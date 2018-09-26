@@ -1,6 +1,6 @@
 from peewee import *
 
-database = SqliteDatabase('model-data.db', **{})
+database = SqliteDatabase('olfactorybulb/model-data.sqlite', **{})
 
 class UnknownField(object):
     def __init__(self, *_, **__): pass
@@ -10,36 +10,35 @@ class BaseModel(Model):
         database = database
 
 class CellType(BaseModel):
-    acronym = TextField(column_name='Acronym', unique=True)
-    id = AutoField(column_name='ID')
+    id = TextField(column_name='ID', primary_key=True)
     name = TextField(column_name='Name', unique=True)
 
     class Meta:
         table_name = 'cell_type'
 
-class CellLocation(BaseModel):
-    cell_type = ForeignKeyField(column_name='Cell_Type_ID', field='id', model=CellType)
+class Cell(BaseModel):
     id = AutoField(column_name='ID')
+    type = ForeignKeyField(column_name='Type', field='id', model=CellType)
     x = FloatField()
     y = FloatField()
+    z = FloatField()
 
     class Meta:
-        table_name = 'cell_location'
+        table_name = 'cell'
 
-class GlomeruliLocation(BaseModel):
-    enabled = IntegerField(column_name='Enabled')
+class Glomerulus(BaseModel):
     id = AutoField(column_name='ID')
     radius = FloatField(column_name='Radius')
     x = FloatField()
     y = FloatField()
+    z = FloatField()
 
     class Meta:
-        table_name = 'glomeruli_location'
+        table_name = 'glomerulus'
 
 class Layer(BaseModel):
-    acronym = TextField(column_name='Acronym', null=True)
     depth_order = IntegerField(column_name='Depth_Order')
-    id = AutoField(column_name='ID')
+    id = TextField(column_name='ID', primary_key=True)
     name = TextField(column_name='Name', unique=True)
 
     class Meta:
@@ -48,11 +47,22 @@ class Layer(BaseModel):
 class LayerVertex(BaseModel):
     id = AutoField(column_name='ID')
     layer = ForeignKeyField(column_name='Layer_ID', field='id', model=Layer)
-    x = FloatField(null=True)
-    y = FloatField(null=True)
+    x = FloatField()
+    y = FloatField()
+    z = FloatField()
 
     class Meta:
         table_name = 'layer_vertex'
+
+class LfpElectrode(BaseModel):
+    id = AutoField(column_name='ID')
+    label = TextField(column_name='Label')
+    x = FloatField()
+    y = FloatField()
+    z = FloatField()
+
+    class Meta:
+        table_name = 'lfp_electrode'
 
 class Parameter(BaseModel):
     name = TextField(primary_key=True)
