@@ -10,15 +10,14 @@ class BaseModel(Model):
         database = database
 
 class CellType(BaseModel):
-    id = TextField(column_name='ID', primary_key=True)
-    name = TextField(column_name='Name', unique=True)
+    id = TextField(primary_key=True)
+    name = TextField(unique=True)
 
     class Meta:
         table_name = 'cell_type'
 
 class Cell(BaseModel):
-    id = AutoField(column_name='ID')
-    type = ForeignKeyField(column_name='Type', field='id', model=CellType)
+    type = ForeignKeyField(column_name='type', model=CellType)
     x = FloatField()
     y = FloatField()
     z = FloatField()
@@ -27,8 +26,7 @@ class Cell(BaseModel):
         table_name = 'cell'
 
 class Glomerulus(BaseModel):
-    id = AutoField(column_name='ID')
-    radius = FloatField(column_name='Radius')
+    radius = FloatField()
     x = FloatField()
     y = FloatField()
     z = FloatField()
@@ -37,16 +35,15 @@ class Glomerulus(BaseModel):
         table_name = 'glomerulus'
 
 class Layer(BaseModel):
-    depth_order = IntegerField(column_name='Depth_Order')
-    id = TextField(column_name='ID', primary_key=True)
-    name = TextField(column_name='Name', unique=True)
+    depth_order = IntegerField()
+    id = TextField(primary_key=True)
+    name = TextField(unique=True)
 
     class Meta:
         table_name = 'layer'
 
 class LayerVertex(BaseModel):
-    id = AutoField(column_name='ID')
-    layer = ForeignKeyField(column_name='Layer_ID', field='id', model=Layer)
+    layer = ForeignKeyField(column_name='layer_id', model=Layer)
     x = FloatField()
     y = FloatField()
     z = FloatField()
@@ -55,8 +52,7 @@ class LayerVertex(BaseModel):
         table_name = 'layer_vertex'
 
 class LfpElectrode(BaseModel):
-    id = AutoField(column_name='ID')
-    label = TextField(column_name='Label')
+    label = TextField()
     x = FloatField()
     y = FloatField()
     z = FloatField()
@@ -64,12 +60,38 @@ class LfpElectrode(BaseModel):
     class Meta:
         table_name = 'lfp_electrode'
 
-class Parameter(BaseModel):
-    name = TextField(primary_key=True)
-    value = TextField()
+class Source(BaseModel):
+    journal_book_title = TextField(null=True)
+    short_title = TextField()
+    title = TextField(null=True)
+    url = TextField()
+    year = IntegerField(null=True)
 
     class Meta:
-        table_name = 'parameter'
+        table_name = 'source'
+
+class Property(BaseModel):
+    id = TextField(primary_key=True)
+    is_emergent = IntegerField(null=True)
+    mean = FloatField(null=True)
+    n = IntegerField(null=True)
+    name = TextField(null=True)
+    picked_value = FloatField(null=True)
+    std = FloatField(null=True)
+
+    class Meta:
+        table_name = 'property'
+
+class Measurement(BaseModel):
+    mean = FloatField(null=True)
+    n = IntegerField()
+    notes = TextField(null=True)
+    property = ForeignKeyField(column_name='property_id', field='id', model=Property)
+    source = ForeignKeyField(column_name='source_id', field='id', model=Source)
+    std = FloatField(null=True)
+
+    class Meta:
+        table_name = 'measurement'
 
 class SqliteSequence(BaseModel):
     name = UnknownField(null=True)  # 

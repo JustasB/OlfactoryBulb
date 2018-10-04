@@ -8,7 +8,7 @@ class OlfactoryBulb:
         # import pydevd
         # pydevd.settrace('192.168.0.34', port=4200, stdoutToServer=True, stderrToServer=True)
 
-        self.params = {param.name: eval(param.value) for param in Parameter.select()}
+        self.properties = {param.name: eval(param.value) for param in Property.select()}
 
         # Load layers
         self.layers = {layer.id: layer for layer in Layer.select()}
@@ -288,12 +288,12 @@ class OlfactoryBulb:
 
     def within_modeled_region(self, target):
         return (
-            (target.x >= self.params['modeled_region_xyz_start'][0]) &
-            (target.x <= self.params['modeled_region_xyz_end'][0]) &
-            (target.y >= self.params['modeled_region_xyz_start'][1]) &
-            (target.y <= self.params['modeled_region_xyz_end'][1]) &
-            (target.z >= self.params['modeled_region_xyz_start'][2]) &
-            (target.z <= self.params['modeled_region_xyz_end'][2])
+            (target.x >= self.properties['modeled_region_xyz_start'][0]) &
+            (target.x <= self.properties['modeled_region_xyz_end'][0]) &
+            (target.y >= self.properties['modeled_region_xyz_start'][1]) &
+            (target.y <= self.properties['modeled_region_xyz_end'][1]) &
+            (target.z >= self.properties['modeled_region_xyz_start'][2]) &
+            (target.z <= self.properties['modeled_region_xyz_end'][2])
         )
 
 if __name__ == "__main__":
