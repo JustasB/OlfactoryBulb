@@ -1,0 +1,5 @@
+Radius,Inters.,Radius (norm)Volume,Inters./Volume,log(Radius),log(Inters./Volume)
+0,1,10,0.001,2.303,-6.731
+10,5,20,1.492E-4,2.996,-8.810
+20,5,30,2.653E-5,3.401,-10.537
+30,3,NaN,NaN,NaN,NaN
