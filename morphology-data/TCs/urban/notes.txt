@@ -1,0 +1,5 @@
+many are thickish slices
+
+ones that start with tufted-cell... have tufts disconnected - have been fixed
+
+some of that lateral denrites are labeled as primary - fixed

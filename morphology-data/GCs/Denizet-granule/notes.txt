@@ -1,0 +1,7 @@
+everything is basal dendrites - retyped to apical and basal
+
+no soma
+
+slices are thin
+
+computed basal and apical thin metrics

@@ -106,3 +106,8 @@ venv.bak/
 \.idea/
 
 Untitled\.ipynb
+
+tmp/
+
+x84_64
+

@@ -4,7 +4,7 @@ import numpy as np
 
 def pool_experimental_measurements(property_id):
     """
-    Aggregates the distributions of measurments of the given property and saves
+    Aggregates the distributions of measurements of the given property and saves
     the resulting aggregate mean, std, and n to property table
 
     :param property_id: the id of the property to aggregate
