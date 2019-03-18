@@ -1,0 +1,33 @@
+// test_pnetstim.hoc
+// uses a simple pnetstim to follow flow
+
+create soma
+access soma
+insert pas  // needed to better see the result of synaptic activation
+soma {diam=10 L=10}
+objref ts, glut, nc
+
+soma ts = new ThetaStim(0.5)
+soma glut = new AmpaNmda(0.5)
+nc = new NetCon(ts, glut)
+nc.weight = 1 // change from initialization of 0 to 1
+xpanel("test ThetaStim")
+  xlabel("Control for each inner spike burst:")
+  xvalue("ts.interval")
+  xlabel("  start (below) is relative to the start of the burst:")
+  xvalue("ts.start")
+  xvalue("ts.number")
+  xvalue("ts.noise")
+  xlabel("****    ****    ****")
+  xlabel("Timing of the groups of spikes:")
+  xvalue("ts.outer_interval")
+  xlabel("outer_start is in absolute time:")
+  xvalue("ts.outer_start")
+  xvalue("ts.outer_number")
+  xvalue("ts.outer_noise")
+  xlabel(" ")
+  xlabel("NetCon weight:")
+  xvalue("nc.weight")
+xpanel()
+
+load_file("test_ts.ses")

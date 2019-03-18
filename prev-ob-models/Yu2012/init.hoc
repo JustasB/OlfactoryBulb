@@ -1,0 +1,14 @@
+{load_file("nrngui.hoc")}
+{load_file("net.hoc")}
+{load_file("stim.hoc")}
+{load_file("control.ses")}
+{load_file("hinton.hoc")}
+
+load_file("showw.hoc")
+
+//run()
+show_weight()
+
+{load_file("perfrun.hoc")}
+{want_all_spikes()}
+// excute {spike2file()} to create out1.dat file

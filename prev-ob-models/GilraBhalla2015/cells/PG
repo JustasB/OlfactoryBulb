@@ -1,0 +1,17 @@
+Warning: Failed to find slot: fluxSrc
+Warning: Failed to find slot: unblockedSrc
+Warning: Failed to find slot: xGate.lookup
+Warning: Failed to find slot: yGate.lookup
+Warning: Failed to find slot: zGate.lookup
+.:/home/aditya
+SIMPATH = .:/home/aditya
+2171 FuncVecs built for the first time
+Process 0 on node022.local.
+loading channel : Ih_cb into /library .
+loading channel : TCa_d into /library .
+loading synapse : ORN_PG into /library .
+loading synapse : ORN_mitral into /library .
+loading synapse : mitral_PG into /library .
+loading synapse : PG_mitral into /library .
+loading synapse : SA_PG into /library .
+loading cell : PG into /library .

@@ -1,0 +1,315 @@
+/*--------------------------------------------------------------
+	TEMPLATE FILE FOR REGULAR-SPIKING CORTICAL PYRAMIDAL CELL
+	---------------------------------------------------------
+
+	One compartment model and currents derived from:
+
+   Pospischil, M., Toledo-Rodriguez, M., Monier, C., Piwkowska, Z., 
+   Bal, T., Fregnac, Y., Markram, H. and Destexhe, A.
+   Minimal Hodgkin-Huxley type models for different classes of
+   cortical and thalamic neurons.
+   Biological Cybernetics 99: 427-441, 2008.
+
+	This model was inspired from:
+
+   McCormick, D.A., Wang, Z. and Huguenard, J. Neurotransmitter 
+   control of neocortical neuronal activity and excitability. 
+   Cerebral Cortex 3: 387-398, 1993.
+
+	- one compartment model
+	- passive
+	- HH: Traub
+
+	Alain Destexhe, CNRS, 2008
+
+--------------------------------------------------------------*/
+
+begintemplate Orn		// create a new template object
+	public soma, spikecount, spiketimes, connect2target, record_v, print_v
+	public ampa_syn, gabaa_syn, add_exc_connection_to_soma, add_inh_connection_to_soma, add_random_exc_spikes_to_soma, add_random_inh_spikes_to_soma
+	public synlist, netconlist
+	public add_random_exc_spikes_to_soma_with_seed, add_random_inh_spikes_to_soma_with_seed
+	public add_iclamp_input, iclamp
+	public record_iampa, record_inmda, record_igaba, record_iodor
+	public print_iampa, print_inmda, print_igaba, print_iodor
+
+	// synlist is needed by ParallelNetManager.nc_append for connecting Orns to mitral cells
+    objref spikecount, spiketimes, synlist, recv, rect, netconlist, nc, ns_exc, ns_inh, ampa_syn, gabaa_syn, nullobject
+	objref ns_exc_input, nc_exc_input // for artificial extra stimulus
+	objref v_netstim_exc, v_netstim_inh
+	objref reci_ampa, reci_nmda, reci_gaba, reci_odor // for recording synaptic input current --> noise measurements
+	external thresh
+
+	create soma
+	proc init() { local v_potassium, v_sodium
+	  	v_potassium = -100	// potassium reversal potential 
+	  	v_sodium = 50			// sodium reversal potential 
+	  	synlist = new List()
+	  	netconlist = new List()
+      	rect = new Vector()
+      	recv = new Vector()
+		v_netstim_exc = new List()
+		v_netstim_inh = new List()
+        reci_ampa = new Vector()
+        reci_nmda = new Vector()
+        reci_gaba = new Vector()
+        reci_odor = new Vector()
+
+		spiketimes = new Vector()
+
+		soma {
+			Ra = 100			// [ohm/cm]
+			nseg = 1    
+			diam = 96           // [um]
+			L = 96				// [um]
+			// in NEURON the area is only the area of the side (not the bottom :))
+			// so that area is about 
+			// A = 2.8953 * 10^(-8) m^2 = 2.8953 * 10^(-4) cm^2
+			cm = 1				// [uF/cm2]
+
+			insert pas			// leak current 
+			e_pas = -70			// [mV]
+			g_pas = $9	    // [S/cm2], i.e. g_leak = 10^(-5) S/cm2
+	/*        g_pas = 1e-4	    // [S/cm2], i.e. g_leak = 10^(-5) S/cm2*/
+	/*                            // Rin = 34 MOhm*/
+
+			insert hh2		// Hodgin-Huxley INa and IK 
+			ek_hh2 = v_potassium
+			ena_hh2 = v_sodium
+			vtraub_hh2 = -55	// Resting Vm, BJ was -55
+			//gkbar_hh2 = 0.005	// spike duration of pyr cells
+			gkbar_hh2 = $6	// spike duration of pyr cells (default value in template is 0.005)
+			//gnabar_hh2 = 0.05	// McCormick=15 muS, thal was 0.09
+			gnabar_hh2 = $5 	// McCormick=15 muS, thal was 0.09
+			
+			insert odorinput //OR machinery (odorinput.mod)
+			gor_odorinput = $1
+			or_odorinput = $2
+			e_odorinput = 0
+			tstart_odorinput = $3
+			tstop_odorinput = $4
+
+
+			insert cagk2		// calcium activated K channel (cagk.mod)
+			gkbar_cagk2=$7
+					
+	/*        insert cad			// calcium decay*/
+	/*        taur_cad = $10*/
+			insert cadecay_destexhe // low threshold calcium current
+			taur_cadecay_destexhe = $10
+		// 	depth_cad = 1		// McCormick= 0.1 um
+		// 	taur_cad = 100		// McCormick=1 ms !!!
+		// 	cainf_cad = 2.4e-4	// McCormick=0
+		// 	kt_cad = 0			// no pumpica = gcabar * m * m * h * (v-carev)
+					
+			insert ical			// IL current (Reuveni et al. model, Nernst)
+		//	cai_ical = 2.4e-4 
+	/*        cao_ical = 2 */
+	/*        eca_ical = 120*/
+			gcabar_ical = $8 //1e-4
+
+			spikecount = new APCount(0.5)
+			spikecount.thresh = thresh
+			spikecount.record(spiketimes)
+
+			soma ampa_syn = new ExpSyn(0.5)
+			soma gabaa_syn = new ExpSyn(0.5)
+			ampa_syn.tau	= 10
+			ampa_syn.e		= 0
+			gabaa_syn.tau = 10
+			gabaa_syn.e = -80
+			synlist.append(ampa_syn) //idx 0: excitation
+			synlist.append(gabaa_syn) //idx 1: inhibition 
+
+	  }
+	  // print "Area:", area(0.5)
+
+	}
+	proc connect2target() {
+		// This function is called by ParallelNetManager.register_cell(gid, new Orn())
+		// This function has to construct a NetCon object and return it in the second argument
+		// with the following syntax:
+		soma $o2 = new NetCon(&v(0.5), $o1)
+		// the first argument of NetCon is the source cell (the cell which is being registered)
+		// the second argument of NetCon is the first argument of connect2target and
+		// represents the synapse object
+		$o2.threshold = spikecount.thresh()
+	}
+
+    proc record_v() {
+        recv.record(&soma.v(0.5))
+        rect.record(&t)
+    }
+
+	proc record_iodor() {
+		reci_odor.record(&soma.i_odorinput(0.5))
+		rect.record(&t)
+	}
+
+    proc record_iampa() {
+        reci_ampa.record(&ampa_syn.i)
+        rect.record(&t)
+    }
+
+    proc record_igaba() {
+        reci_gaba.record(&gabaa_syn.i)
+        rect.record(&t)
+    }
+
+
+    proc print_v() {local c_Kd localobj file, m
+        strdef fn
+		fn = $s1
+		//sprint(fn, "data/mem_pot_orn_%d.v", gid)
+        file = new File()
+        file.wopen(fn)
+        // file.printf("#%d\t%f\n", rect.size(), recv.max())
+/*        file.printf("#\t\tgor\toor\t\tc/Kd\t\tgna\t\tgk\t\tgk_cag\t\tgca_l\n")*/
+ 		// calculate c over Kd from oor:
+/*        if (or_odorinput == 1){*/
+/*            c_Kd = 10^5*/
+/*        } else {*/
+/*            c_Kd = or_odorinput / (1 - or_odorinput)*/
+/*        }*/
+/*        file.printf("#%f\t%f\t%f\t%f\t%f\t%f\n", gor_odorinput, or_odorinput, c_Kd, gnabar_hh2, gkbar_hh2, gkbar_cagk2, gcabar_ical)*/
+
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(recv.size(), 1)
+        m.setcol(0, recv)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_iampa() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_ampa.size(), 1)
+        m.setcol(0, reci_ampa)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_igaba() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_gaba.size(), 1)
+        m.setcol(0, reci_gaba)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_iodor() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        m = new Matrix()
+        m.resize(reci_odor.size(), 1)
+        m.setcol(0, reci_odor)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+
+	proc add_exc_connection_to_soma() {local threshold, delay
+		threshold = 10
+			delay = 0
+			weight = $1
+			// create a new synapse on the target section
+			nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight)
+			netconlist.append(nc) //netconlist[0]
+	}
+
+	proc add_inh_connection_to_soma() {local threshold, delay
+		threshold = 10
+			delay = 0
+			weight = $1
+			nc = new NetCon(nullobject, synlist.o(1), threshold, delay, weight)
+			netconlist.append(nc) //netconlist[1]
+	}
+
+	proc add_random_exc_spikes_to_soma(){ local threshold, delay
+		threshold = 10
+		delay = 0
+/*        start = $3*/
+		w_exc = $1
+		// $2 = rate [Hz]
+		soma ns_exc = new NetStim(0.5)
+		ns_exc.interval = (1. / $2) * 1000.
+		// $4 = t_stop
+		ns_exc.number = $2 * (($3-start) / 1000.)
+		ns_exc.noise = 1.0
+		ns_exc.start = 0
+		nc = new NetCon(ns_exc, synlist.o(0), threshold, delay, w_exc)
+		netconlist.append(nc)
+	}
+
+	proc add_random_inh_spikes_to_soma(){ local threshold, delay
+		threshold = 10
+		delay = 0
+		w_inh = $1
+		start = 0
+		// $2 = rate [Hz]
+		ns_inh = new NetStim(0.5)
+		ns_inh.interval = (1. / $2) * 1000.
+		// $4 = t_stop
+		ns_inh.number = $2 * (($3-start) / 1000.)
+		ns_inh.noise = 1.0
+		ns_inh.start = 0
+		nc = new NetCon(ns_inh, synlist.o(1), threshold, delay, w_inh)
+		netconlist.append(nc)
+	}
+
+
+	proc add_random_exc_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc_exc_input = new NetCon(ns, synlist.o(0), threshold, delay, w_exc)
+		netconlist.append(nc_exc_input)
+		v_netstim_exc.append(ns)
+	}
+
+
+	proc add_random_inh_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc = new NetCon(ns, synlist.o(1), threshold, delay, w_exc)
+		v_netstim_inh.append(ns)
+		netconlist.append(nc)
+	}
+
+
+endtemplate Orn

@@ -1,0 +1,17 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[7]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,15,-80,40)
+scene_vector_[6] = save_window_
+{save_window_.view(0, -80, 15, 120, 318, 109, 426.24, 273.28)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("soma.v( 0.5 )", 2, 1, 0.680631, 0.966745, 2)
+save_window_.addexpr("priden.v( 0.75 )", 1, 1, 0.685135, 0.956206, 2)
+save_window_.addexpr("tuftden.v( 0.5 )", 3, 5, 0.685135, 0.945667, 2)
+}
+objectvar scene_vector_[1]
+{doNotify()}

@@ -1,0 +1,132 @@
+// tdt2mat_data.hoc
+// creates tdt2mat_data files that can be read by matlab to allow the simulation to 
+// be analysed like the experiments
+/* excerpts from diagnostic_script_5.m
+tdt2mat_data.streams.BRTH.data = BRTH_data;
+tdt2mat_data.streams.BRTH.fs = fs;
+tdt2mat_data.snips.eNeu.ts=spike_times;
+tdt2mat_data.snips.eNeu.sortcode=ones(1, length(spike_times)); % arbitrarily assign a sortcode of 1 for each spike time
+tdt2mat_data.epocs.SOFF.onset = SOFF;
+duplicates_S_ON = kron(S_ON, [1 1]);
+tdt2mat_data.epocs.S_ON.onset=duplicates_S_ON;
+stimids=1:length(S_ON);  % arbitrarily assign whole numbers as stimids
+duplicates_stimids = kron(stimids, [1 1]);
+tdt2mat_data.epocs.S_ON.data = duplicates_stimids;
+
+----
+use the following filenames where _d_ means _dot_ i.e. is a "." (see above)
+
+tdt2mat_data_d_streams_d_BRTH_d_data.dat
+tdt2mat_data_d_streams_d_BRTH_d_fs.dat
+tdt2mat_data_d_snips_d_eNeu_d_ts.dat
+tdt2mat_data_d_snips_d_eNeu_d_sortcode.dat
+tdt2mat_data_d_epocs_d_SOFF_d.dat
+tdt2mat_data_d_epocs_d_S_ON_d.dat
+tdt2mat_data_d_epocs_d_S_ON_d_data.dat
+
+*/
+
+// first BRTH_data
+// Make a sine wave lined up with the breath pulses:
+objref BRTH_data, fs_vec, ts_vec, sortcode_vec, SOFF_vec, S_ON_vec, S_ON_data_vec
+strdef tmpfilename // used by NSG to find run_X/tdt2mat_data for each simulation
+proc save_tank() {
+  breath_zero_time = 0 // ThetaStim[0].outer_start+ThetaStim[0].start // arbitrarily choose the start time of the breath pulses as zero
+  // in the breath cycle
+  breath_period = breathing_period // ThetaStim[0].outer_interval
+  // assume that t_vec already exists and is the recorded time for the entire simulation
+
+// comment in when want the big breath trace otherwise use shared breath trace to save space
+//  BRTH_data=t_vec.c.sin(1/(breath_period/1000),PI/2-2*PI*breath_zero_time/breath_period, dt) // freq in Hz
+  // uncomment the below if want to write the big file:
+  ///// BRTH_data=t_vec.append(0) // store one number just to make a file
+  ///// BRTH_data.c.mul(20).line(v_graph,t_vec,5,1)
+  ///// sprint(tmpfilename, "%s_d_streams_d_BRTH_d_data.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  // skip writing these big identical files:
+  // write_vec(tmpfilename, BRTH_data)
+
+  fs_vec = new Vector()
+  fs_vec.append(1000/dt) // if dt is 0.025 us this will be 40k Hz
+  sprint(tmpfilename, "%s_d_streams_d_BRTH_d_fs.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename,fs_vec)
+/////////////////////////////////////////
+// augmented section for more possible activity traces
+
+// ***************************** variants - this one is the original m1 activity
+  // ts_vec is a vector of the time's of the spikes: this comes in NEURON in ms so needs conversion to seconds
+  ts_vec=m1_events.c.div(1000) // 
+  sprint(tmpfilename, "%s_d_snips_d_eNeu_d_ts_m1.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, ts_vec)
+
+// ***************************** variants - this one is the pg reciprocal synapse - will try this first as main pg activity indicator
+  // ts_vec is a vector of the time's of the spikes: this comes in NEURON in ms so needs conversion to seconds
+  ts_vec=pg1_to_m1tuft_events.c.div(1000) // 
+  sprint(tmpfilename, "%s_d_snips_d_eNeu_d_ts.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, ts_vec)
+
+// ***************************** variants - this one is the pg1 axon to m2 priden and should match the recip synapse above
+  // ts_vec is a vector of the time's of the spikes: this comes in NEURON in ms so needs conversion to seconds
+  ts_vec=pg1_axon_to_m2_events.c.div(1000) // 
+  sprint(tmpfilename, "%s_d_snips_d_eNeu_d_ts_pg1_to_m2.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, ts_vec)
+
+// ***************************** variants - this one recorded the pg2 to m1 priden
+  // ts_vec is a vector of the time's of the spikes: this comes in NEURON in ms so needs conversion to seconds
+  ts_vec=pg2_axon_to_m1priden_events.c.div(1000) // 
+  sprint(tmpfilename, "%s_d_snips_d_eNeu_d_ts_pg2_to_m1.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, ts_vec)
+
+//////////////////////////////////////////////
+
+  sortcode_vec = ts_vec.c // make a vector the same length as the vector of spikes
+  sortcode_vec.fill(1) // make the sortcode arbitrarily set to 1
+  sprint(tmpfilename, "%s_d_snips_d_eNeu_d_sortcode.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, sortcode_vec)
+
+  SOFF_vec = new Vector()
+  S_ON_vec = new Vector()
+  S_ON_data_vec = new Vector()
+/*
+  num_of_points = light1_events.size()
+  points_per_burst = ThetaStim[2].number // for light stimulation of mitral 1
+  stimid=1
+  for (i=0; i<num_of_points; i = i+ points_per_burst) {
+    // note that the S_ON and SOFF times are duplicated because the analysis code expects them to be duplicated
+
+    S_ON_vec.append(light1_events.x[i], light1_events.x[i])
+    SOFF_vec.append(light1_events.x[i+points_per_burst-1], light1_events.x[i+points_per_burst-1])
+    S_ON_data_vec.append(stimid, stimid)
+
+    stimid = stimid + 1
+  }
+*/
+  // recreate the S_ON, SOFF vectors from the gauss light parameters
+  stimid = 1
+  current_S_ON_time = light_gauss_center - light_half_width
+  current_SOFF_time = light_gauss_center + light_half_width
+  while (current_S_ON_time < tstop) { // keep going until past tstop
+    // note that the S_ON and SOFF times are duplicated because the analysis code expects them to be duplicated
+    if (current_S_ON_time>0) {
+      S_ON_vec.append(current_S_ON_time, current_S_ON_time)
+    }
+    if (current_SOFF_time<tstop) {
+
+      SOFF_vec.append(current_SOFF_time, current_SOFF_time)
+    }
+    S_ON_data_vec.append(stimid, stimid)
+    // increment variables for next stimulus
+    current_S_ON_time += light_period
+    current_SOFF_time += light_period
+    stimid = stimid + 1
+  }
+
+  sprint(tmpfilename, "%s_d_epocs_d_SOFF_d_onset.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, SOFF_vec.c.div(1000)) // divide by 1000 to convert from ms to seconds
+
+  sprint(tmpfilename, "%s_d_epocs_d_S_ON_d_onset.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, S_ON_vec.c.div(1000))
+
+  sprint(tmpfilename, "%s_d_epocs_d_S_ON_d_data.dat", tank_folder) // looks like run_X/tdt2mat_data/_d_...
+  write_vec(tmpfilename, S_ON_data_vec)
+/**/
+}

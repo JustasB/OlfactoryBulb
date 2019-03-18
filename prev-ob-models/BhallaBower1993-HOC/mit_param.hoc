@@ -1,0 +1,17 @@
+// mit_param.hoc
+// Andrew Davison
+// 03-11-98
+
+// This file contains some global parameters for the mitral cell model
+
+dt 		= 0.010		// ms
+steps_per_ms	= 10		// for graphing
+tstop 		= 200		// ms
+Erest		= -65		// mV
+ErevNa 		= 45		// mV
+ErevK 		= -70		// mV
+ErevCa 		= 70		// mV
+CaConcExt 	= 2		// mM
+CaConcInt 	= 0.00001	// mM
+Raxial		= 200		// ohm-cm
+Rmemb		= 100000	// ohm/cm^2

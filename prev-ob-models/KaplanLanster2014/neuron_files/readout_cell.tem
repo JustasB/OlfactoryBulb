@@ -1,0 +1,140 @@
+/*--------------------------------------------------------------
+  	READOUT CELL: simple integrator
+	---------------------------------------------------------
+
+	One compartment integrator model 
+
+
+--------------------------------------------------------------*/
+
+begintemplate Readout// create a new template object
+
+	public soma, ampa, gabaa, nmda, netconlist, synlist
+	public add_connection_to_soma, connect2target, record_v, print_v, spiketimes, spikecount
+	public add_netcon_to_synlist0, add_netcon_to_synlist1 // required to simulate offline, i.e. without all other cells
+	external thresh
+	create soma[1]
+
+	objref  spikecount, spiketimes, synlist, recv, rect, netconlist, ampa, gabaa, nmda
+	objref  syn, nc, ns, nullobject // needed for adding a synapse and spiketrain as input
+
+	proc init() { local v_potassium, v_sodium, AMPAtau, AMPArev, GABAAtau, GABAArev
+
+		synlist = new List()
+		spiketimes = new Vector()
+		netconlist = new List()
+        rect = new Vector()
+        recv = new Vector()
+
+	    v_potassium = -100		// potassium reversal potential 
+	    v_sodium = 50			// sodium reversal potential 
+
+		soma {
+			Ra = 100		// geometry 
+			nseg = 1
+			diam = 96
+			L = 96			// so that area is about 29000 um2
+			cm = 1
+
+			insert pas		// leak current 
+			e_pas = -70
+			g_pas = $1// Rin = 34 Meg
+			// 10^(-4) S / cm^2 
+			// conversion with McC units: 
+			// g(S/cm2) = g(nS)*1e-9/29000e-8
+			//	    = g(nS) * 3.45e-6
+			// g_total = A * g(S/cm2) = 2.895 * 10^(-8)m2 * 10^(-4) S / 10^(-4) m2 = 2.895 * 10 *(-8) S
+
+			// synapses
+			AMPAtau	= $2		//ms
+			AMPArev	= 0		//mV
+			GABAAtau	= $3		// from Sc&98
+			GABAArev	= -70		// values taken from Malin's mitral cell synapses
+			ampa = new ExpSyn(0.5)
+			synlist.append(ampa)	//synlist[0]: excitation
+			ampa.tau	= AMPAtau
+			ampa.e		= AMPArev
+			nmda = new NMDA(0.5)
+			synlist.append(nmda)	// synlist[1]: slow excitation
+			gabaa = new ExpSyn(0.5)
+			synlist.append(gabaa) //synlist[2]: inhibition 
+			gabaa.tau	= GABAAtau
+			gabaa.e	= GABAArev
+
+/*            spikecount = new APCount(0.5)*/
+/*            spikecount.thresh = thresh*/
+/*            spikecount.record(spiketimes)*/
+	  }
+
+	}
+
+    proc record_v() {
+        recv.record(&soma.v(0.5))
+        rect.record(&t)
+    }
+
+
+    proc print_v() {localobj file, m
+/*        gid = $1*/
+        strdef fn
+		fn = $s1
+		//sprint(fn, "data/mem_pot_mit_%d.v", gid)
+        file = new File()
+        file.wopen(fn)
+		// file.printf("#%d\t%f\n", rect.size(), recv.max())
+/*        printf("DEBUG MIT_V: %d\t%f\n", rect.size(), recv.max())*/
+
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(recv.size(), 1)
+        m.setcol(0, recv)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+	proc add_connection_to_soma() {local threshold, delay, weight
+		threshold = thresh
+		delay = 1
+		weight = $1
+		// create a new synapse on the target section
+/*        dend[0] syn = new ExpSyn(0.5)*/
+		soma syn = new ExpSyn(0.5)
+		syn.tau = 10	// [ms]
+		synlist.append(syn) //synlist[2]
+		nc = new NetCon(nullobject, syn, threshold, delay, weight)
+		soma netconlist.append(nc)
+	}
+
+	proc connect2target() {
+		// This function is called by ParallelNetManager.register_cell(gid, new Orn())
+		// This function has to construct a NetCon object and return it in the second argument
+		// with the following syntax:
+		soma $o2 = new NetCon(&v(0.5), $o1)
+		// the first argument of NetCon is the source cell (the cell which is being registered)
+		// the second argument of NetCon is the first argument of connect2target and
+		// represents the synapse object
+		$o2.threshold = thresh
+	}
+
+	proc add_netcon_to_synlist0() {local threshold, delay
+		threshold = 10
+		delay = 1
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight)
+		netconlist.append(nc)
+	}
+
+	proc add_netcon_to_synlist1() {local threshold, delay
+		threshold = 10
+		delay = 1
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(1), threshold, delay, weight)
+		netconlist.append(nc)
+	}
+
+
+endtemplate Readout
+
+
+

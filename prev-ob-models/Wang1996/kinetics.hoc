@@ -1,0 +1,166 @@
+load_file("nrngui.hoc")
+cvode.active(1)
+cvode.atol(1.e-3)
+create a
+a	{nseg=1 diam=5 L=5 
+	insert kamt ek=-85 sha_kamt=0 shi_kamt=0
+	insert kdrmt ek=-85
+	insert pas g_pas=1/10000 Ra=150 cm=1}
+access a
+
+celsius=24
+tstop=200
+vlow=-90
+vhigh=60
+dt=0.1
+
+mtfac=1
+htfac=5
+drfac=10
+
+objref gk, b,gt,vc, gs,c, gf,ic
+b = new VBox()
+c = new VBox()
+b.intercept(1)
+gk = new Graph(0)
+gk.view(vlow,0,vhigh-vlow,1,0,0,100,200)
+gk.exec_menu("New Axis")
+gk.exec_menu("10% Zoom out")
+gk.label(0.1,0.9,"Fig.4B: steady-states")
+gk.addexpr("minf_kamt",3,2, 2*tstop,0,2)
+gk.addexpr("hinf_kamt",2,2, 2*tstop,0,2)
+gk.addexpr("minf_kdrmt",1,2, 2*tstop,0,2)
+
+gt = new Graph(0)
+gt.view(vlow,0,vhigh-vlow,15,0,0,100,200)
+gt.exec_menu("New Axis")
+gt.exec_menu("10% Zoom out")
+gt.label(0.1,0.9,"time constants (scale in ms)")
+gt.addexpr("mtau_kamt/mtfac",3,2, 2*tstop,0,2)
+gt.addexpr("htau_kamt/htfac",2,2, 2*tstop,0,2)
+gt.addexpr("mtau_kdrmt/drfac",1,2, 2*tstop,0,2)
+
+xpanel("")
+xbutton("run ", "run()")
+xpanel()
+b.intercept(0)
+b.map("K-A and K-DR kinetics for Mitral Cells",100,0,200,400)
+
+c.intercept(1)
+gs = new Graph(0)
+gs.view(0,0,tstop,20,0,0,100,200)
+gs.exec_menu("New Axis")
+gs.exec_menu("10% Zoom out")
+gs.label(0.1,0.9,"K-A activation (pA), protocol as in Fig.6B")
+gs.exec_menu("Keep Lines")
+
+gf = new Graph(0)
+gf.view(0,0,tstop,25,0,0,100,200)
+gf.exec_menu("New Axis")
+gf.exec_menu("10% Zoom out")
+gf.label(0.1,0.9,"K-DR activation (pA), protocol as in Fig.6C")
+gf.exec_menu("Keep Lines")
+
+c.intercept(0)
+c.map("activation",390,0,500,370)
+
+vc = new SEClamp(0.5)
+
+proc run() {
+gk.begin()
+gk.color(1)
+gk.label(0.6,0.2,"K-DR act.")
+for (v=vlow; v<vhigh; v=v+1) {
+    trates_kamt(v)
+    trates_kdrmt(v)
+    gk.plot(v)
+}
+gk.flush()
+doNotify()
+
+gt.begin()
+gt.mark(-20,12.18/mtfac,"+",12,5,2)
+gt.mark(-10,9.11/mtfac,"+",12,5,2)
+gt.mark(0,6.68/mtfac,"+",12,5,2)
+gt.mark(10,6.51/mtfac,"+",12,5,2)
+gt.mark(20,4.94/mtfac,"+",12,5,2)
+gt.mark(30,3.56/mtfac,"+",12,5,2)
+gt.mark(40,3.45/mtfac,"+",12,5,2)
+gt.mark(50,3.05/mtfac,"+",12,5,2)
+gt.mark(-10,51.17/htfac,"+",12,6,2)
+gt.mark(0,47.84/htfac,"+",12,6,2)
+gt.mark(10,48.32/htfac,"+",12,6,2)
+gt.mark(20,45.21/htfac,"+",12,6,2)
+gt.mark(30,44.11/htfac,"+",12,6,2)
+gt.mark(40,46.19/htfac,"+",12,6,2)
+gt.mark(50,43.44/htfac,"+",12,6,2)
+gt.color(1)
+gt.label(0.55,0.2,"DR act./10")
+gt.color(2)
+gt.label(0.25,0.2,"A inact./5")
+for (v=vlow; v<vhigh; v=v+1) {
+    trates_kamt(v)
+    trates_kdrmt(v)
+    gt.plot(v)
+}
+gt.flush()
+doNotify()
+
+gbar_kamt=0.0002
+gbar_kdrmt=0.0
+
+gs.begin()
+k=-20
+color=1
+while (k<61) {
+gs.addexpr("ik*area(0.5)*10",color,1, 2*tstop,0,2) // *10=pA, *1e-2=nA
+t=0
+vc.amp1=-70
+vc.dur1=0.2
+vc.amp2=k
+vc.dur2=tstop
+forall {finitialize(vc.amp1)}
+while (t<tstop) {
+    fadvance()
+    gs.plot(t)
+gs.flush()
+doNotify()
+    }
+gs.flush()
+doNotify()
+k=k+10
+//color=color+1
+gs.begin()
+}
+
+gbar_kamt=0.0
+gbar_kdrmt=0.0002
+
+gf.begin()
+k=-20
+color=1
+while (k<61) {
+gf.addexpr("ik*area(0.5)*10",color,1, 2*tstop,0,2) // *10=pA, *1e-2=nA
+t=0
+vc.amp1=-70
+vc.dur1=0.2
+vc.amp2=k
+vc.dur2=tstop
+forall {finitialize(vc.amp1)}
+while (t<tstop) {
+    fadvance()
+    gf.plot(t)
+gf.flush()
+doNotify()
+    }
+gf.flush()
+doNotify()
+k=k+10
+//color=color+1
+gf.begin()
+}
+vc.dur1=0
+vc.dur2=0
+vc.dur3=0
+}
+

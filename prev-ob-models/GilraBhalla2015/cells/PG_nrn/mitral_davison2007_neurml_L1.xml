@@ -1,0 +1,558 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<neuroml xmlns="http://morphml.org/neuroml/schema"
+    xmlns:mml="http://morphml.org/morphml/schema"
+    xmlns:meta="http://morphml.org/metadata/schema"
+    xmlns:bio="http://morphml.org/biophysics/schema"
+    xmlns:cml="http://morphml.org/channelml/schema"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://morphml.org/neuroml/schema http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.0/Level3/NeuroML_Level3_v1.8.0.xsd"
+    name = "NeuroML Level 1 file exported from NEURON"
+    lengthUnits="micron">
+
+<meta:notes>NeuroML Level 1 file generated from ModelView by: NEURON -- Release 7.1 (359:7f113b76a94b) 2009-10-26
+Authors: Michael Hines, Sushil Kambampati and Padraig Gleeson,
+Yale University and UCL</meta:notes>
+
+<cells>
+  <cell name="Mitral_0">
+    <meta:notes>Cell: Mitral_0 exported from NEURON ModelView</meta:notes>
+    <segments  xmlns="http://morphml.org/morphml/schema"> <!-- Changing the namespace from neuroml to morphml-->
+<!-- Section: Mitral[0].soma -->
+      <segment id="0" name = "Seg0_soma" cable = "0">
+        <proximal x="0" y="0" z="0" diameter="20"/>
+        <distal x="12.5" y="0" z="0" diameter="20"/>
+      </segment>
+      <segment id="2" name = "Seg1_soma" parent="0" cable = "0">
+        <distal x="25" y="0" z="0" diameter="20"/>
+      </segment>
+<!-- Section: Mitral[0].hillock -->
+      <segment id="142" name = "Seg0_hillock" parent="0" cable = "5">  <!-- Connected at 0 on parent section: Mitral[0].soma  -->
+        <proximal x="0" y="0" z="0" diameter="16.9167"/>
+        <distal x="-0.833333" y="7.28523e-08" z="0" diameter="16.9167"/>
+      </segment>
+      <segment id="143" name = "Seg1_hillock" parent="142" cable = "5">
+        <distal x="-2.5" y="2.18557e-07" z="0" diameter="10.75"/>
+      </segment>
+      <segment id="144" name = "Seg2_hillock" parent="143" cable = "5">
+        <distal x="-4.16667" y="3.64262e-07" z="0" diameter="4.58333"/>
+      </segment>
+      <segment id="145" name = "Seg3_hillock" parent="144" cable = "5">
+        <distal x="-5" y="4.37114e-07" z="0" diameter="4.58333"/>
+      </segment>
+<!-- Section: Mitral[0].secden[1] -->
+      <segment id="60" name = "Seg0_secden_1" parent="0" cable = "3">  <!-- Connected at 0.5 on parent section: Mitral[0].soma  -->
+        <proximal x="12.5" y="0" z="0" diameter="2"/>
+        <distal x="14.4471" y="4.60531" z="0" diameter="2"/>
+      </segment>
+      <segment id="61" name = "Seg1_secden_1" parent="60" cable = "3">
+        <distal x="18.3413" y="13.8159" z="0" diameter="2"/>
+      </segment>
+      <segment id="62" name = "Seg2_secden_1" parent="61" cable = "3">
+        <distal x="22.2355" y="23.0265" z="0" diameter="2"/>
+      </segment>
+      <segment id="63" name = "Seg3_secden_1" parent="62" cable = "3">
+        <distal x="26.1296" y="32.2371" z="0" diameter="2"/>
+      </segment>
+      <segment id="64" name = "Seg4_secden_1" parent="63" cable = "3">
+        <distal x="30.0238" y="41.4477" z="0" diameter="2"/>
+      </segment>
+      <segment id="65" name = "Seg5_secden_1" parent="64" cable = "3">
+        <distal x="33.918" y="50.6584" z="0" diameter="2"/>
+      </segment>
+      <segment id="66" name = "Seg6_secden_1" parent="65" cable = "3">
+        <distal x="37.8122" y="59.869" z="0" diameter="2"/>
+      </segment>
+      <segment id="67" name = "Seg7_secden_1" parent="66" cable = "3">
+        <distal x="41.7064" y="69.0796" z="0" diameter="2"/>
+      </segment>
+      <segment id="68" name = "Seg8_secden_1" parent="67" cable = "3">
+        <distal x="45.6006" y="78.2902" z="0" diameter="2"/>
+      </segment>
+      <segment id="69" name = "Seg9_secden_1" parent="68" cable = "3">
+        <distal x="49.4947" y="87.5008" z="0" diameter="2"/>
+      </segment>
+      <segment id="70" name = "Seg10_secden_1" parent="69" cable = "3">
+        <distal x="53.3889" y="96.7114" z="0" diameter="2"/>
+      </segment>
+      <segment id="71" name = "Seg11_secden_1" parent="70" cable = "3">
+        <distal x="57.2831" y="105.922" z="0" diameter="2"/>
+      </segment>
+      <segment id="72" name = "Seg12_secden_1" parent="71" cable = "3">
+        <distal x="61.1773" y="115.133" z="0" diameter="2"/>
+      </segment>
+      <segment id="73" name = "Seg13_secden_1" parent="72" cable = "3">
+        <distal x="65.0715" y="124.343" z="0" diameter="2"/>
+      </segment>
+      <segment id="74" name = "Seg14_secden_1" parent="73" cable = "3">
+        <distal x="68.9657" y="133.554" z="0" diameter="2"/>
+      </segment>
+      <segment id="75" name = "Seg15_secden_1" parent="74" cable = "3">
+        <distal x="72.8598" y="142.764" z="0" diameter="2"/>
+      </segment>
+      <segment id="76" name = "Seg16_secden_1" parent="75" cable = "3">
+        <distal x="76.754" y="151.975" z="0" diameter="2"/>
+      </segment>
+      <segment id="77" name = "Seg17_secden_1" parent="76" cable = "3">
+        <distal x="80.6482" y="161.186" z="0" diameter="2"/>
+      </segment>
+      <segment id="78" name = "Seg18_secden_1" parent="77" cable = "3">
+        <distal x="84.5424" y="170.396" z="0" diameter="2"/>
+      </segment>
+      <segment id="79" name = "Seg19_secden_1" parent="78" cable = "3">
+        <distal x="88.4366" y="179.607" z="0" diameter="2"/>
+      </segment>
+      <segment id="80" name = "Seg20_secden_1" parent="79" cable = "3">
+        <distal x="92.3307" y="188.818" z="0" diameter="2"/>
+      </segment>
+      <segment id="81" name = "Seg21_secden_1" parent="80" cable = "3">
+        <distal x="96.2249" y="198.028" z="0" diameter="2"/>
+      </segment>
+      <segment id="82" name = "Seg22_secden_1" parent="81" cable = "3">
+        <distal x="100.119" y="207.239" z="0" diameter="2"/>
+      </segment>
+      <segment id="83" name = "Seg23_secden_1" parent="82" cable = "3">
+        <distal x="104.013" y="216.449" z="0" diameter="2"/>
+      </segment>
+      <segment id="84" name = "Seg24_secden_1" parent="83" cable = "3">
+        <distal x="107.907" y="225.66" z="0" diameter="2"/>
+      </segment>
+      <segment id="85" name = "Seg25_secden_1" parent="84" cable = "3">
+        <distal x="111.802" y="234.871" z="0" diameter="2"/>
+      </segment>
+      <segment id="86" name = "Seg26_secden_1" parent="85" cable = "3">
+        <distal x="115.696" y="244.081" z="0" diameter="2"/>
+      </segment>
+      <segment id="87" name = "Seg27_secden_1" parent="86" cable = "3">
+        <distal x="119.59" y="253.292" z="0" diameter="2"/>
+      </segment>
+      <segment id="88" name = "Seg28_secden_1" parent="87" cable = "3">
+        <distal x="123.484" y="262.502" z="0" diameter="2"/>
+      </segment>
+      <segment id="89" name = "Seg29_secden_1" parent="88" cable = "3">
+        <distal x="127.378" y="271.713" z="0" diameter="2"/>
+      </segment>
+      <segment id="90" name = "Seg30_secden_1" parent="89" cable = "3">
+        <distal x="131.273" y="280.924" z="0" diameter="2"/>
+      </segment>
+      <segment id="91" name = "Seg31_secden_1" parent="90" cable = "3">
+        <distal x="135.167" y="290.134" z="0" diameter="2"/>
+      </segment>
+      <segment id="92" name = "Seg32_secden_1" parent="91" cable = "3">
+        <distal x="139.061" y="299.345" z="0" diameter="2"/>
+      </segment>
+      <segment id="93" name = "Seg33_secden_1" parent="92" cable = "3">
+        <distal x="142.955" y="308.555" z="0" diameter="2"/>
+      </segment>
+      <segment id="94" name = "Seg34_secden_1" parent="93" cable = "3">
+        <distal x="146.849" y="317.766" z="0" diameter="2"/>
+      </segment>
+      <segment id="95" name = "Seg35_secden_1" parent="94" cable = "3">
+        <distal x="150.743" y="326.977" z="0" diameter="2"/>
+      </segment>
+      <segment id="96" name = "Seg36_secden_1" parent="95" cable = "3">
+        <distal x="154.638" y="336.187" z="0" diameter="2"/>
+      </segment>
+      <segment id="97" name = "Seg37_secden_1" parent="96" cable = "3">
+        <distal x="158.532" y="345.398" z="0" diameter="2"/>
+      </segment>
+      <segment id="98" name = "Seg38_secden_1" parent="97" cable = "3">
+        <distal x="162.426" y="354.608" z="0" diameter="2"/>
+      </segment>
+      <segment id="99" name = "Seg39_secden_1" parent="98" cable = "3">
+        <distal x="166.32" y="363.819" z="0" diameter="2"/>
+      </segment>
+      <segment id="100" name = "Seg40_secden_1" parent="99" cable = "3">
+        <distal x="170.214" y="373.03" z="0" diameter="2"/>
+      </segment>
+      <segment id="101" name = "Seg41_secden_1" parent="100" cable = "3">
+        <distal x="174.109" y="382.24" z="0" diameter="2"/>
+      </segment>
+      <segment id="102" name = "Seg42_secden_1" parent="101" cable = "3">
+        <distal x="178.003" y="391.451" z="0" diameter="2"/>
+      </segment>
+      <segment id="103" name = "Seg43_secden_1" parent="102" cable = "3">
+        <distal x="181.897" y="400.662" z="0" diameter="2"/>
+      </segment>
+      <segment id="104" name = "Seg44_secden_1" parent="103" cable = "3">
+        <distal x="185.791" y="409.872" z="0" diameter="2"/>
+      </segment>
+      <segment id="105" name = "Seg45_secden_1" parent="104" cable = "3">
+        <distal x="189.685" y="419.083" z="0" diameter="2"/>
+      </segment>
+      <segment id="106" name = "Seg46_secden_1" parent="105" cable = "3">
+        <distal x="193.579" y="428.293" z="0" diameter="2"/>
+      </segment>
+      <segment id="107" name = "Seg47_secden_1" parent="106" cable = "3">
+        <distal x="197.474" y="437.504" z="0" diameter="2"/>
+      </segment>
+      <segment id="108" name = "Seg48_secden_1" parent="107" cable = "3">
+        <distal x="201.368" y="446.715" z="0" diameter="2"/>
+      </segment>
+      <segment id="109" name = "Seg49_secden_1" parent="108" cable = "3">
+        <distal x="205.262" y="455.925" z="0" diameter="2"/>
+      </segment>
+      <segment id="110" name = "Seg50_secden_1" parent="109" cable = "3">
+        <distal x="207.209" y="460.531" z="0" diameter="2"/>
+      </segment>
+<!-- Section: Mitral[0].secden[0] -->
+      <segment id="9" name = "Seg0_secden_0" parent="0" cable = "2">  <!-- Connected at 0.5 on parent section: Mitral[0].soma  -->
+        <proximal x="12.5" y="0" z="0" diameter="2"/>
+        <distal x="10.5529" y="4.6053" z="0" diameter="2"/>
+      </segment>
+      <segment id="10" name = "Seg1_secden_0" parent="9" cable = "2">
+        <distal x="6.65872" y="13.8159" z="0" diameter="2"/>
+      </segment>
+      <segment id="11" name = "Seg2_secden_0" parent="10" cable = "2">
+        <distal x="2.76454" y="23.0265" z="0" diameter="2"/>
+      </segment>
+      <segment id="12" name = "Seg3_secden_0" parent="11" cable = "2">
+        <distal x="-1.12964" y="32.2371" z="0" diameter="2"/>
+      </segment>
+      <segment id="13" name = "Seg4_secden_0" parent="12" cable = "2">
+        <distal x="-5.02383" y="41.4477" z="0" diameter="2"/>
+      </segment>
+      <segment id="14" name = "Seg5_secden_0" parent="13" cable = "2">
+        <distal x="-8.91801" y="50.6584" z="0" diameter="2"/>
+      </segment>
+      <segment id="15" name = "Seg6_secden_0" parent="14" cable = "2">
+        <distal x="-12.8122" y="59.869" z="0" diameter="2"/>
+      </segment>
+      <segment id="16" name = "Seg7_secden_0" parent="15" cable = "2">
+        <distal x="-16.7064" y="69.0796" z="0" diameter="2"/>
+      </segment>
+      <segment id="17" name = "Seg8_secden_0" parent="16" cable = "2">
+        <distal x="-20.6006" y="78.2902" z="0" diameter="2"/>
+      </segment>
+      <segment id="18" name = "Seg9_secden_0" parent="17" cable = "2">
+        <distal x="-24.4947" y="87.5008" z="0" diameter="2"/>
+      </segment>
+      <segment id="19" name = "Seg10_secden_0" parent="18" cable = "2">
+        <distal x="-28.3889" y="96.7114" z="0" diameter="2"/>
+      </segment>
+      <segment id="20" name = "Seg11_secden_0" parent="19" cable = "2">
+        <distal x="-32.2831" y="105.922" z="0" diameter="2"/>
+      </segment>
+      <segment id="21" name = "Seg12_secden_0" parent="20" cable = "2">
+        <distal x="-36.1773" y="115.133" z="0" diameter="2"/>
+      </segment>
+      <segment id="22" name = "Seg13_secden_0" parent="21" cable = "2">
+        <distal x="-40.0715" y="124.343" z="0" diameter="2"/>
+      </segment>
+      <segment id="23" name = "Seg14_secden_0" parent="22" cable = "2">
+        <distal x="-43.9657" y="133.554" z="0" diameter="2"/>
+      </segment>
+      <segment id="24" name = "Seg15_secden_0" parent="23" cable = "2">
+        <distal x="-47.8598" y="142.764" z="0" diameter="2"/>
+      </segment>
+      <segment id="25" name = "Seg16_secden_0" parent="24" cable = "2">
+        <distal x="-51.754" y="151.975" z="0" diameter="2"/>
+      </segment>
+      <segment id="26" name = "Seg17_secden_0" parent="25" cable = "2">
+        <distal x="-55.6482" y="161.186" z="0" diameter="2"/>
+      </segment>
+      <segment id="27" name = "Seg18_secden_0" parent="26" cable = "2">
+        <distal x="-59.5424" y="170.396" z="0" diameter="2"/>
+      </segment>
+      <segment id="28" name = "Seg19_secden_0" parent="27" cable = "2">
+        <distal x="-63.4366" y="179.607" z="0" diameter="2"/>
+      </segment>
+      <segment id="29" name = "Seg20_secden_0" parent="28" cable = "2">
+        <distal x="-67.3308" y="188.818" z="0" diameter="2"/>
+      </segment>
+      <segment id="30" name = "Seg21_secden_0" parent="29" cable = "2">
+        <distal x="-71.2249" y="198.028" z="0" diameter="2"/>
+      </segment>
+      <segment id="31" name = "Seg22_secden_0" parent="30" cable = "2">
+        <distal x="-75.1191" y="207.239" z="0" diameter="2"/>
+      </segment>
+      <segment id="32" name = "Seg23_secden_0" parent="31" cable = "2">
+        <distal x="-79.0133" y="216.449" z="0" diameter="2"/>
+      </segment>
+      <segment id="33" name = "Seg24_secden_0" parent="32" cable = "2">
+        <distal x="-82.9075" y="225.66" z="0" diameter="2"/>
+      </segment>
+      <segment id="34" name = "Seg25_secden_0" parent="33" cable = "2">
+        <distal x="-86.8017" y="234.871" z="0" diameter="2"/>
+      </segment>
+      <segment id="35" name = "Seg26_secden_0" parent="34" cable = "2">
+        <distal x="-90.6959" y="244.081" z="0" diameter="2"/>
+      </segment>
+      <segment id="36" name = "Seg27_secden_0" parent="35" cable = "2">
+        <distal x="-94.59" y="253.292" z="0" diameter="2"/>
+      </segment>
+      <segment id="37" name = "Seg28_secden_0" parent="36" cable = "2">
+        <distal x="-98.4842" y="262.502" z="0" diameter="2"/>
+      </segment>
+      <segment id="38" name = "Seg29_secden_0" parent="37" cable = "2">
+        <distal x="-102.378" y="271.713" z="0" diameter="2"/>
+      </segment>
+      <segment id="39" name = "Seg30_secden_0" parent="38" cable = "2">
+        <distal x="-106.273" y="280.924" z="0" diameter="2"/>
+      </segment>
+      <segment id="40" name = "Seg31_secden_0" parent="39" cable = "2">
+        <distal x="-110.167" y="290.134" z="0" diameter="2"/>
+      </segment>
+      <segment id="41" name = "Seg32_secden_0" parent="40" cable = "2">
+        <distal x="-114.061" y="299.345" z="0" diameter="2"/>
+      </segment>
+      <segment id="42" name = "Seg33_secden_0" parent="41" cable = "2">
+        <distal x="-117.955" y="308.555" z="0" diameter="2"/>
+      </segment>
+      <segment id="43" name = "Seg34_secden_0" parent="42" cable = "2">
+        <distal x="-121.849" y="317.766" z="0" diameter="2"/>
+      </segment>
+      <segment id="44" name = "Seg35_secden_0" parent="43" cable = "2">
+        <distal x="-125.744" y="326.977" z="0" diameter="2"/>
+      </segment>
+      <segment id="45" name = "Seg36_secden_0" parent="44" cable = "2">
+        <distal x="-129.638" y="336.187" z="0" diameter="2"/>
+      </segment>
+      <segment id="46" name = "Seg37_secden_0" parent="45" cable = "2">
+        <distal x="-133.532" y="345.398" z="0" diameter="2"/>
+      </segment>
+      <segment id="47" name = "Seg38_secden_0" parent="46" cable = "2">
+        <distal x="-137.426" y="354.608" z="0" diameter="2"/>
+      </segment>
+      <segment id="48" name = "Seg39_secden_0" parent="47" cable = "2">
+        <distal x="-141.32" y="363.819" z="0" diameter="2"/>
+      </segment>
+      <segment id="49" name = "Seg40_secden_0" parent="48" cable = "2">
+        <distal x="-145.214" y="373.03" z="0" diameter="2"/>
+      </segment>
+      <segment id="50" name = "Seg41_secden_0" parent="49" cable = "2">
+        <distal x="-149.109" y="382.24" z="0" diameter="2"/>
+      </segment>
+      <segment id="51" name = "Seg42_secden_0" parent="50" cable = "2">
+        <distal x="-153.003" y="391.451" z="0" diameter="2"/>
+      </segment>
+      <segment id="52" name = "Seg43_secden_0" parent="51" cable = "2">
+        <distal x="-156.897" y="400.662" z="0" diameter="2"/>
+      </segment>
+      <segment id="53" name = "Seg44_secden_0" parent="52" cable = "2">
+        <distal x="-160.791" y="409.872" z="0" diameter="2"/>
+      </segment>
+      <segment id="54" name = "Seg45_secden_0" parent="53" cable = "2">
+        <distal x="-164.685" y="419.083" z="0" diameter="2"/>
+      </segment>
+      <segment id="55" name = "Seg46_secden_0" parent="54" cable = "2">
+        <distal x="-168.58" y="428.293" z="0" diameter="2"/>
+      </segment>
+      <segment id="56" name = "Seg47_secden_0" parent="55" cable = "2">
+        <distal x="-172.474" y="437.504" z="0" diameter="2"/>
+      </segment>
+      <segment id="57" name = "Seg48_secden_0" parent="56" cable = "2">
+        <distal x="-176.368" y="446.715" z="0" diameter="2"/>
+      </segment>
+      <segment id="58" name = "Seg49_secden_0" parent="57" cable = "2">
+        <distal x="-180.262" y="455.925" z="0" diameter="2"/>
+      </segment>
+      <segment id="59" name = "Seg50_secden_0" parent="58" cable = "2">
+        <distal x="-182.209" y="460.53" z="0" diameter="2"/>
+      </segment>
+<!-- Section: Mitral[0].priden -->
+      <segment id="3" name = "Seg0_priden" parent="2" cable = "1">  <!-- Parent section: Mitral[0].soma -->
+        <proximal x="25" y="0" z="0" diameter="3"/>
+        <distal x="55" y="0" z="0" diameter="3"/>
+      </segment>
+      <segment id="4" name = "Seg1_priden" parent="3" cable = "1">
+        <distal x="115" y="0" z="0" diameter="3"/>
+      </segment>
+      <segment id="5" name = "Seg2_priden" parent="4" cable = "1">
+        <distal x="175" y="0" z="0" diameter="3"/>
+      </segment>
+      <segment id="6" name = "Seg3_priden" parent="5" cable = "1">
+        <distal x="235" y="0" z="0" diameter="3"/>
+      </segment>
+      <segment id="7" name = "Seg4_priden" parent="6" cable = "1">
+        <distal x="295" y="0" z="0" diameter="3"/>
+      </segment>
+      <segment id="8" name = "Seg5_priden" parent="7" cable = "1">
+        <distal x="325" y="0" z="0" diameter="3"/>
+      </segment>
+<!-- Section: Mitral[0].initialseg -->
+      <segment id="146" name = "Seg0_initialseg" parent="145" cable = "6">  <!-- Parent section: Mitral[0].hillock -->
+        <proximal x="-5" y="4.37114e-07" z="0" diameter="1.5"/>
+        <distal x="-10" y="1.19209e-06" z="0" diameter="1.5"/>
+      </segment>
+      <segment id="147" name = "Seg1_initialseg" parent="146" cable = "6">
+        <distal x="-20" y="2.70205e-06" z="0" diameter="1.5"/>
+      </segment>
+      <segment id="148" name = "Seg2_initialseg" parent="147" cable = "6">
+        <distal x="-30" y="4.21201e-06" z="0" diameter="1.5"/>
+      </segment>
+      <segment id="149" name = "Seg3_initialseg" parent="148" cable = "6">
+        <distal x="-35" y="4.96699e-06" z="0" diameter="1.5"/>
+      </segment>
+<!-- Section: Mitral[0].tuftden -->
+      <segment id="111" name = "Seg0_tuftden" parent="8" cable = "4">  <!-- Parent section: Mitral[0].priden -->
+        <proximal x="325" y="0" z="0" diameter="0.4"/>
+        <distal x="330" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="112" name = "Seg1_tuftden" parent="111" cable = "4">
+        <distal x="340" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="113" name = "Seg2_tuftden" parent="112" cable = "4">
+        <distal x="350" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="114" name = "Seg3_tuftden" parent="113" cable = "4">
+        <distal x="360" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="115" name = "Seg4_tuftden" parent="114" cable = "4">
+        <distal x="370" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="116" name = "Seg5_tuftden" parent="115" cable = "4">
+        <distal x="380" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="117" name = "Seg6_tuftden" parent="116" cable = "4">
+        <distal x="390" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="118" name = "Seg7_tuftden" parent="117" cable = "4">
+        <distal x="400" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="119" name = "Seg8_tuftden" parent="118" cable = "4">
+        <distal x="410" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="120" name = "Seg9_tuftden" parent="119" cable = "4">
+        <distal x="420" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="121" name = "Seg10_tuftden" parent="120" cable = "4">
+        <distal x="430" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="122" name = "Seg11_tuftden" parent="121" cable = "4">
+        <distal x="440" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="123" name = "Seg12_tuftden" parent="122" cable = "4">
+        <distal x="450" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="124" name = "Seg13_tuftden" parent="123" cable = "4">
+        <distal x="460" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="125" name = "Seg14_tuftden" parent="124" cable = "4">
+        <distal x="470" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="126" name = "Seg15_tuftden" parent="125" cable = "4">
+        <distal x="480" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="127" name = "Seg16_tuftden" parent="126" cable = "4">
+        <distal x="490" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="128" name = "Seg17_tuftden" parent="127" cable = "4">
+        <distal x="500" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="129" name = "Seg18_tuftden" parent="128" cable = "4">
+        <distal x="510" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="130" name = "Seg19_tuftden" parent="129" cable = "4">
+        <distal x="520" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="131" name = "Seg20_tuftden" parent="130" cable = "4">
+        <distal x="530" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="132" name = "Seg21_tuftden" parent="131" cable = "4">
+        <distal x="540" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="133" name = "Seg22_tuftden" parent="132" cable = "4">
+        <distal x="550" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="134" name = "Seg23_tuftden" parent="133" cable = "4">
+        <distal x="560" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="135" name = "Seg24_tuftden" parent="134" cable = "4">
+        <distal x="570" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="136" name = "Seg25_tuftden" parent="135" cable = "4">
+        <distal x="580" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="137" name = "Seg26_tuftden" parent="136" cable = "4">
+        <distal x="590" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="138" name = "Seg27_tuftden" parent="137" cable = "4">
+        <distal x="600" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="139" name = "Seg28_tuftden" parent="138" cable = "4">
+        <distal x="610" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="140" name = "Seg29_tuftden" parent="139" cable = "4">
+        <distal x="620" y="0" z="0" diameter="0.4"/>
+      </segment>
+      <segment id="141" name = "Seg30_tuftden" parent="140" cable = "4">
+        <distal x="625" y="0" z="0" diameter="0.4"/>
+      </segment>
+    </segments>
+    <cables  xmlns="http://morphml.org/morphml/schema"> <!-- Changing namespace from neuroml to morphml-->
+      <cable id = "0" name = "soma" fract_along_parent = "0"/>
+      <cable id = "5" name = "hillock" fract_along_parent = "0">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>3</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cable id = "3" name = "secden_1" fract_along_parent = "0.5">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>50</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cable id = "2" name = "secden_0" fract_along_parent = "0.5">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>50</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cable id = "1" name = "priden">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>5</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cable id = "6" name = "initialseg">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>3</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cable id = "4" name = "tuftden">
+        <meta:properties>
+          <meta:property>
+            <meta:tag>numberInternalDivisions</meta:tag> <!-- Discetization of model at time of export. Can be overridden by importing application-->
+            <meta:value>30</meta:value>
+          </meta:property>
+        </meta:properties>
+      </cable>
+      <cablegroup name="ModelViewParmSubset_0"> 
+        <cable id = "0"/>
+        <cable id = "5"/>
+        <cable id = "3"/>
+        <cable id = "2"/>
+        <cable id = "1"/>
+        <cable id = "6"/>
+        <cable id = "4"/>
+      </cablegroup>
+      <cablegroup name="ModelViewParmSubset_1"> 
+        <cable id = "0"/>
+        <cable id = "5"/>
+        <cable id = "3"/>
+        <cable id = "2"/>
+        <cable id = "1"/>
+        <cable id = "4"/>
+      </cablegroup>
+      <cablegroup name="OneSecGrp_SectionRef_7"> <!-- Creating a group containing a single section: Mitral[0].tuftden... -->
+        <cable id = "4"/>
+      </cablegroup>
+      <cablegroup name="OneSecGrp_SectionRef_6"> <!-- Creating a group containing a single section: Mitral[0].initialseg... -->
+        <cable id = "6"/>
+      </cablegroup>
+    </cables>
+  </cell>
+</cells>
+</neuroml>

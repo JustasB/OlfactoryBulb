@@ -1,0 +1,144 @@
+{load_file("nrngui.hoc")}
+{load_file("mitral.hoc")}
+{load_file("granule.hoc")}
+
+celsius = 35
+objref nil, pc
+pc = new ParallelContext()
+
+// line of num_mitral mitral cells distributed from position 0 to net_spatial_len.
+// No wrap-around. Each mitral cell assumed to have two
+// secondary dendrites along the line with length len.
+
+//network size parameters
+//change following in param.hoc
+//net_spatial_len = 1000 // size of the linear domain, mitral positions range from 0 to net_spatial_len
+//secdenlen = 1000 // mitral secden length
+//num_granule = 1000 // distributed uniformly over the linear domain
+//num_mitral = 100 // distributed uniformly over the linear domain
+// positions of mitral and granule cells
+objref mitral_x, granule_x
+mitral_x = new Vector()
+granule_x = new Vector()
+for i=0, num_mitral - 1 {
+	mitral_x.append(100+i*200)
+}
+for i=0, num_granule - 1 {
+	granule_x.append((i+.5)*net_spatial_len/num_granule)
+}
+
+num_mitral=mitral_x.size
+
+// networksize assigned variables
+// see comment on global GIDs assigned to cells
+
+num_mitral_begin = 0
+num_granule_begin = num_mitral_begin + num_mitral
+ncell = num_granule_begin + num_granule
+
+{load_file("mgrs.hoc")}
+{load_file("connect.hoc")}
+
+// for more accurate complexity when splitting
+// (prior to creation)
+// $1 gid, $2 right or left
+func how_many_syn_on_secden(){local n, xm, i, xg, delta, g  localobj sp
+	if (object_id(sparse_connection_matrix_) == 0) {
+		sparse_connections()
+	}
+	sp = sparse_connection_matrix_
+	xm = mitral_x.x[$1]
+	n = 0
+	for i = 0, sp.sprowlen($1) - 1 {
+		sp.spgetrowval($1, i, &g)
+		xg = granule_x.x[i]
+		delta = xg - xm
+		if ($2 == 0) { // right secden
+			if (delta > 0 && delta < secdenlen) {
+				n += 1
+			}
+		}else{ // left secden
+			if (delta < 0 && delta > -secdenlen) {
+				n += 1
+			}
+		}
+	}
+	return n
+}
+func how_many_syn_on_granule() {local i, n, xg, xm  localobj c //$1 is gid
+	c = g2m_connections($1)
+	return c.size
+
+	xg = granule_x.x[$1]
+	n = 0
+	for i=0, num_mitral-1 {
+		xm = mitral_x.x[i]
+		if (abs(xm - xg) < secdenlen) {
+			n += 1
+		}
+	}
+	return n
+}
+// if iterator does not exist load the default one.
+if (!name_declared("cell_gids")) { load_file("iterator.hoc") }
+
+//variables
+// each cpu will have its own cell objects
+
+objref cells  //mitrals and granules on this cpu
+cells = new List()
+
+// for initialization
+Vrest=-65
+proc init() {
+	finitialize(Vrest)
+	forall {
+		if (ismembrane("nax")) {
+			e_pas=v+(ina+ik)/g_pas
+		} else if (ismembrane("k_ion")){
+			e_pas=v+ik/g_pas
+		}
+	}
+	fcurrent()
+	cvode.re_init()
+	frecord_init()
+}
+
+//parallel network object
+
+// distribute GIDs and create cells
+
+proc create_cells() { local gid, pgid, i, j, nm   localobj cell, nc
+    for cell_gids(&pgid, &i) {   //iterator returns changed value of address &gid in each loop
+	pc.set_gid2node(pgid, pc.id) //here the return value of iterator (gid) is used
+    }
+    for cell_gids(&pgid, &i) { 
+	gid = basegid(pgid)
+	// if a piece exists do not create again
+	if (piecegid(gid) != pgid) { continue }
+	if (gid < num_mitral) {
+	    cell = new Mitral()
+	    cell.position(mitral_x.x[gid], gid*20, 0)
+	    for j=0,1 cell.secden[j].L = secdenlen
+	    splitmitral(gid, cell) // also associates base and piece gids
+	} else {
+	    cell = new Granule()
+	    cell.position(granule_x.x[gid-num_granule_begin], -100, 0)
+	    cell.soma nc = new NetCon(&v(.5),nil)
+	    pc.cell(gid, nc)
+	}
+	cells.append(cell)
+//	print pc.id, gid, cell
+ 
+    }
+    if (is_split) { pc.multisplit() }
+}
+
+proc mknet() {
+	create_cells()
+	connect_cells()
+}
+
+//load_file("control_net_graphics.hoc")
+//load_file("control_net3.hoc")
+//for i=0, mgrs_list.count-1 mgrs_list.object(i).pr()

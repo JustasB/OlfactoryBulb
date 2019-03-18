@@ -1,0 +1,146 @@
+xopen("$(NEURONHOME)/lib/hoc/noload.hoc")
+load_file("mulfit.hoc")
+pwman_place(0,0)
+xopen("mitral.hoc")
+xopen("memb.hoc")
+xopen("elec2.hoc")
+xopen("param.hoc")
+
+cut=0
+
+proc nahigh(){ forsec axon gbar_na = 10000*$1
+	if (cut > 0) initialseg.gbar_na(0:cut) = soma.gbar_na:soma.gbar_na
+}
+proc kdhigh(){ forsec axon gbar_kd= 1000*$1
+	if (cut > 0) initialseg.gbar_kd(0:cut) = soma.gbar_kd:soma.gbar_kd
+}
+proc nalow(){
+		forsec somden gbar_na=10*$1
+
+//		forsec second gbar_na = 10*$1
+//		forsec "priden" gbar_na=10*$1
+//		forsec somatic gbar_na=10*$1
+	if (cut > 0) initialseg.gbar_na(0:cut) = soma.gbar_na:soma.gbar_na
+}
+proc kdlow(){ 
+		forsec somden gbar_kd=100*$1
+
+//		forsec second gbar_kd = 100*$1
+//		forsec "priden" gbar_kd = 100*$1
+//		forsec somatic gbar_kd=100*$1
+	if (cut > 0) initialseg.gbar_kd(0:cut) = soma.gbar_kd:soma.gbar_kd
+}
+
+proc somden_ra() {
+	forsec somden Ra = 10^$1
+}
+
+proc somden_g_pas() {
+	forsec somden g_pas = 10^$1
+}
+
+proc somden_cm() {
+	forsec somden cm = 10^$1
+}
+
+proc tuft_diam() {
+	forsec "tuft" diam = 10^$1
+}
+
+proc second_diam() {
+	forsec "secden" diam = 10^$1
+}
+
+proc pe_ra() {
+	pe.electrode.Ra = 10^$1
+}
+
+proc pe_cm() {
+	pe.electrode.cm = 10^$1
+}
+
+proc tdiam() {
+	forsec  tuft  diam = $1
+}
+
+proc setx() {
+	if ($1==0) { nahigh($2)
+	} else if ($1==1) { kdhigh($2)
+	} else if ($1==2) { nalow($2)
+	} else if ($1==3) { kdlow($2) }
+}
+
+objref sestim, pestim
+
+se.electrode sestim = new IClamp(.5)
+pe.electrode pestim = new IClamp(.5)
+
+sestim.del = 5.1
+sestim.dur = 20
+sestim.amp = 0
+
+pestim.del = 5.1
+pestim.dur = 20
+pestim.amp = 0
+
+nrnmainmenu()
+
+proc doall() {
+	initialseg for(cut) if (cut > 0 && cut < 1) {
+		prun(0)
+		appendline(cut)
+	}
+}
+
+ttlen = 135
+proc tprox() {
+	forsec "tdenp" L = $1
+	forsec "tdend" L = ttlen - $1
+}
+
+proc pdiam() {
+	forsec "priden" diam = $1
+}
+
+proc initvol() {
+	v_init = $1
+	forall e_pas = $1
+}
+
+proc init() {local dtsav, i
+        finitialize(v_init)
+        fcurrent()
+        forsec sad for(x) if (x>=0 && x<=1) {
+		e_pas(x) = (ina(x) + ik(x) + g_pas(x)*v_init)/g_pas(x)
+	} 
+	fcurrent()
+}
+/*
+        t = -200
+        dtsav = dt
+        dt = 20
+        for i = 0, 9 {
+        	fadvance()
+        }
+        dt = dtsav
+	t=15
+*/
+
+/*
+objref lstim, rstim
+tdene[0] lstim = new GluSyn(0.5)
+tdene[1] rstim = new GluSyn(0.5)
+onset_GluSyn = 17
+*/
+
+tstop = 26
+xopen("runctrl.ses")
+xopen("hyper40.ses")
+
+// former content's of cell2's mosinit.hoc with xopen commented out:
+// {xopen("init.hoc")}
+{object_push(MulRunFitter[0].p)}
+gengui(0)
+run()
+{object_pop()}
+

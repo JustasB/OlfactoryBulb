@@ -1,0 +1,18 @@
+// parameters_mitral_stim.hoc
+// Olfactory bulb network model: parameters file
+//   for mitral_stim.
+// Andrew Davison, The Babraham Institute, 2000.
+
+nmitx       = 20		// 1st dimension of mitral cell array
+nmity       = 1 		// 2nd dimension of mitral cell array
+ndend 	    = 100
+
+seed        = 0			// seed for random number generator
+
+thresh      = -10       // mV	// threshold for detecting spikes
+
+
+tstop	    = 500	// ms	// total simulation time
+
+cvode.active(0)
+dt 	    = 0.01	//ms

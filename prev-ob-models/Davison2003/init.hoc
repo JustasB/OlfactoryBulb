@@ -1,0 +1,72 @@
+// init.hoc
+// Olfactory bulb network model: initialisation file
+// Andrew Davison, The Babraham Institute, 2000.
+
+objref exptBox, ctrlBox
+strdef filename
+quitmodel = 0
+
+exptBox = new VBox()
+exptBox.intercept(1)
+  xpanel("Experiments")
+    xlabel("Choose an experiment:")
+    xradiobutton("Response to olfactory nerve shock (Fig. 2)", "run_experiment(\"ddi_baseline\")")
+    xradiobutton("Response to odour stimulus (Fig. 8)","run_experiment(\"odour_baseline\")")
+  xpanel()
+  xpanel("Controls",1)
+    xbutton("Quit","quit()")
+  xpanel()
+exptBox.intercept(0)
+exptBox.map("Olfactory bulb network model",0,80,-1,-1)
+
+proc run_experiment() {
+  exptBox.unmap()
+  ctrlBox = new VBox()
+  ctrlBox.intercept(1)
+    xpanel("Progress")
+    xlabel("The network is being created. This may take some time.")
+    xpanel()
+  ctrlBox.intercept(0)
+  ctrlBox.map("Olfactory bulb network model",0,80,-1,-1)
+  xopen("mathslib.hoc")			// mathematical procedures
+  print "Reading channel tables"
+  xopen("tabchannels.hoc")		// channel tables
+  print "Reading mitral cell template"
+  xopen("mitral.tem") 			// mitral cell template
+  print "Reading granule cell template"
+  xopen("granule.tem")			// granule cell template
+  print "Reading parameters"
+  sprint(filename,"parameters_%s.hoc",$s1)
+  xopen(filename)                       // model parameters
+  print "Creating network"
+  xopen("bulb.hoc")			// model set-up
+  print "Reading input procedures"
+  xopen("input.hoc")			// define procedures to set-up input
+  print "Setting-up experiment"
+  sprint(filename,"experiment_%s.hoc",$s1)
+  xopen(filename)                       // which parameters to record
+  ctrlBox.unmap()
+  ctrlBox = new VBox()
+  ctrlBox.intercept(1)
+  xpanel("Instructions")
+    xlabel("* To run the simulation, click on [Init & Run].")
+    xlabel("* When the simulation is complete, click on [Save Results].")
+    xlabel("* If you wish to run a different experiment, you will have")
+    xlabel("   to quit NEURON and restart.")
+  xpanel()
+  xpanel("Controls",1)
+    xbutton("Quit","quit()")
+    xlabel(" ")
+    xbutton("Save results","print_results()")
+  xpanel()
+  ctrlBox.intercept(0)
+  ctrlBox.map("Olfactory bulb network model",0,80,-1,-1)
+  
+  print "Initialisation complete"
+  print ""
+  print "To run the simulation, click on [Init & Run]."
+  print "When the simulation is complete, click on [Save Results]."
+  print "If you have gnuplot (http://www.gnuplot.info) installed"
+  print "on your computer, you can produce a figure by running"
+  print "gnuplot with the file ", $s1, ".gnu"
+}

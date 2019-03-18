@@ -1,0 +1,116 @@
+// $Id: analyze_spiketuft.hoc,v 1.4 2007/03/17 00:19:52 ted Exp $
+
+// split off from older version of control_spiketuft.hoc
+// analyses results
+
+// monx can't detect v at 0 or 1 end
+// so we must use Vector record() to determine peak at origin of tuft
+objref vorigin
+vorigin = new Vector()  // this is used by procs plotresults() and plotvmaxrvp()
+apic[2] vorigin.record(&v(0))
+
+
+objref areavec, normareavec, vpeakvec, resultvec
+totalarea = 0
+
+proc preanalysis() {
+  areavec = new Vector()
+  forsec tuft for (x,0) {
+    areavec.append(area(x))
+  }
+//  areavec.printf()
+  totalarea = areavec.sum()
+  normareavec = new Vector()
+  normareavec = areavec.c.div(totalarea)
+}
+
+// calculate totalarea and contents of areavec and normareavec just once, before doing any simulations
+preanalysis()
+
+
+// for diagnosis and development
+LOWPCTTHRESH = 10
+
+/*
+Modified from implementation in processpeakdata.hoc
+$o1 is vpvec
+$2 is LOWPCTTHRESH
+In implementation from processpeakdata.hoc, $o3 is temprvec which returns results
+*/
+
+objref si, normareacusum, svpvec, snormareavec
+
+wmedian = -1  // three nonsense values
+wpctlo = -1
+wpcthi = -1
+
+// proc percentiles() { local ii, wmedian, wpctlo, wpcthi
+proc percentiles() { local ii
+  si = new Vector(normareavec.size())
+  $o1.sortindex(si)  // the elements of si sort $o1 (which is vpvec) in numerical order
+  normareacusum = new Vector(normareavec.size())
+  // set up snormareavec here--we'll use it later for the distribution graph
+  snormareavec = new Vector()
+  snormareavec.index(normareavec, si)
+
+  normareacusum = snormareavec.c
+  // snormareavec and normareacusum hold the normalized areas
+  //   in order of increasing peak v
+  for ii=1,normareavec.size()-1 normareacusum.x[ii] += normareacusum.x[ii-1]
+//  normareacusum.printf()
+  // now normareacusum holds the cusum of the normalized areas
+
+  svpvec = $o1.c.sort()  // we're going to use the sorted vpvec repeatedly
+                         // so might as well sort it once and for all
+  // find the index of the first element of normareacusum 
+  //   whose value is > 0.5
+  ii = normareacusum.indwhere(">", 0.5)
+
+  wmedian = svpvec.x[ii-1]  // we want the immediately preceding value
+  ii = normareacusum.indwhere(">", $2/100)
+  wpctlo = svpvec.x[ii-1]
+  ii = normareacusum.indwhere(">", (100-$2)/100)
+  wpcthi = svpvec.x[ii-1]
+/*
+  $o3.x[MEDIAN] = wmedian
+  $o3.x[PCTLO] = wpctlo
+  $o3.x[PCTHI] = wpcthi
+*/
+  print "wmedian ", wmedian, " wpctlo ", wpctlo, " wpcthi ", wpcthi
+}
+
+//////////////////////////////////////
+
+
+proc analyze() { local ii, num, wmean, wvar, wstdev  localobj tmpvec
+  vpeakvec = new Vector()
+  forsec tuft for (x,0) {
+    vpeakvec.append(vmax_monx(x))
+  }
+
+  // weighted mean
+  tmpvec = vpeakvec.c()
+  tmpvec.mul(areavec)
+  wmean = tmpvec.sum()/totalarea
+  // weighted variance
+  tmpvec = vpeakvec.c()
+  tmpvec.sub(wmean)
+  for ii=0,tmpvec.size()-1 tmpvec.x[ii]*=tmpvec.x[ii]
+  tmpvec.mul(areavec)
+  num = tmpvec.size()
+  wvar = (tmpvec.sum()/totalarea)*(num/(num-1))
+  // weighted stdev
+  wstdev = sqrt(wvar)
+
+  printf("Mean %4.3f  Min %4.3f  Max %4.3f  Var %5.4f  StDev %5.4f\n", \
+         wmean, vpeakvec.min(), vpeakvec.max(), wvar, wstdev)
+
+  resultvec = new Vector()
+  resultvec.append(wmean)
+  resultvec.append(vpeakvec.min())
+  resultvec.append(vpeakvec.max())
+  resultvec.append(wvar)
+  resultvec.append(wstdev)
+
+  percentiles(vpeakvec, LOWPCTTHRESH)
+}

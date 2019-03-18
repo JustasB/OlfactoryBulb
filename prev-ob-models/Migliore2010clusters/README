@@ -1,0 +1,26 @@
+An example of a parallel run is
+  mpiexec -n 12 nrniv -mpi parinit.hoc
+which takes about an hour and
+creates a weight-forfig3-bulb1.dat file and an out12.dat file
+(the number of processors is used to construct the spike output file name).
+The former contains the synapse weights at time 59900.
+The latter contains the spike time, gid pairs for granule and mitral soma
+and all the reciprocal synapse spike detectors (two per synapse).
+When a simulation is carried out using more than one processor, the out.dat
+file should be sorted with (taking the above example)
+sort -k 1n,1n -k 2n,2n out12.dat > out.spk
+
+To explore the results of a simulation run, use
+  nrngui start.hoc
+
+Quantitative identity of the spike output and weight files can only be
+obtained if one uses NEURON -- Release 6.2.3 (2203) 2008-08-28
+http://www.neuron.yale.edu/ftp/neuron/versions/v6.2/ More recent
+versions of NEURON will give very similar results but not quantitatively
+identical due to differences in the delivery event times when events do
+not occur on time step boundaries for the fixed step method. 
+(Note that pattern.hoc has been modified to read the 6.2.3.2203.spk
+instead of an out.spk file)
+
+The mosinit.hoc file runs start.hoc and shows a hinton plot of the weights at
+time 59900.

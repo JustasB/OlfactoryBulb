@@ -1,0 +1,73 @@
+This is the readme for configuring and running simple circuit
+simulations on the NSG for the manuscript under preparation
+
+Short et al. 2015
+
+To configure the simulation to run edit these files in 1) and 2) and
+then follow step 3) etc.:
+
+1) create_arrays.py: first edit create_arrays.py to assign values of
+the breathing (B) and light-stimulated (S) event peak rates and also
+the number of additional columns (add_columns python list). The
+"additional" refers to that there is always one glomerular column
+containing the mitral cell which has its voltage recorded analagous to
+the wetlab experiments.
+
+2) pre_init.py: The basic idea with pre_init.py is that it creates two
+python lists "parameters", and "columns", each of length equal to the
+number of simulations.  By copying verbatim corresponding elements of
+these lists, a parameter.hoc and a num_of_columns.hoc file is written
+in each simulation folder run_X, where X=1,2,3, ...,
+number_of_simulations.  For example: the run_0 folder gets a
+parameter.hoc file assigned from parameters[0] and num_of_columns.hoc
+file from columns[0]. The number of simulations is figured out
+automatically by taking the create_arrays data into consideration with
+a net_type list: Set the net_type list (found near the top of this
+program) to something like
+
+net_type=['full_net','pg_net','gc_net']
+
+These variables will trigger network simulations with these types
+being created, with each of these network types having the commands to
+make them present in the parameters.hoc file.  (See the code that
+creates "parameters" elements with an append and then modifies these with
+indexed assignments).
+
+Also edit the lines in the parameters.append(""" section which will
+look something like:
+
+breath_peak_rate = %d
+light1_peak_rate = 0
+light2_peak_rate = %d
+
+so that the second %d is either on light1 or light2 depending on
+whether you want the light stimulation (S) to fall either on the
+primary column being recorded from (light1) or adjacent column(s)
+(light2).
+
+3) Run pre_init.py by typing ./pre_init.py on the command line.  run_X
+simulation folders will be created.  See what the highest number of
+the X is. This is one less than the number of simulations since X
+starts at 0.  Check that this number of simulations is present in the
+line in init.py that checks id's, for example:
+
+if id<2888:
+
+(This checking is present because there is no gaurentee that you can
+ask for the same number of processors (nodes*cores_per_node) as there
+number of simulations.)
+
+4) zip the folder containing all these files into an input file for
+the NSG.
+
+5) Sign onto the NSG and follow the directions in its help to create a
+data folder containing the input file created in step 4) and a task
+folder where you select NEURON with Python on a machine that contains
+at least as many processors as there are number of simulations as
+determined in step 3) (probably stampede which note has 16 cores per
+node).  Set the number of nodes to be such that the number of nodes
+times the number of cores per node is the smallest number greater than
+the number of simulations (there will be left over processors with nothing to do).
+
+6) save and run the task!
+

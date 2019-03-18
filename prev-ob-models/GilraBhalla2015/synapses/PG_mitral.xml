@@ -1,0 +1,45 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>Inhibitory PG to mitral synpase taken same as since sIPSPs are same for PGs and granules as per Dong et al 2007</meta:notes>
+     
+    <synapse_type name="PG_mitral">
+               
+        <status value="in_progress">
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes> Dual exponential inhibitory PG to mitral synapse </meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>NCBS, India</meta:institution>    
+                <meta:email>adityag@ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+
+        <meta:publication>
+           <meta:fullTitle>Hong-Wei Dong, Abdallah Hayar, and Matthew Ennis, “Activation of Group I Metabotropic Glutamate Receptors on Main Olfactory Bulb Granule Cells and Periglomerular Cells Enhances Synaptic Inhibition of Mitral Cells,” The Journal of neuroscience : the official journal of the Society for Neuroscience 27, no. 21 (May 23, 2007): 5654-5663.</meta:fullTitle>
+        </meta:publication>
+        
+        <meta:neuronDBref>
+            <meta:modelName></meta:modelName>
+            <meta:uri></meta:uri>
+        </meta:neuronDBref>
+       
+       <!--<doub_exp_syn max_conductance="30e-9" rise_time="1e-3" decay_time="1e-3" reversal_potential="-0.078"/>-->
+       <doub_exp_syn max_conductance="1e-9" rise_time="1e-3" decay_time="20e-3" reversal_potential="-0.078"/>
+       
+    </synapse_type>
+</channelml>

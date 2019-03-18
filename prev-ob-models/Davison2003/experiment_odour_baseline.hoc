@@ -1,0 +1,69 @@
+// experiment_odour_baseline.hoc
+// Olfactory bulb network model: experiment file
+//   for odour input.
+// Andrew Davison, The Babraham Institute, 2000.
+
+xopen("calcisilag.hoc")
+
+// Redefine run() procedure
+proc run() {
+  running_ = 1
+  set_no_input()
+  add_uniform_input(-0.1,0.3)
+  stdinit()
+  continuerun(ttrans)
+  add_fixed_input(inputnumber,maxinput)
+  continuerun(tstop)
+  show_results()
+}
+print "Note: run() procedure redefined."
+
+// Process data and print out results
+proc print_results() {
+  print_raster(fileroot)
+  print_gran_raster(fileroot)
+  print_smooth_hist(minisi()/4,fileroot)
+  print_gran_smooth_hist(minisi()/4,fileroot)
+  print_isi_stats(fileroot)
+  print_si(fileroot)
+  print "Results printed to files."
+}
+
+// Show results on screen
+objref gResults[4], yvec
+proc show_results() { local i,j
+  yvec = new Vector()
+  for i = 0,3 {
+    gResults[i] = new Graph(0)
+  }
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      k = i*nmity + j
+      yvec.resize(mit[i][j].spiketimes.size())
+      yvec.fill(k)
+      yvec.mark(gResults[0],mit[i][j].spiketimes,"|",3)
+    }
+  }
+  gResults[0].label(0.3,0.9,"Mitral cell spike plot")
+  gResults[0].view(0,-0.1*nmitx*nmity,tstop,nmitx*nmity*1.2,400,0,500,150)
+  calc_smooth_hist(minisi()/4)
+  hist.plot(gResults[1])
+  gResults[1].label(0.3,0.9,"Mitral cell spike time histogram")
+  gResults[1].view(0,-0.1*hist.max(),tstop,hist.max()*1.2,400,220,500,150)
+  for i = 0, ngranx-1 {
+    for j = 0, ngrany-1 {
+      k = i*ngrany + j
+      yvec.resize(gran[i][j].spiketimes.size())
+      yvec.fill(k)
+      yvec.mark(gResults[2],gran[i][j].spiketimes,"|",1)
+    }
+  }
+  gResults[2].label(0.3,0.9,"Granule cell spike plot")
+  gResults[2].view(0,-0.1*ngranx*ngrany,tstop,ngranx*ngrany*1.2,400,440,500,150)
+  calc_gran_smooth_hist(minisi()/4)
+  hist.plot(gResults[3])
+  gResults[3].label(0.3,0.9,"Granule cell spike time histogram")
+  gResults[3].view(0,-0.1*hist.max(),tstop,hist.max()*1.2,400,660,500,150)
+}
+
+xopen("odour_baseline.ses")

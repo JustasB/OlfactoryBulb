@@ -1,0 +1,29 @@
+objref glu[6]
+j=0
+for i=0,1 tuftden[i] for (x) if (x > 0 && x < 1) {glu[j] = new GluSyn(x) j+=1}
+for i=0,5 {
+	glu[i].onset = 2
+	glu[i].tp = 1.5
+	glu[i].tau1 = 80
+	glu[i].tau2 = 5
+}
+for i=0,1 {GluSyn[i].gmaxampa = 0 GluSyn[i].gmaxnmda=0}
+
+proc grun() {local i
+	for i=0, 5 {
+		glu[i].gmaxampa = $1/3
+		glu[i].gmaxnmda = $1*.5/3
+	}
+        run()
+}
+
+proc irun() {local i
+	for i=0, 5 {
+		glu[i].onset = $1
+		glu[i].gmaxampa = $2/3
+		glu[i].gmaxnmda = $2*.5/3
+	}
+        for i=0,1 {InhiSyn[i].gmaxampa = 0 InhiSyn[i].gmaxnmda = $3}
+        run()
+}
+

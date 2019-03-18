@@ -1,0 +1,127 @@
+
+begintemplate ScreenUpdateHandler
+public begin, flush, view_count, add, remove
+external flush_list
+objref this
+strdef stmt
+proc init() {
+	stmt = $s1
+}
+proc add() {
+	if (flush_list.index(this) == -1) {
+		flush_list.append(this) }
+	}
+proc remove() { local i
+	i = flush_list.index(this)
+	if (i > -1) {
+		flush_list.remove(i)
+	}
+}
+proc begin() {
+	//printf("%s.begin %g\n", this, t)
+}
+proc flush() {
+	//printf("%s.flush %g\n", this, t)
+	execute(stmt)
+}
+func view_count() {
+	//printf("%s.view_count %g\n", this, t)
+	return 1
+}
+endtemplate ScreenUpdateHandler
+
+objref gl, gls[num_mitral+num_granule], tvt, rt, tvi, tvs
+tvt= new Vector(0)
+tvi= new Vector(0)
+tvs= new Vector(0)
+
+proc gly() {
+gl.erase()
+gl.path()
+gl.m(t,0)
+gl.l(t,num_mitral)
+gl.s(8,3)
+}
+
+proc glys() {local s, x
+    s=$1
+    if (s<num_mitral){
+	gls[s].path()
+	x=8
+	gls[s].m(0,x*1.1547)
+	gls[s].l(-x,-x)
+	gls[s].l(x,-x)
+	gls[s].close()
+	gls[s].fill(s+1)
+    } else {
+	x = 4
+	gls[s].path()
+	gls[s].m(-x, -x)
+	gls[s].l(-x, x)
+	gls[s].l(x, x)
+	gls[s].l(x, -x)
+	gls[s].close()
+	gls[s].fill(8)
+    }
+}
+
+
+objref bh
+
+proc barinit() {
+	if (object_id(bh) == 0) {
+		bh = new ScreenUpdateHandler("bar()")
+		bh.add()
+	}
+	gl = new Glyph()
+	gly()
+	sc_.grasterm_.glyph(gl, 0, 0)
+	sc_.grasterm_.flush()
+}
+
+proc bar() {
+	gly()
+	sc_.grasterm_.flush()
+	//cvode.event(t + 20, "bar()")
+}
+
+objref spikes_hnd
+proc spikesinit() { local m, next   localobj tv, s
+	if (object_id(spikes_hnd) == 0) {
+		spikes_hnd = new ScreenUpdateHandler("spikeson()")
+		spikes_hnd.add()
+	}
+	idx = 0
+	sc_.draw()
+	s = new String()
+	for m=0, num_mitral+num_granule-1 {
+		gls[m] = new Glyph()
+		if (m<num_mitral) {
+//			sc_.g.glyph(gls[m],m+896,(m-4)/12)
+			sc_.g.glyph(gls[m],mitral_x.x[m], m, 1,1,0,1)
+		}else{
+//			sc_.g.glyph(gls[m],(m-5)*10,-1)
+			sc_.g.glyph(gls[m],granule_x.x[m-num_mitral],-1, 1,1,0,1)
+		}
+	}
+}
+
+
+proc spikeson() {local m, i, tt
+        //printf("spikeson %d %g\n", idx, t)
+	if (idx >= pattern_idvec_.size) { return }
+	tt = pattern_tvec_.x[idx]
+	for m=0, num_mitral + num_granule -1 {
+		gls[m].erase()
+	}
+	// light up if a spike between tt and t
+	for i=idx, pattern_idvec_.size-1 {
+		if (pattern_tvec_.x[i] > t) { break }
+		m = pattern_idvec_.x[i]
+		if (m < num_mitral + num_granule) {
+			glys(m)
+		}
+	}
+	idx = i+1
+	sc_.g.flush()
+}

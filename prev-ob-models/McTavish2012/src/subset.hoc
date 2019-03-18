@@ -1,0 +1,33 @@
+{load_file("nrngui.hoc")}
+
+objref gidvec
+gidvec = new Vector()
+iterator cell_gids() { local i
+	for i=0, gidvec.size-1 {
+		$&1 = gidvec.x[i]
+		$&2 = i
+		iterator_statement
+	}
+}
+
+one_gid_ = 0
+gidvec.append(0)
+
+{load_file("net.hoc")}
+{load_file("stim.hoc")}
+{load_file("pattern.hoc")}
+strdef cell_gid_label_
+synapses_only_ = 0
+if (num_mitral < 2) {
+sprint(cell_gid_label_, "gid range: mitral [%d]   granule [%d - %d]", 0, num_mitral, num_mitral + num_granule - 1)
+}else{
+sprint(cell_gid_label_, "gid range: mitral [%d - %d]   granule [%d - %d]", 0, num_mitral-1, num_mitral, num_mitral + num_granule - 1)
+}
+{load_file("subset_control.ses")}
+
+proc synapse_checkbox() {
+	if (synapses_only_ == 0) {
+		reload_onecell(one_gid_)
+		return
+	}
+}

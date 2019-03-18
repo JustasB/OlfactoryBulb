@@ -1,0 +1,80 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>T-type (low threshold) Ca channel for periglomerular cells translated from the NEURON version of Destexhe available as ModelDB accession number 17663.</meta:notes>
+     
+    <channel_type name="TCa_d">
+               
+        <status value="in_progress">
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes> T-type (low-threshold) Ca channel</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Huguenard</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>Prince</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>Destexhe</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>NCBS, India</meta:institution>    
+                <meta:email>adityag@ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        
+        <meta:publication>
+           <meta:fullTitle>Huguenard, J. R., and D. A. Prince. ‘A Novel T-type Current Underlies Prolonged Ca(2+)-dependent Burst Firing in GABAergic Neurons of Rat Thalamic Reticular Nucleus’. The Journal of Neuroscience 12, no. 10 (10 January 1992): 3804–3817.</meta:fullTitle>
+        </meta:publication>
+        
+        <meta:neuronDBref>
+            <meta:modelName>Thalamic reticular neurons: the role of Ca currents (Destexhe et al 1996)</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/ModelDb/ShowModel.asp?model=17663</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="Ca" default_gmax="0.5" default_erev="0.120">
+            
+            <q10_settings q10_factor="5" experimental_temp="24.0" gate="m"/>
+            <q10_settings q10_factor="3" experimental_temp="24.0" gate="h"/>
+            <!--<offset value="0.010"/>-->
+            
+            <gate name="m" instances="2">
+                <closed_state id="m0"/>
+                <open_state id="m"/>
+                     
+                <!-- Order is important: first time_course, then steady_state-->
+                <time_course name="tau" from="m0" to="m" expr_form="generic" expr="3e-3 + 1.0e-3 / ( exp((v+0.025)/0.010) + exp(-(v+0.1)/0.015) )" />
+                <steady_state name="inf" from="m0" to="m" expr_form="sigmoid" rate="1.0" scale="-0.0074" midpoint="-0.05"/>
+            </gate>
+            
+            <gate name="h" instances="1">
+                <closed_state id="h0"/>
+                <open_state id="h"/>
+                     
+                <!-- Order is important: first time_course, then steady_state-->
+                <time_course name="tau" from="h0" to="h" expr_form="generic" expr="85e-3 + 1.0e-3 / ( exp((v+0.046)/0.004) + exp(-(v+0.405)/0.050) )" />
+                <steady_state name="inf" from="h0" to="h" expr_form="sigmoid" rate="1.0" scale="0.005" midpoint="-0.078"/>
+            </gate>
+            
+        </current_voltage_relation> 
+        
+        
+        <impl_prefs>
+            <table_settings max_v="0.1" min_v="-0.1" table_divisions="200"/>
+        </impl_prefs>
+        
+    </channel_type>
+</channelml>

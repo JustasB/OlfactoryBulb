@@ -1,0 +1,82 @@
+
+// ¬¬ Initialisation ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+
+objref cvode, random, rand2, intensva[nmitx][nmity], delva[nmitx][nmity]
+cvode = new CVode(0)   		 // start with CVode inactive
+random = new Random(seed)
+rand2 = new Random(seed)
+
+objref mit[nmitx][nmity]
+objref input_reg[nmitx][nmity], input_ipsc[nmitx][1], input_glom[nmitx][1]
+
+objref outfile
+outfile = new File()
+strdef filename
+
+// ¬¬  Procedures ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+// Create cells --------------------------------------------------------
+
+proc create_cells() { local i,j,ii,jj,k,p
+  	quitmodel = 0
+   	print "Creating cells. This may take some time."
+	print nmitx
+	print nmity
+  	for i = 0, nmitx-1 {
+    		for j = 0, nmity-1 {
+       			ndend = 100
+       			mit[i][j] = new Mit(ndend)
+	    	}
+  	}
+  printf("\n")
+  access mit[0][0].prim
+}
+
+// Add input currents --------------------------------------------------
+proc insert_iclamps_reg() { local i,j // 2 args - del dur
+	for i = 0, nmitx-1 {
+		for j = 0, nmity-1 {
+			mit[i][j].soma input_reg[i][j] = new IClamp(0.5)
+			input_reg[i][j].dur = tstop
+			input_reg[i][j].del = 0	
+		}
+  	}
+}
+
+proc insert_iclamps_glom() { local i,j
+	for i = 0, nmitx-1 {
+		for j = 0, nmity-1 {
+			mit[i][j].glom input_glom[i][j] = new IClamp(0.5)
+			input_glom[i][j].dur = tstop
+			input_glom[i][j].del = 0
+		}
+  	}
+}
+
+proc insert_iclamp_ipsc() { local i,j
+		for i = 0, nmitx-1 {
+      			ind = 5*(i+1)-1
+      			mit[i][j].dend[ind] input_ipsc[i][0] = new IClamp2(0.5)
+      			input_ipsc[i][0].amp = -0.05
+      			input_ipsc[i][0].dur = tstop
+      			input_ipsc[i][0].del = 150
+      			input_ipsc[i][0].tau = 5
+		}
+}
+
+// Randomise initial conditions ----------------------------------------
+proc random_init() { local i,j,ii,jj,k
+  random.normal(-65,25)
+  for i = 0,nmitx-1 {
+    for j = 0, nmity-1 {
+      mit[i][j].soma.v(0.5) = 0  //random.repick()
+      mit[i][j].dend[0].v(0.5) = mit[i][j].soma.v(0.5)
+      mit[i][j].prim.v(0.5) = mit[i][j].soma.v(0.5)
+      mit[i][j].glom.v(0.5) = mit[i][j].soma.v(0.5)
+    }
+  }
+}
+
+// ¬¬ Create the model ¬¬¬
+create_cells()
+
+

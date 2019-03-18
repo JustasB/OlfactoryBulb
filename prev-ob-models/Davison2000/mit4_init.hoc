@@ -1,0 +1,116 @@
+// mit4_init.hoc
+// Runs the mit4 model
+// Andrew Davison 10-Jun-1999
+// modified 28-Feb-2002: fig6_panel() added
+
+xopen("mit4.hoc")
+
+cvode.active(1)		// turn variable time step on
+dt = 0.02
+tstop = 200
+
+// initial values
+p 	= 0.051
+q 	= 0.084
+r 	= 0.328
+gpg 	= 5.86e-5
+gsp 	= 5.47e-5
+gsd 	= 1.94e-4
+alphas 	= 1.37
+alphag	= 1.85
+
+change_params()
+
+proc param_panel() {
+  xpanel("fourmit model")
+  xvalue("p","p",1,"change_params()")
+  xvalue("q","q",1,"change_params()")
+  xvalue("r","r",1,"change_params()")
+  xvalue("g_pg (S/cm2)","gpg",1,"change_params()")
+  xvalue("g_sp (S/cm2)","gsp",1,"change_params()")
+  xvalue("g_sd (S/cm2)","gsd",1,"change_params()")
+  xvalue("alpha_s","alphas",1,"change_params()")
+  xvalue("alpha_g","alphag",1,"change_params()")
+  xvalue("I_full (nA)","Ifull",1,"change_params()")
+  xlabel(" ")
+  xlabel("Stimulus location")
+  xcheckbox("Soma",&somastim,"change_params()")
+  xcheckbox("Glom",&glomstim,"change_params()")
+  xpanel(450,10)
+}
+
+objref fig6box, gfull, g4
+
+proc fig6_panel() { // creates a panel to show the results in fig 6. of the paper
+  fig6box = new VBox()
+  fig6box.intercept(1)
+  xpanel("")
+  xlabel("Four-compartment model")
+  xpanel()
+  g4 = new Graph(0)
+  g4.addvar("soma.v(0.5)",2,1)
+  g4.view(40,-70,410,50,0,0,400,150)
+  graphList[0].append(g4)
+  xpanel("")
+  xlabel("Full model (from data file)")
+  xpanel()
+  gfull = new Graph(0)
+  gfull.view(40,-70,410,50,0,0,400,150)
+  xpanel("")
+  xbutton("Stimulate soma with 0.2 uA/cm2","run_fig6(0)")
+  xbutton("Stimulate soma with 1.6 uA/cm2","run_fig6(1)")
+  xbutton("Stimulate glomerulus with 0.2 uA/cm2","run_fig6(2)")
+  xbutton("Stimulate glomerulus with 1.6 uA/cm2","run_fig6(3)")
+  xpanel()
+  xpanel("")
+  xbutton("Show abstract","show_abstract()")
+  xpanel()
+  fig6box.intercept(0)
+  fig6box.map("Figure 6",10,120,-1,-1)
+}
+
+proc run_fig6() {
+  if ($1 == 0) {
+    somastim = 1
+    glomstim = 0
+    Ifull = 0.2
+    tstop = 450
+    g4.size(40,450,-70,-20)
+    gfull.size(40,450,-70,-20)
+    clipboard_retrieve("mit2_si_0p2.dat")
+  } else if ($1 == 1) {
+    somastim = 1
+    glomstim = 0
+    Ifull = 1.6
+    tstop = 90
+    g4.size(40,90,-70,-20)
+    gfull.size(40,90,-70,-20)
+    clipboard_retrieve("mit2_si_1p6.dat")
+  } else if ($1 == 2) {
+    somastim = 0
+    glomstim = 1
+    Ifull = 0.2
+    tstop = 400
+    g4.size(40,400,-70,-20)
+    gfull.size(40,400,-70,-20)
+    clipboard_retrieve("mit2_gi_0p2.dat")
+  } else if ($1 == 3) {
+    somastim = 0
+    glomstim = 1
+    Ifull = 1.6
+    tstop = 165
+    g4.size(40,165,-70,-20)
+    gfull.size(40,165,-70,-20)
+    clipboard_retrieve("mit2_gi_1p6.dat")
+  }
+  hoc_obj_[0].plot(gfull,hoc_obj_[1],3,1)
+  change_params()
+  init()
+  run()
+}
+
+param_panel()
+xopen("mit4.ses")
+xopen("abstract.hoc")
+fig6_panel()
+

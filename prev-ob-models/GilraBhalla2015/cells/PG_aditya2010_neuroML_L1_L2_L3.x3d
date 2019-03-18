@@ -1,0 +1,44 @@
+<?xml version="1.0"?>
+<X3D xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" profile="Immersive" version="3.1" xsd:noNamespaceSchemaLocation=" http://www.web3d.org/specifications/x3d-3.1.xsd ">
+  <Scene>
+    <Background skyColor="1.0 1.0 1.0"/>
+    <Viewpoint description="Down z axis, 3mm away" position="0 0 3000"/>
+    <Viewpoint description="Down z axis, 500 microns away" position="0 0 500"/>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linetype="0" linewidthScaleFactor="8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 8  0  0"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linetype="0" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8  0  0, 28  0  0"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linetype="0" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8  0  0, 8  20  0"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

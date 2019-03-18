@@ -1,0 +1,144 @@
+// The spike viewer colors spikes using the theme of red if
+// a spike is potentiating, blue if depressing, and black if unchanged.
+//Spikes are shown for a selected mitral cell at each granule position.
+// The lower graph is a zoom view of the indicated postion in the
+// full raster upper graph
+
+begintemplate SpikeViewer1
+external num_granule, num_mitral, ncell
+external gid2mg
+objref tpat, idpat, vb, g, gz, this
+objref dtpat, mat[2], xsel, ysel, csel
+proc init() {
+	mdetect = 1
+	zv_width = 1000
+	tpat = $o1 // pattern_tvec
+	idpat = $o2 // pattern_idvec
+	color_spikes()
+	xmitral = int(num_mitral/2)
+	xsel = tpat.c.resize(0)
+	ysel = tpat.c.resize(0)
+	csel = tpat.c.resize(0)
+	build()
+}
+
+proc build() {
+	vb = new VBox()
+	vb.ref(this)
+	vb.save("")
+	vb.intercept(1)
+	xpanel("",1)
+	xmenu("Z View Width")
+	xbutton("200", "zvw(200)")
+	xbutton("500", "zvw(500)")
+	xbutton("1000", "zvw(1000)")
+	xmenu()
+	xcheckbox("M detect", &mdetect, "x_change()")
+	xpvalue("Mitral gid", &xmitral, 1, "x_change()")
+	xpanel()
+	g = new Graph()
+	g.menu_tool("zoomed view", "zview")
+	g.size(0, 1000*int(tpat.x[tpat.size-1]/1000 + .5), 0, num_granule)
+	g.view(0,0,zv_width,num_granule,0,0,300,200)
+	vb.intercept(0)
+	vb.map("Spike Viewer", 200, 200, 500, 600)
+	g.exec_menu("zoomed view")
+	x_change()
+}
+
+proc zvw() {local x
+	zv_width = $1
+	x = g.view_info(1, 5)
+	g.view_size(1, x, x+zv_width, -10, num_granule+10)
+}
+proc zview() {local i
+	i = g.view_info()
+	if (i == 0) {
+		g.view_size(1, $2-zv_width/2, $2+zv_width/2, -10, num_granule+10)
+	}else{
+		translate($1, $2, $3)
+	}
+}
+
+i=0
+x=0
+width=0
+proc translate() {local x0,y0
+        if ($1 == 2) {
+                i = g.view_info()
+                x = g.view_info(i, 5)
+                xrel=g.view_info(i, 11, $2)
+                width=g.view_info(i,1)
+        }
+        if ($1 == 1) {
+                x1 = g.view_info(i, 11, $2)
+                x0 = x - width*(x1 - xrel)
+                g.view_size(i, x0, x0 + width, -10, num_granule+10)
+        }
+}
+
+
+proc x_change() {local i, c, f, gid, m, g, is_m2g
+	if (xmitral < 0) {
+		xmitral = 0
+	}else if (xmitral > num_mitral-1) {
+		xmitral = num_mitral-1
+	}else{
+		xmitral = int(xmitral)
+	}
+	xsel.resize(0)
+	ysel.resize(0)
+	csel.resize(0)
+	for i=0, tpat.size-1 {
+		gid = idpat.x[i]
+		f = 0
+		if (gid > ncell){
+			gid2mg(gid, &m, &g, &is_m2g)
+			if (m == xmitral && is_m2g != mdetect) {
+				f = 1
+				xsel.append(tpat.x[i])
+				ysel.append(g)
+			}
+		}
+		if (f) {
+			dt = dtpat.x[i]
+			if (dt < ltpinvl_AmpaNmda) {
+				c = 2
+			}else if (dt > ltdinvl_AmpaNmda) {
+				c = 1
+			}else{
+				c = 3
+			}
+			csel.append(c)
+		}
+	}
+	gplt()
+}
+proc color_spikes() {local i, gid, m, g, is_m2g
+	dtpat = tpat.c
+	mat[0] = new Matrix(num_mitral+1, num_granule+1)
+	for m=0, num_mitral for g = 0, num_granule { mat[0].x[m][g] = -1000 }
+	mat[1] = mat[0].c
+	for i=0, tpat.size-1 {
+		gid = idpat.x[i]
+		if (gid < num_mitral) {
+			m = gid + 1  g = 0  is_m2g = 0
+		}else if (gid < num_mitral + num_granule) {
+			m = 0  g = gid - num_mitral + 1
+		}else{
+			gid2mg(gid, &m, &g, &is_m2g)
+			m += 1
+			g += 1
+		}
+		
+		dtpat.x[i] = tpat.x[i] - mat[is_m2g].x[m][g]
+		mat[is_m2g].x[m][g] = tpat.x[i]
+	}
+}
+proc gplt() {local i
+	g.erase()
+	for i=0, xsel.size-1 {
+		g.mark(xsel.x[i], ysel.x[i], "|", 2, csel.x[i], 1)
+	}
+}
+endtemplate SpikeViewer1

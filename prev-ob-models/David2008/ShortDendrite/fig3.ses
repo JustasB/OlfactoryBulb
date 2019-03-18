@@ -1,0 +1,72 @@
+load_file("nrngui.hoc")
+objectvar save_window_, rvp_
+objectvar scene_vector_[16]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+
+{
+//("potentiel mitrale")
+save_window_ = new Graph(0)
+save_window_.size(0,tstop,-80,40)
+scene_vector_[0] = save_window_
+{save_window_.view(0, -80, tstop, 120, 393, 20, 500, 150.32)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addvar("mit[0][0].soma.v( 0.5 )",1, 2, 0.8, 0.9, 2)
+save_window_.addvar("mit[0][0].dend.v( 0.5 )",1, 2, 0.8, 0.9, 2)
+}
+
+{
+//("Courant Injecte dans une cellule")
+save_window_ = new Graph(0)
+save_window_.size(0,tstop,0,4)
+scene_vector_[1] = save_window_
+{save_window_.view(0, 0, tstop, 2, 393, 240, 500, 100)}
+graphList[1].append(save_window_)
+save_window_.save_name("graphList[1].")
+save_window_.addvar("input_reg[0][0].i",1,1,0.8,0.9,2)
+}
+
+{
+save_window_ = new Graph(0)
+save_window_.size(0,500,0,4)
+scene_vector_[3] = save_window_
+{save_window_.view(0, -1, tstop, 1, 393, 400, 500, 100)}
+graphList[1].append(save_window_)
+save_window_.save_name("graphList[1].")
+save_window_.addvar("input_ipsc[0][0].i",1,1,0.8,2)
+}
+
+{
+xpanel("RunControl", 0)
+//random_init()
+v_init = -65
+xvalue("Init","v_init", 1,"std_init()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = tstop
+xvalue("t","t", 2 )
+tstop = tstop
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.01
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 100
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xcheckbox("Quiet",&stdrun_quiet,"")
+realtime = 511
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(107,368)
+}
+
+objectvar scene_vector_[1]
+{doNotify()}
+
+//xopen("Refine_inhib_ipsc.ses")
+
+//random_init()

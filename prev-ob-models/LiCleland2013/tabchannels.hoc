@@ -1,0 +1,43 @@
+
+// This hoc file is written by Andrew Davison (2003) and downloaded from ModelDB
+
+//=============================================================
+// Read function tables for tabchannels.
+// Needed for kfasttab.mod, kslowtab.mod and nagran.mod.
+// All data now in a single file, tabchannels.dat.
+// Andrew Davison, July 2003
+//=============================================================
+
+npoints = 1001
+
+objref datafile, datavec[12], vvec
+
+datafile = new File()
+datafile.ropen("tabchannels.dat")
+datafile.seek(0)
+
+vvec = new Vector(npoints)
+vvec.scanf(datafile,1,13)
+datafile.seek() // goes to beginning of file
+for i = 0,11 {
+  datavec[i] = new Vector(npoints)
+  datavec[i].scanf(datafile,i+2,13)
+  datafile.seek()
+}
+datafile.close()
+
+table_tabninf_kfasttab(&datavec[0].x[0], vvec.size, &vvec.x[0])
+table_tabntau_kfasttab(&datavec[1].x[0], vvec.size, &vvec.x[0])
+table_tabkinf_kfasttab(&datavec[2].x[0], vvec.size, &vvec.x[0])
+table_tabktau_kfasttab(&datavec[3].x[0], vvec.size, &vvec.x[0])
+table_tabninf_kslowtab(&datavec[4].x[0], vvec.size, &vvec.x[0])
+table_tabntau_kslowtab(&datavec[5].x[0], vvec.size, &vvec.x[0])
+table_tabkinf_kslowtab(&datavec[6].x[0], vvec.size, &vvec.x[0])
+table_tabktau_kslowtab(&datavec[7].x[0], vvec.size, &vvec.x[0])
+
+/*
+table_tabminf_nagrantab(&datavec[8].x[0], vvec.size, &vvec.x[0])
+table_tabmtau_nagrantab(&datavec[9].x[0], vvec.size, &vvec.x[0])
+table_tabhinf_nagrantab(&datavec[10].x[0], vvec.size, &vvec.x[0])
+table_tabhtau_nagrantab(&datavec[11].x[0], vvec.size, &vvec.x[0])
+*/

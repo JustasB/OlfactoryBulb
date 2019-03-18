@@ -1,0 +1,86 @@
+This readme describes how to run the cluster code for simple circuits.
+
+Overview:
+
+A program called batch_runs.py will be the master program to run to
+prepare many simulations to run at once. batch_runs.py executes a file
+called create_arrays.py that sets breath and light stimulus lists that
+are then used to generate parameter settings for each
+simulation. run_X folders are created and the contents of a template
+model folder called simple_circuits are copied to each of these
+folders along with the unique parameters.hoc files created by
+batch_runs.py.  Then the simulations are run with qsub.
+
+Usage:
+
+1) unzip this archive on a cluster with PBS (portable batch system) and NEURON installed
+
+2) edit the create_arrays.py program to 
+
+the desired pairs of breathing
+(respiration) (B) and light evoked (stimulated (S) peak rates (ends up
+in variables called breath_peak_rate, light1_peak_rate in the NEURON
+code). These must be created in a "both" list, for example to combine 50, and 400 in
+all possible ways both should look like:
+
+both=[(50,50),(50,400),(400,50),(400,400)]
+
+the first number in each tuple corresponds to B and the second to S.
+The both list is the only variable reused from the create_arrays.py
+program. Note that the peak rates refer to the number of OSN axon firing
+events that produce EPSPs in the dendrites of the cells connected to OSNs (olfactory
+sensory neurons).
+
+3) edit batch_run.py for the following:
+
+3a) change the assignment of absolute path to match the folder that
+you will create the run_X's in.  For example if you are running in
+/home/tmm46/project/VerhagenLab/20150714/batch_runs then assign
+absolute_path = "/home/tmm46/project/VerhagenLab/20150714/batch_runs/"
+where you include the last slash.
+
+3b) edit, if desired, where it writes the
+num_of_columns.hoc file for each run_X folder.  This gives the
+possibility of simulations with different numbers of columns.
+
+3c) edit the batch_runs.py to set the p[] (parameters.hoc file texts)
+array.  p[0] is the string that represents the parameters.hoc file in
+folder run_0, p[1] for run_1/parameters.hoc, etc..  Note that there
+could be multiple settings of p[] for different types of network runs.
+
+3d) make sure that the p[]'s include a net_type hoc comment like
+
+// net_type pg_net
+
+for example if the parameters correspond to a pg_net.  This is needed
+because it was troublesome to automatically detect which type of
+network was present and gives the possibility of new types of
+networks.  This name is reported in subsequent analysis programs. It
+is important to exactly have the begining part be "// net_type ".
+
+5) run batch_runs.py with a command like
+./batch_runs.py
+(should work if you have python in /usr/bin/python and batch_runs.py
+has been set to executable with a command like
+chmod 775 batch_runs.py
+
+if it is not already executable. This creates the run_X's, which
+except for needing their mod files compiled are fully functional (can
+run with the command nrngui build_net_Shep.hoc.
+
+6) run the simulations with a command like
+qsub run.pbs
+where the pbs file was generated with a command like:
+/usr/local/cluster/software/installation/SimpleQueue/sqPBS.py gen 8 tmm46 nrn_task tasklist > run.pbs
+tmm46 can be replaced for example by sms296
+Double check that you have the right number of processors and nodes for your job.
+
+7) Collect the output results with a command like 
+zip -r results.zip run_?/tdt2mat_data run_*/parameters.hoc
+
+so that results retain which parameters were included.  If the model
+was run with varying columns make sure that you also zip up num_of_columns.hoc
+zip -r results.zip run_?/tdt2mat_data run_*/parameters.hoc run_*/num_of_columns.hoc
+
+
+

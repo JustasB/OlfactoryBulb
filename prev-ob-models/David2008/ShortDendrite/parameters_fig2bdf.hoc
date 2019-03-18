@@ -1,0 +1,23 @@
+//  adapted from Andrew Davison, The Babraham Institute, 2003.
+// 
+
+nmitx       = 10		// 1st dimension of mitral cell array
+nmity       = 1 		// 2nd dimension of mitral cell array
+
+nglom       = nmitx*nmity	// total number of mitral cells
+g2m         = 1 		// 
+ngranx      = 1   //nmitx*g2m	// 1st dimension of granule cell array
+ngrany      = 1   //nmitx*1	// 2nd dimension of granule cell array
+
+seed        = 4			// seed for random number generator
+
+iweight      = 0 //e-6 	// uS	// }
+ampaGrweight = 0 	// uS	// }
+iGrweight    = 0         // uS	// }
+
+ 
+tstop	    = 1000	// ms	// total simulation time
+ttrans	    = 0		// ms   // when calculating statistics, ignore
+				// spikes occuring before this time
+cvode.active(1)
+dt 	    = 0.01	//ms

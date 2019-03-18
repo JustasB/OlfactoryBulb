@@ -1,0 +1,13 @@
+    load_file("nrngui.hoc")
+    load_file("vecevent.ses") // creates a VecStim object called vs_VecStim[0]
+    objref evec
+    evec = new Vector(100) // will hold times at which the VecStim should generate an event
+    evec.indgen(5) // evec's elements are now 0, 1 . . . 99
+    vs_VecStim[0].pp.play(evec) // the VecStim object generates events at t = 0, 1 . . . 99 ms
+
+// create soma
+
+// objref nc, synapse
+// soma synapse = new AmpaNmda(0.5)
+
+// nc = new NetCon(vs_VecStim[0], synapse)

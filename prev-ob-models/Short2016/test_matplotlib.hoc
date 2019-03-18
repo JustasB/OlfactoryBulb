@@ -1,0 +1,8 @@
+// test_matplotlib.hoc
+
+nrnpython("from matplotlib import pyplot")
+nrnpython("pyplot.figure(figsize=(8,4)) # Default figsize is (8,6)")
+nrnpython("pyplot.plot(t_vec, m1_v_vec)")
+nrnpython("pyplot.xlabel('time (ms)')")
+nrnpython("pyplot.ylabel('mV')")
+nrnpython("pyplot.show()")

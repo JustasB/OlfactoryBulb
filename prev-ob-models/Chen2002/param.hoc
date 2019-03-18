@@ -1,0 +1,33 @@
+// particular geometrical values for double spike simulation
+priden { L = 300  diam = 3.2 }
+initialseg{ L=30  diam=1.5}
+forsec tuft diam=1.8
+hillock.L = 5
+
+forsec sad cm = 1
+forsec "myelin" cm=0.01
+thm1_na = -73.1718
+thm2_na = -20.885
+Am1_na = 0.174565
+Am2_na = 0.710094
+qm1_na = 4.35318
+qm2_na = 6.51715
+thi1_na = -32.0296
+thi2_na = -78.4418
+qi_na = 2.0038
+thinf_na = -38.8877
+qinf_na = 10.9109
+Rg_na = 2.99989
+Rd_na = 0.0931745
+Ra_kd = 0.596458
+Rb_kd = 0.0128992
+tha_kd = 1.00846
+qa_kd = 13.5709
+forsec somden Ra = 70
+forsec "node" gbar_na = 5000 //too high a density can cause repolarization failure
+forsec "node" gbar_kd = 100
+initialseg.gbar_na = 20000
+initialseg.gbar_kd = 100
+forsec somden gbar_na = 175
+forsec somden gbar_kd = 50.6382
+

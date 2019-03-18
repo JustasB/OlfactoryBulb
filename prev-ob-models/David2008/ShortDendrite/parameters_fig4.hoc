@@ -1,0 +1,15 @@
+// fig 4 parameters
+//  adapted from Andrew Davison, The Babraham Institute, 2003.
+nmitx       = 1			// 1st dimension of mitral cell array
+nmity       = 1 		// 2nd dimension of mitral cell array
+
+ngranx      = 0  //nmitx*g2m	// 1st dimension of granule cell array
+ngrany      = 0  //nmitx*1		// 2nd dimension of granule cell array
+
+
+seed        = 4			// seed for random number generator
+
+tstop	    = 600	// ms	// total simulation time
+
+cvode.active(0)
+dt 	    = 0.01	//ms

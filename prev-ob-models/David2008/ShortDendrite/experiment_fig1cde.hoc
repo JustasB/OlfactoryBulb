@@ -1,0 +1,58 @@
+
+// *** Set-up recording
+objref igabaa, tvec, vmit[nmitx], iclamp
+record_step = 0.01
+record_vec_size = int(tstop/record_step)+1
+
+tvec = new Vector(record_vec_size)
+for i=0,nmitx-1 {
+	vmit[i]= new Vector(record_vec_size)
+	vmit[i].record(&mit[i][0].soma.v(0.5),record_step)
+}
+tvec.record(&t,record_step)
+
+// *** Process data and print out results
+insert_iclamps_reg(tstop)
+for i=0,nmitx-1 {
+	input_reg[i][0].amp = 0 //0.265
+	input_reg[i][0].dur = tstop
+	input_reg[i][0].del = 0
+}
+
+insert_iclamp_ipsc() 
+for i=0,nmitx-1 {
+	input_ipsc[i][0].amp = -0.05
+	input_ipsc[i][0].dur = tstop
+	input_ipsc[i][0].del = 150
+	input_ipsc[i][0].Erev = -90
+}
+
+xopen("fig1cde.ses")
+
+xpanel("Control")
+xbutton("Run fig 1cde", "run_fig1cde()")
+xvalue("Tau gGABAa","input_ipsc[0][0].tau", 1,"change_taugaba()", 0, 1)
+xpanel(930,200)
+
+proc change_taugaba() {
+	for i=0,nmitx-1 {
+		input_ipsc[i][0].tau = input_ipsc[0][0].tau
+	}
+}
+
+
+proc run_fig1cde() {
+	sprint(filename,"%s.dat","vmitfile")
+	outfile.wopen(filename)
+
+	run()
+
+	for i = 0, tvec.size()-1 {
+		outfile.printf("%8.7g \t",tvec.x[i])
+		for j = 0, nmitx-2 {
+			outfile.printf("%8.7g \t",vmit[j].x[i])
+		}
+		outfile.printf("%8.7g \n",vmit[nmitx-1].x[i])
+	}
+	outfile.close()
+}

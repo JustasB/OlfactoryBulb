@@ -1,0 +1,294 @@
+
+//======================================================================
+//              Save simulation data into data files
+//======================================================================
+
+double Ngm[nMit]
+
+objref f1
+f1 = new File()
+
+strdef filepath, filepath1, filepath2, filename
+filepath  = "data/"     // data is saved into the "data" folder
+filepath1 = "SP/"       // timing of random backgound spike trains is saved into the "SP" folder
+
+objref time, Vmean, Vmean2 
+objref GABApm[nMit]
+objref Ggm[nMit][nGran], Ggm_Total[nMit]
+objref Vms[nMit],  Vmt[nMit]
+objref Vmd0[nMit], Vmd1[nMit], Vmd2[nMit]
+objref Vgs[nGran], Vgb[nGran]
+objref Vps[nPG],   Vpb[nPG] 
+
+time = new Vector()
+
+// Record time
+time.record(&t, DT)
+
+//====================================================
+//                  Record Voltage
+//====================================================	
+
+// Record Mit Soma Voltage
+ for i=0, nMit-1 {
+    Vms[i] = new Vector()
+    Vms[i].record(&mit[i].soma.v(0.5), DT)
+ }
+ 
+
+// Record PG Soma Voltage
+ for i=0, nPG-1 {
+    Vps[i] = new Vector()
+    Vps[i].record(&pg[i].soma.v(0.5), DT)
+  } 
+  
+// Record PG Spine Voltage
+ for i=0, nPG-1 {
+    Vpb[i] = new Vector()
+    Vpb[i].record(&pg[i].gemmbody.v(0.5), DT)
+  } 
+ 
+ 
+// Record GC Voltage if the Full model is simulated (i.e., NTCE==0)
+
+if (NTCE==0) {
+// Record GC soma voltage
+  for i=0, nGran-1 {
+     Vgs[i] = new Vector()
+     Vgs[i].record(&gran[i].soma.v(0.5), DT)
+   }
+ 
+// Record GC Voltage
+  for i=0, nGran-1 { 
+     Vgb[i] = new Vector()
+     Vgb[i].record(&gran[i].gemmbody.v(0.5), DT)
+   }
+}
+  
+//====================================================
+//              Record Conductance
+//====================================================	
+// Save PG->MC conductance
+ for i=0, nMit-1 {
+	   GABApm[i] = new Vector()
+       GABApm[i].record(&p2m[i].g, DT)
+}
+
+// Save GC->MC conductance
+ if (NTCE==0) { 
+   f1.ropen("Connection/Ngc")
+   for i=0, nMit-1 {
+     Ngm[i] = f1.scanvar()
+   }
+   f1.close() 
+
+   for i=0, nMit-1 {
+    for j=0, Ngm[i]-1 {
+	  Ggm[i][j] = new Vector()
+      Ggm[i][j].record(&g2m[i][j].g, DT)  
+    }
+  }
+ }
+ 
+ 
+//====================================================
+//                 Save Data
+//====================================================
+
+proc save_data() {
+
+ // Calculate the mean voltage for MCs and GCs    
+  size1  = Vms[0].size()
+  Vmean  = new Vector(size1, 0)
+
+  for i=0, nMit-1 {
+	 Vmean = Vmean.c.add(Vms[i]) 
+   } 
+  
+  if (NTCE==0) { 
+    size2  = Vgb[0].size()
+    Vmean2 = new Vector(size2, 0)
+  
+    for i=0, nGran-1 {
+	  Vmean2 = Vmean2.c.add(Vgb[i]) 
+    } 
+  }
+  
+ // Calculate the TOTAL GC GABAa conductance to each MC
+  if (NTCE==0) {
+    size = Ggm[0][0].size()
+	
+    for i=0, nMit-1 {
+	  Ggm_Total[i] = new Vector(size, 0)
+      
+	  for j=0, Ngm[i]-1 {  
+        Ggm_Total[i] = Ggm_Total[i].c.add(Ggm[i][j])
+      }
+    } 
+  }  
+
+//====================================================
+//               Save Conductance
+//====================================================		
+// Save PG-->MC conductance
+  for i=0, nMit-1 {
+     sprint(filename, "%sGABApm%d",filepath, i)
+     f1.wopen(filename)
+     GABApm[i].printf(f1)
+     f1.close()	
+    } 
+   
+ // Save GC-->MC conductance
+  if (NTCE==0)  {
+    for i=0, nMit-1 {
+     sprint(filename, "%sGgm%d",filepath, i)
+     f1.wopen(filename)
+     Ggm_Total[i].printf(f1)
+     f1.close()	
+    } 
+  }	
+   
+  
+// ====================================================
+//             Save Simulation Time
+// ====================================================
+    f1.wopen("data/tt")
+	time.printf(f1)
+	f1.close()
+
+
+//====================================================
+//                 Save Voltage
+//====================================================		
+//Save mean voltage	
+  Vmean = Vmean.div(nMit)
+  f1.wopen("data/Vm")
+  Vmean.printf(f1)
+  f1.close()	
+	
+  if (NTCE==0) {
+    Vmean2 = Vmean2.div(nGran)
+    f1.wopen("data/Vg")
+    Vmean2.printf(f1)
+    f1.close()	
+	}
+	
+//Save voltage of mitral cells
+  //Soma 
+  for i=0, nMit-1 {
+     sprint(filename, "%sVms%d",filepath, i)
+     f1.wopen(filename)
+     Vms[i].printf(f1)
+     f1.close()	
+  }  
+  
+ // Save PG voltages
+ // Soma
+  for i=0, nPG-1 {
+    sprint(filename, "%sVps%d",filepath, i)
+    f1.wopen(filename)
+    Vps[i].printf(f1)
+    f1.close()	
+   } 
+  
+  // Spine
+  for i=0, nPG-1 {
+    sprint(filename, "%sVpb%d",filepath, i)
+    f1.wopen(filename)
+    Vpb[i].printf(f1)
+    f1.close()	
+  } 
+  
+  
+  
+// Save GC voltages
+// Soma
+if (NTCE==0) {
+
+  for i=0, nGran-1 {
+    sprint(filename, "%sVgs%d",filepath, i)
+    f1.wopen(filename)
+    Vgs[i].printf(f1)
+    f1.close()	
+   } 
+  
+ // Spine
+  for i=0, nGran-1 {
+    sprint(filename, "%sVgb%d",filepath, i)
+    f1.wopen(filename)
+    Vgb[i].printf(f1)
+    f1.close()	
+   }  
+}  
+    
+	
+//====================================================
+//               Save Spike Time
+//====================================================	
+//Save MC somatic spike time	
+  for i=0, nMit-1 {
+    sprint(filename, "%sMs%d",filepath, i)
+	f1.wopen(filename)
+	mit[i].spiketimes.printf(f1)
+	f1.close()
+    }		  
+	
+ // Save MC dendritic spike time	
+  for i=0, nMit-1 {
+    sprint(filename, "%sMd%d",filepath, i)
+	f1.wopen(filename)
+	mit[i].dendspike.printf(f1)
+	f1.close()
+   }
+ 
+// Save PG somatic spike time	
+  for i=0, nPG-1 {
+      sprint(filename, "%sPs%d",filepath, i)
+	  f1.wopen(filename)
+	  pg[i].spiketimes.printf(f1)
+	  f1.close()
+   }
+ 
+ // Save PG dendritic spike time	
+  for i=0, nPG-1 {
+      sprint(filename, "%sPd%d",filepath, i,j)
+	  f1.wopen(filename)
+	  pg[i].dendspike.printf(f1)
+	  f1.close()
+  } 
+  
+ // Save GC somatic spike time	
+ if (NTCE==0) {
+ 
+  for i=0, nGran-1 {
+      sprint(filename, "%sGs%d",filepath, i)
+	  f1.wopen(filename)
+	  gran[i].spiketimes.printf(f1)
+	  f1.close()
+   } 
+ 
+ // Save GC dendritic spike time	
+  for i=0, nGran-1 {
+      sprint(filename, "%sGd%d", filepath, i)
+	  f1.wopen(filename)
+	  gran[i].dendspike.printf(f1)
+	  f1.close()
+    }
+  }  
+  
+ 
+//===============================================
+// Save random spontaneous spikes
+  for i=0, nMit-1 {
+    sprint(filename, "%sspp%d",filepath1, i)
+	f1.wopen(filename)
+	WSP[i].printf(f1)
+	f1.close()
+    }		
+  
+}
+
+
+
+
+

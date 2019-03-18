@@ -1,0 +1,65 @@
+{load_file("stdlib.hoc")}
+objref pc, parmvars, parmstrs
+pc = new ParallelContext()
+parmvars = new List()
+parmstrs = new List()
+
+proc default_var() {localobj s
+	s = new String()
+	if (name_declared($s1) < 2) {
+		hoc_ac_ = $2
+		sprint(s.s, "%s = hoc_ac_", $s1)
+		execute(s.s)
+	}	
+	s.s = $s1
+	parmvars.append(s)
+}
+
+proc default_str() {localobj s
+	s = new String()
+	if (name_declared($s1) < 2) {
+		sprint(s.s, "strdef %s", $s1)
+		execute1(s.s)
+		sprint(s.s, "%s = \"%s\"", $s1, $s2)
+		execute(s.s)
+	}	
+//	if (pc.id == 0) {
+//		sprint(s.s, "printf(\"%s = \\\"%%s\\\"\\n\", %s)", $s1, $s1)
+//		execute(s.s)
+//	}
+	s.s = $s1
+	parmstrs.append(s)
+}
+
+proc print_param() {local i, x localobj s, ss, pc
+	pc = new ParallelContext()
+	s = new String()
+	if (numarg() == 1) {
+		$o1.printf("%s\n", nrnversion())
+		$o1.printf("%s\n", nrnversion(6))
+		$o1.printf("nhost %d\n", pc.nhost())
+	}
+	for i = 0, parmvars.count-1 {
+		sprint(s.s, "hoc_ac_ = %s", parmvars.o(i).s)
+		execute(s.s)
+		x = hoc_ac_
+		if (numarg() == 1) {
+			$o1.printf("%s = %g\n", parmvars.o(i).s, x)
+		}else{
+			printf("%s  = %g\n", parmvars.o(i).s, x)
+		}
+	}
+	for i = 0, parmstrs.count-1 {
+		ss = parmstrs.o(i)
+		if (numarg() == 1) {
+			sprint(s.s, "%s.printf(\"%s = \\\"%%s\\\"\\n\", %s)", $o1, ss.s, ss.s)
+		}else{
+			sprint(s.s, "printf(\"%s = \\\"%%s\\\"\\n\", %s)", ss.s, ss.s)
+		}
+		execute(s.s)
+	}
+	if (numarg() == 1) {
+		$o1.printf("@@@end header@@@\n")
+	}
+}
+

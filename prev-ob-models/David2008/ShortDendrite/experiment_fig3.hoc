@@ -1,0 +1,48 @@
+// *** Set-up recording
+
+objref Iinj
+Iinj = new Vector(3)
+Iinj.x[0] = 0.5
+Iinj.x[1] = 0.8
+Iinj.x[2] = 1.8
+
+insert_iclamps_reg(tstop)
+insert_iclamp_ipsc(tstop)
+
+input_ipsc[0][0].tau=5
+
+xopen("fig3.ses")
+
+xpanel("Control")
+xbutton("Run fig 3", "run_fig3()")
+xvalue("Tau gGABAa","input_ipsc[0][0].tau", 1,"change_taugaba()", 0, 1)
+xpanel(930,200)
+
+proc change_taugaba() {
+	input_ipsc[0][0].tau = input_ipsc[0][0].tau
+}
+
+//default
+input_reg[0][0].amp = Iinj.x[0]
+
+proc run_fig3() {
+	for i= 0, 2 {
+		sprint(filename,"%s_%f.dat","fig3",Iinj.x[i])
+		outfile.wopen(filename)
+		input_reg[0][0].amp = Iinj.x[i]
+
+		input_ipsc[0][0].del = 1000
+	
+		for p = 0, 11 {
+			input_ipsc[0][0].del = 1000
+			input_ipsc[0][0].amp = -0.02*10^(0.2*(p-1)) 
+			for w = 0, 59 {
+				run()
+				mit[0][0].spiketimes.printf(outfile,"%10.3f")
+				outfile.printf("\n")
+				input_ipsc[0][0].del = mit[0][0].spiketimes.x[9] + w + 1
+			}
+		}
+		outfile.close()
+	}
+}

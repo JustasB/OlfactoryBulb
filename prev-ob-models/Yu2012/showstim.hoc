@@ -1,0 +1,54 @@
+// show the stimulus
+load_file("start.hoc")
+
+// fake mitral with a synodor to allow OBStim to work
+begintemplate FakeMitral
+public soma, synodor, external_syn
+create soma
+objref synodor, external_syn
+proc init() {
+	soma synodor = new Exp2Syn(.2)
+	soma external_syn = new Exp2Syn(.2)
+	synodor.e = 0
+	synodor.tau1 = 20
+	synodor.tau2 = 200
+}
+endtemplate FakeMitral
+
+
+proc showstim() {local i, mgid, act  localobj nc, cell, nil, st, exist, smag
+	exist = new Vector()
+	smag = new Vector()
+	stim_list_.remove_all()
+	mt_noise_stim_list_.remove_all()
+	gc_noise_stim_list_.remove_all()
+	create_stim()
+
+	for i = 0,  stim_list_.count-1 if (stim_list_.o(i).ww) {
+		exist.append(i)
+		smag.append(stim_list_.o(i).ww)
+	}
+
+	printf("mitral gids with odor stimuli\n")
+	for i=1, 4 {
+		printf("magnitude %d\n", i)
+		exist.c.index(exist, smag.c.indvwhere("==", i)).printf
+	}
+
+	mgid = exist.x[0]
+	pc.set_gid2node(mgid, 0)
+	cell = new FakeMitral()
+	cell.soma nc = new NetCon(&v(.5), nil)
+	pc.cell(mgid, nc)
+	create_stim()
+	st = stim_list_.o(mgid)
+	act = cvode_active()
+	cvode_active(1)
+	run()
+	printf("odor event times\n")
+	st.spktime.printf
+	cvode_active(act)
+	clear()
+}
+
+showstim()

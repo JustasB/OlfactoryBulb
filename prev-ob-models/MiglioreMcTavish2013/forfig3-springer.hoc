@@ -1,0 +1,117 @@
+// to show IPSP on M0 - no EPSP input
+
+load_file("nrngui.hoc")
+load_file("mitral-lss.hoc")
+load_file("gc-ka.hoc")
+cvode.active(1)
+
+Vrest = -65
+dt = 1
+celsius=35
+tstop=400
+
+objref nconp[3], net, netp[3], g, b, synp, nil, stim0, stim1, stim2
+objref mt[3], gc[3]
+objref nc[27]
+
+for i=0, 2 {
+mt[i] = new Mitral()
+gc[i] = new GC()
+}
+
+weight=.1
+amp=.03
+rel=0.2
+inh=30
+synstr=3
+nmdafactor=0.0035
+frac=1
+
+mt[0].soma {
+stim0 = new IClamp(.5)
+stim0.amp=0.3
+stim0.dur=150
+stim0.del=30
+}
+mt[1].soma {
+stim1 = new IClamp(.5)
+stim1.amp=0.3
+stim1.dur=150
+stim1.del=2
+}
+mt[2].soma {
+stim2 = new IClamp(.5)
+stim2.amp=0.3
+stim2.dur=150
+stim2.del=50
+}
+
+temp=0
+flag=0
+
+b = new VBox()
+b.intercept(1)
+g = new Graph()
+g.size(0,tstop,-70,0)
+g.xaxis(1)
+g.addvar("mt[0].soma.v(0.5)",1,1,0.6,0.7,2)
+g.addvar("mt[1].soma.v(0.5)",2,1,0.6,0.67,2)
+g.addvar("mt[2].soma.v(0.5)",3,1,0.6,0.64,2)
+g.addvar("mt[0].secden[1].v(0.8)",8,1,0.6,0.61,2)
+g.exec_menu("10% Zoom out")
+xpanel("",1)
+xbutton("runm", "runm()")
+xstatebutton("GC1",&flag)
+xpanel()
+b.intercept(0)
+b.map()
+
+
+////////////////// circuit definition  
+
+///// gc <-> mt
+
+mt[1].secden[1]	nc[10]= new NetCon(&v(0),gc[1].synmt[0],-40,1, synstr*nmdafactor) 
+mt[1].secden[1]	nc[11]= new NetCon(&v(0),gc[1].sampa[0],-40,1, synstr*1e-3) 
+
+gc[1].dend[4]	nc[15]= new NetCon(&v(1),mt[0].igp[1][1],-40,1,inh*1e-3) 
+gc[2].dend[0]	nc[18]= new NetCon(&v(1),mt[2].igp[1][0],-40,1,inh*1e-3) 
+
+mt[0].secden[1]	nc[25]= new NetCon(&v(0.8),gc[2].synmt[2],-40,1,synstr*nmdafactor) 
+mt[0].secden[1]	nc[26]= new NetCon(&v(0.8),gc[2].sampa[2],-40,1,synstr*1e-3) 
+
+////////////////// end circuit definition
+
+
+proc init() {
+	t=0
+	finitialize(Vrest)
+        fcurrent()
+        forall {
+		v=Vrest
+		if (ismembrane("nax")) {e_pas=v+(ina+ik)/g_pas
+		} else {
+		e_pas=v+ik/g_pas
+		}
+	}
+	cvode.re_init()
+	g.begin()
+	g.plot(t)
+}
+
+
+proc advance() {
+	fadvance()
+	g.plot(t)
+	g.flush()
+	Graph[1].flush()
+	doNotify()
+}
+
+proc runm() {
+	nc[15].weight=flag*inh*1e-3
+	init()
+	run()
+}
+
+load_file("forfig2.ses")

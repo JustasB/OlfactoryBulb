@@ -1,0 +1,104 @@
+objref repere, rdom1, rdom2
+
+repere = new Vector(10)
+
+// *** Set-up recording
+objref igabaa, tvec, vmit, i_soma_br[nmitx], ipscburst
+objref Iinj
+Iinj = new Vector(3)
+Iinj.x[0] = 0.5
+Iinj.x[1] = 0.8
+Iinj.x[2] = 1.8
+
+record_step 	= 0.1
+record_vec_size = int(tstop/record_step)+1
+i_soma_br 	= new Vector(nmitx)
+ipscburst	= new Vector(nmitx)
+
+record_step 	= 0.1
+
+size_treel = tstop/dt+1
+
+insert_iclamps_reg(tstop)
+insert_iclamp_ipsc(tstop)
+
+mit[0][0].soma	i_soma_br[0] = new current_gauss(0.5)
+i_soma_br[0].dur   = 1000
+i_soma_br[0].std0  = 0.9
+i_soma_br[0].f0    = 4000
+i_soma_br[0].tau_f = 1
+
+mit[0][0].dend ipscburst = new ipsc_gauss(0.5)
+ipscburst.dep   = 0
+ipscburst.dur   = 100
+ipscburst.delm  = 10
+ipscburst.sigi  = 5
+ipscburst.amp   = 0.005
+ipscburst.tau   = 5
+ipscburst.nipsc = 200 //10 // cas ter //200 cas bis
+ipscburst.seed1(2)
+
+xopen("fig6.ses")
+
+a = startsw() //sert a generer la seed
+
+phase = 10 
+ggb = 0.005  //cas bis 200 IPSC
+
+//ggb=0.1 // cas ter 10IPSC
+
+nbnoise = 200
+
+xpanel("Choose parameters")
+xvalue("Noise realizations","nbnoise",1,"change_nbnoise()",0,1)
+xvalue("Tau gGABAa","ipscburst.tau", 1,"change_taugaba()",0,1)
+xbutton("Run fig6", "run_fig6()")
+xpanel(930,200)
+
+proc change_nbnoise() {
+	nbnoise = nbnoise
+}
+
+proc change_taugaba() {
+	ipscburst.tau = ipscburst.tau
+}
+
+proc run_fig6()	{
+	for i = 0, 2 {
+		sprint(filename,"fig6_%s_%f.dat","200",Iinj.x[i])
+		outfile.wopen(filename)
+		input_reg[0][0].amp = Iinj.x[i]
+
+		// BOUCLE SUR LE BRUIT
+		for w = 0, nbnoise-1 {
+			//  1eme simu sans ipsc
+			ipscburst.amp   = 0
+			ipscburst.seed1(2+w)
+			ipscburst.sigi  = 1
+			i_soma_br[0].seed(a+w)
+			run()
+			mit[0][0].spiketimes.printf(outfile,"%10.3f")
+			outfile.printf("\n")
+			repere.x[0] = mit[0][0].spiketimes.x[9]
+			print mit[0][0].spiketimes.x[9],mit[0][0].spiketimes.x[10],mit[0][0].spiketimes.x[10]-mit[0][0].spiketimes.x[9]
+
+			////////////////////////////////////////////////
+			//  the simu with ipsc 
+			for s = 0, 8 {
+				ipscburst.seed1(2+w)
+				ipscburst.dep   = repere.x[0]
+				ipscburst.delm  = repere.x[0]+phase
+				ipscburst.amp   = ggb
+				ipscburst.sigi  = 0.01+2.5*s
+				i_soma_br[0].seed(a+w)
+				run()
+				mit[0][0].spiketimes.printf(outfile,"%10.3f")
+				outfile.printf("\n")
+				repere.x[0] = mit[0][0].spiketimes.x[9]
+				print mit[0][0].spiketimes.x[9],mit[0][0].spiketimes.x[10],mit[0][0].spiketimes.x[10]-mit[0][0].spiketimes.x[9]
+			}
+			print "w=", w
+		}
+		outfile.close()
+	}
+}

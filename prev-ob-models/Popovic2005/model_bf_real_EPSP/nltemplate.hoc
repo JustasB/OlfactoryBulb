@@ -1,0 +1,208 @@
+begintemplate NLsection
+    public sect, nsect, terminal
+    public xroot,yroot,zroot,droot,zrootangle,xyrootangle
+    public moveby, moveto
+    create sect[1]
+    double order[1]
+    double xcoord[1]
+    double ycoord[1]
+    double zcoord[1]
+    double coordset[1]
+    double basediam[1]
+    double avgdiam[1]
+    double enddiam[1]
+    double length[1]
+    double zangle[1]
+    double xyangle[1]
+    double terminal[1]
+    objref f
+    strdef fname
+    proc connections() {local i,cbranch,xend,yend,zend,diamend,xmid,ymid,zmid
+        xend=xcoord[$2]+length[$2]*cos(zangle[$2])*cos(xyangle[$2])
+        yend=ycoord[$2]+length[$2]*cos(zangle[$2])*sin(xyangle[$2])
+        zend=zcoord[$2]+length[$2]*sin(zangle[$2])  
+        if (enddiam[$2]==0) {
+            diamend=avgdiam[$2]
+        } else {
+            diamend=enddiam[$2]
+        }
+        while (n<(nsect-1)) {
+            cbranch=order[n+1]
+            if (cbranch>$1) {
+                terminal[$2]=0
+                n=n+1
+                xcoord[n]=xend
+                ycoord[n]=yend
+                zcoord[n]=zend
+                diamend=basediam[n]
+                connect sect[n](0), sect[$2](1)
+                connections(cbranch,n)
+            } else {
+                break
+            }  
+        }
+        sect[$2] {
+            nseg=int(length[$2]/10)+1
+            pt3dclear()
+            pt3dadd(xcoord[$2],ycoord[$2],zcoord[$2],basediam[$2])
+            for i=1,nseg-2 {
+                xmid=xcoord[$2]+(i/nseg)*length[$2]*cos(zangle[$2])*cos(xyangle[$2])
+                ymid=ycoord[$2]+(i/nseg)*length[$2]*cos(zangle[$2])*sin(xyangle[$2])
+                zmid=zcoord[$2]+(i/nseg)*length[$2]*sin(zangle[$2])            
+                pt3dadd(xmid,ymid,zmid,avgdiam[$2]) 
+            }
+            pt3dadd(xend,yend,zend,diamend)
+        }
+    }
+    proc init() {
+        //counts number of sections (equals to number of lines in order.txt file)
+        sprint(fname,"order%d.txt",$1)
+        f=new File()
+        f.ropen(fname)
+        nsect=0
+        while (!f.eof()) {
+            nsect=nsect+1
+            f.scanvar()
+        }
+        f.close()
+        //printf("number of sections: %d\n",nsect)
+        //creates variable arrays
+        create sect[nsect]
+        double order[nsect]
+        double xcoord[nsect]
+        double ycoord[nsect]
+        double zcoord[nsect]
+        double coordset[nsect]
+        double basediam[nsect]
+        double avgdiam[nsect]
+        double enddiam[nsect]
+        double length[nsect]
+        double zangle[nsect]
+        double xyangle[nsect]
+        double terminal[nsect]
+        for i=0,nsect-1 {
+            terminal[i]=1
+        }
+        //fills order array with values from order.txt file
+        sprint(fname,"order%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            order[nsect-i-1]=f.scanvar()
+            i=i+1
+        }
+        f.close()
+        //fills basediam array with values from basediams.txt file
+        sprint(fname,"basediams%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            basediam[nsect-i-1]=f.scanvar()
+            i=i+1
+        }
+        f.close()
+        //fills avgdiam array with values from avgdiams.txt file
+        sprint(fname,"avgdiams%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            avgdiam[nsect-i-1]=f.scanvar()
+            i=i+1
+        }
+        f.close()    
+        //fills enddiam array with values from enddiams.txt file
+        sprint(fname,"enddiams%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            enddiam[nsect-i-1]=f.scanvar()
+            i=i+1
+        }
+        f.close()    
+        //fills length array with values from lengths.txt file
+        sprint(fname,"lengths%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            length[nsect-i-1]=f.scanvar()
+            i=i+1
+        }
+        f.close()      
+        //fills zangle array with values from zangles.txt file
+        sprint(fname,"zangles%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            zangle[nsect-i-1]=f.scanvar()*3.141592654/180
+            i=i+1
+        }
+        f.close()
+        //fills xyangle array with values from xyangles.txt file
+        sprint(fname,"xyangles%d.txt",$1)
+        f.ropen(fname)
+        i=0
+        while (!f.eof()) {
+            xyangle[nsect-i-1]=f.scanvar()*3.141592654/180
+            i=i+1
+        }
+        f.close()
+        //fills root coordinates (xcoord[0],ycoord[0],zcoord[0]) from xyz.txt file
+        sprint(fname,"xyz%d.txt",$1)
+        f.ropen(fname)
+        xcoord[0]=f.scanvar()
+        ycoord[0]=f.scanvar()
+        zcoord[0]=f.scanvar()
+        f.close()
+        droot=basediam[0]
+        n=0
+        connections(1,n)
+        sect[0] {
+            xroot=x3d(0)
+            yroot=y3d(0)
+            zroot=z3d(0)
+        }
+        xcoord[0]=xroot
+        ycoord[0]=yroot
+        zcoord[0]=zroot
+        zrootangle=zangle[0]
+        xyrootangle=xyangle[0]
+    }
+    proc moveto() {local i,j,deltax, deltay, deltaz
+        sect[0] {
+            deltax=$1-x3d(0)
+            deltay=$2-y3d(0)
+            deltaz=$3-z3d(0)
+        }
+        for i=0,(int(length[0]/10)) {
+            sect[0] {
+                pt3dchange(i,x3d(i)+deltax,y3d(i)+deltay,z3d(i)+deltaz,diam3d(i))
+            }
+        }
+        sect[0] {
+            xroot=x3d(0)+deltax
+            yroot=y3d(0)+deltay
+            zroot=z3d(0)+deltaz
+            xcoord[0]=xroot
+            ycoord[0]=yroot
+            zcoord[0]=zroot
+        }
+    }
+    proc moveby() {local i,j,deltax, deltay, deltaz
+        deltax=$1
+        deltay=$2
+        deltaz=$3
+        for i=0,(int(length[0]/10)) {
+            sect[0] {
+                pt3dchange(i,x3d(i)+deltax,y3d(i)+deltay,z3d(i)+deltaz,diam3d(i))
+            }
+        }
+        sect[0] {
+            xroot=x3d(0)+deltax
+            yroot=y3d(0)+deltay
+            zroot=z3d(0)+deltaz
+            xcoord[0]=xroot
+            ycoord[0]=yroot
+            zcoord[0]=zroot
+        }
+    }
+endtemplate NLsection

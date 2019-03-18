@@ -1,0 +1,83 @@
+begintemplate Gap
+public src, target, g, valid, pr, set_gm, gm, cm
+objref srcsec, targetsec, cm, gm, y, b, xvec, sl, lm, this, fih
+strdef tstr
+
+proc init(){
+	g_ = 10
+	valid_ = 0
+	cm = new Matrix(2,2,2)
+	gm = new Matrix(2,2)
+	y = new Vector(2)
+	b = new Vector(2)
+	xvec = new Vector(2)
+}
+
+func src() {
+	srcsec = new SectionRef()
+	xvec.x[0] = $1
+	valid_ = 0
+	return valid()
+}
+
+func target() {
+	targetsec = new SectionRef()
+	xvec.x[1] = $1
+	valid_ = 0
+	return valid()
+}
+
+func g() {
+	if (numarg() > 0) {
+		g_ = $1
+		if (valid_) {
+			set_gm()
+		}
+	}
+	return g_
+}
+
+proc set_gm() { local us, a// conductance in nanosiemens
+	if (valid_ == 0) { return }
+	us = .001*g_
+	srcsec.sec { a = 100/area(xvec.x[0]) }
+	gm.x[0][0] = us*a
+	gm.x[0][1] = -us*a
+	targetsec.sec { a = 100/area(xvec.x[1]) }
+	gm.x[1][1] = us*a
+	gm.x[1][0] = -us*a
+}
+
+func valid() {
+	if (valid_ == 0) {
+		if (object_id(srcsec) && object_id(targetsec)) {
+			mkgap()		
+		}
+	}
+	return valid_
+}
+
+proc mkgap() {
+	sl = new SectionList()
+	srcsec.sec sl.append()
+	targetsec.sec sl.append()
+	valid_ = 1
+	set_gm()
+	lm = new LinearMechanism(cm, gm, y, b, sl, xvec)
+	// only necessary because we anticpate changes in diameter
+	// fih = new FInitializeHandler(0, "set_gm()")
+	// unfortunately up through the  5.6 2004/02/09 Main (44)
+	// version there is an error in parsing the third arg, so
+	sprint(tstr, "%s.set_gm()", this)
+	fih = new FInitializeHandler(0, tstr)
+}
+
+proc pr() {
+	if (valid_) {
+srcsec.sec printf("%s %s(%g)", this, secname(), xvec.x[0])
+targetsec.sec printf("---%s(%g) \tg = %g (ns)\n", secname(), xvec.x[1], g())
+	}else{
+		printf("%s not used\n", this)
+	}
+}
+endtemplate Gap

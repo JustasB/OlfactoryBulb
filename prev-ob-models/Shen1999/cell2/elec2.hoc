@@ -1,0 +1,60 @@
+/*
+To simulate the electrode we add a small section to
+serve as the electrode resistance and capacitance
+*/
+
+/*
+watch out when changing Ra in the model since this
+electrode.Ra is used for the series resistance!
+*/
+
+begintemplate Electrode
+
+public electrode
+create electrode
+
+// c (pf) = cm*area = PI*L*diam*(.01) * cm
+// rs (MOhm) = Ra*L/2 / (PI*diam^2/4) = 2*L/PI/diam^2 * (.01) * Ra
+
+// so it is nice to have
+// PI*L*diam*.01 = 1
+// 2*L/PI/diam^2*.01 = 1
+
+// diam = (2/PI^2)^(1/3)
+// L = 1/.01/PI/diam
+
+
+proc init_electrode() {
+	electrode {
+		diam = (2/PI^2)^(1/3)
+		L = 1/.01/PI/diam
+		insert pas
+		g_pas = 0
+		e_pas = 0
+	}
+}
+
+proc init() {
+        init_electrode()
+        electrode Ra = 0.001		//(Ohm*cm)
+        electrode cm = 0		//(uF/cm2)
+        connect electrode(0), $1
+}
+
+
+
+//electrode makeppm()
+
+endtemplate Electrode
+
+objref se,pe,te
+
+soma se=new Electrode(0.5)
+pridene2 pe=new Electrode(0.5)
+se.electrode.Ra = 1e-6
+se.electrode.cm = 1e-6
+pe.electrode.Ra = 1e-6
+pe.electrode.cm = 1e-6
+
+access soma
+

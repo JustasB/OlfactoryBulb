@@ -1,0 +1,3 @@
+load_file("nrngui.hoc")
+load_file("JGC_plateau_potential.ses")
+load_file("pulse.hoc")

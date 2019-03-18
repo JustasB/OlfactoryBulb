@@ -1,0 +1,58 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>Excitatory ORN to mitral synapse taken from the paper Djurisic etal 2008 JNeurosci</meta:notes>
+     
+    <synapse_type name="ORN_mitral">
+               
+        <status value="in_progress">
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes> Dual exponential excitatory ORN to mitral synapse </meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Djurisic et al.</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>NCBS, India</meta:institution>    
+                <meta:email>adityag@ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        
+        <meta:notes> Djurisic et al gives time course and upper bound on gmax (100 synapses producing uniform at least 4mV EPSP) </meta:notes>
+        <meta:publication>
+           <meta:fullTitle>M. Djurisic, M. Popovic, N. Carnevale, and D. Zecevic, “Functional structure of the mitral cell dendritic tuft in the rat olfactory bulb,” JOURNAL OF NEUROSCIENCE, vol. 28, no. 15, pp. 4057-4068, Apr. 2008.</meta:fullTitle>
+        </meta:publication>
+        <meta:notes> Zhou et al have 1mV sEPSP in mouse slices, Nickell et al have ~3mV EPSP in rat slices. </meta:notes>
+        <meta:publication>
+           <meta:fullTitle>Zhishang Zhou and Leonardo Belluscio, “Intrabulbar Projecting External Tufted Cells Mediate a Timing-Based Mechanism That Dynamically Gates Olfactory Bulb Output,” J. Neurosci. 28, no. 40 (October 1, 2008): 9920-9928.</meta:fullTitle>
+        </meta:publication>
+        <meta:publication>
+           <meta:fullTitle>William T. Nickell, M. T. Shipley, and Michael M. Behbehani, “Orthodromic synaptic activation of rat olfactory bulb mitral cells in isolated slices,” Brain Research Bulletin 39, no. 1 (1996): 57-62.</meta:fullTitle>
+        </meta:publication>
+        
+        <meta:neuronDBref>
+            <meta:modelName></meta:modelName>
+            <meta:uri></meta:uri>
+        </meta:neuronDBref>
+       
+       <!--<doub_exp_syn max_conductance="8.6516e-9" rise_time="1.6094e-3" decay_time="1.6094e-3" reversal_potential="0.0"/>-->
+       <!-- Djurisic et al 2008 model multiple excitatory+inhibitory conductances over the whole tuft with time course as below.
+        They also model a single excitatory + inhibitory synapse at the base of the tuft as a proxy to the multiple synapses above. 
+        Since I am modeling multiple synapses in the tuft, I use the former synaptic time course as below. -->
+       <!--<doub_exp_syn max_conductance="4e-9" rise_time="2.84e-3" decay_time="5.99e-3" reversal_potential="0.0"/>-->
+       <doub_exp_syn max_conductance="6e-9" rise_time="1e-3" decay_time="1e-3" reversal_potential="0.0"/>
+       
+    </synapse_type>
+</channelml>

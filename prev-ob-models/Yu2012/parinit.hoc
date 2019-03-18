@@ -1,0 +1,92 @@
+setuptime = startsw()
+{load_file("nrngui.hoc")}
+{load_file("param.hoc")}
+objref pnm
+{load_file("netparmpi.hoc")}
+pnm = new ParallelNetManager(0)
+me = 4
+//pnm.nhost = 64
+//pnm.myid = me
+{load_file("lptiter.hoc")}
+nthread = 1
+objref pc
+pc = new ParallelContext()
+if (pnm.nhost == 1) { execute1("{nthread=pc.nthread(4) cvode.cache_efficient(1) }", 0) }
+{load_file("net.hoc")}
+mknet()
+
+tstop = stop_time
+
+objref wbase, odorfilename
+wbase=new String()
+odorfilename=new String()
+{
+sprint(wbase.s, "%se%03dw%03dw%03dd%03d-%ds-%dpc", odorstr, global_exc_gmax*1000, \
+  global_wl*1000, global_wh*1000, owfactor*1000, tstop/1000, g2m_mean*100)
+sprint(odorfilename.s, "stim-%s.hoc", odorstr)
+}
+// do not change the odorfilename here. Set the odorstr in param.hoc
+// so that start.hoc can use the correct version
+
+{load_file(odorfilename.s)}
+if (pc.id == 0) {
+	print wbase.s
+	print odorfilename.s
+}
+/*
+if (odor_mix) {
+	create_stim(net_idx,odor_idx)
+} else {
+	create_stim(odor_idx)
+}
+*/
+{load_file("perfrun.hoc")}
+{load_file("spike2file.hoc")} // replaces the one in perfrun.hoc
+{load_file("netparmpi.hoc")}
+{load_file("loadbal.hoc")}
+
+objref lb
+lb = new LoadBalance()
+tdat_.x[6] = lb.cpu_complexity() // actual to compare to cxcpu
+if (nthread > 1) { lb.thread_partition(1) }
+if (nthread > 1) { pc.thread_busywait(1) }
+
+{load_file("weightsave.hoc")}
+{want_all_spikes()}
+
+objref fih_progress
+if (pc.id == 0) fih_progress = new FInitializeHandler(2, "cvode.event(100, \"progress()\")")
+proc progress() {
+	print t
+	cvode.event(t + 100, "progress()")
+}
+
+//weight_snapshots(filename, starttime, interval_between_snapshots)
+objref wstr
+objref wout
+wout=new String()
+{sprint(wout.s, "%s%s%s","weight-", wbase.s,".dat")}
+weight_snapshots(wout.s, 1e9, 1e9) // call w2_() after prun
+//weight_snapshots("weights-zero.dat", tstop, tstop)
+//print "Weight file to write: ", wout.s
+//weight_initialize(wstr.s)
+
+setuptime = startsw() - setuptime
+if (pc.id == 0) printf("setuptime=%g\n", setuptime)
+if (pnm.myid == -1) {
+	printf("cxcpu=%g tdat_.x[6]=%g\n", cxcpu, tdat_.x[6])
+	topology()
+	//for j=0,1 for i=0, lb.mt[j].count-1 {lb.mt[j].select(i) lb.mt[j].selected(tstr) printf("%s %g\n", tstr, lb.m_complex_[j].x[i])}
+}
+runtime = startsw()
+
+if (pc.nhost > 1) {
+	prun(tstop)
+	// spike2file() // done every checkpoint_interval in prun
+	// if (object_id(weight_file_)) { w2_() } // at end of run.
+	if (pc.id == 0) printf("runtime=%g\n", runtime)
+	{pc.runworker()}
+	getstat()
+	print_spike_stat_info()
+	{pc.done() quit()}
+}

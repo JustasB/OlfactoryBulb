@@ -1,0 +1,70 @@
+load_file("nrngui.hoc")
+load_file("mulfit.hoc")
+load_file("parameters.hoc")
+load_file("morphology.hoc")
+load_file("membrane.hoc")
+celsius = 36
+
+double epsp[271]
+double epsp_soma[271]
+objref epspf
+epspf = new File()
+epspf.ropen("epsp.txt")
+i=0
+while (!epspf.eof()) {
+    epsp[i]=epspf.scanvar()
+    i=i+1
+}
+epspf.close()
+
+epspf.ropen("epsp_soma.txt")
+i=0
+while (!epspf.eof()) {
+    epsp_soma[i]=epspf.scanvar()
+    i=i+1
+}
+epspf.close()
+
+proc init() {
+    finitialize(Erest)
+    fcurrent()
+    V_soma=soma_sc.v(0.5)
+    V_primden_beg=tuft_nl.sect[0].v(0)
+    V_experiment=epsp[0]
+    V_experiment_soma=epsp_soma[0]
+}
+
+init()
+
+proc advance() {
+    fadvance()
+    V_soma=soma_sc.v(0.5)
+    V_primden_beg=tuft_nl.sect[0].v(0)
+    if (int(2*t)>270) {
+        V_experiment=0
+    } else {
+        V_experiment=epsp[int(2*t)]
+    }
+    if (int(2*t)>270) {
+        V_experiment_soma=0
+    } else {
+        V_experiment_soma=epsp_soma[int(2*t)]
+    }
+}
+
+objref graphw,graphe,boxv
+boxv = new VBox()
+boxv.intercept(1) 
+{
+    graphe = new Graph(0)
+    {graphe.view(0, -300, tstop, 250, 0, 0, 800, 300)}
+    graphList[0].append(graphe)
+    graphe.save_name("graphList[0].")
+    graphe.addexpr("V_soma", 1, 4, 0.8, 0.9, 2)
+
+}
+boxv.intercept(0)
+boxv.map("")
+{doNotify()}
+//graphe.exec_menu("Keep Lines")
+run()

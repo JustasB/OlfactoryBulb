@@ -1,0 +1,48 @@
+
+Nd  = 10
+
+objref f1
+f1 = new File()
+
+strdef filepath, filename
+filepath  = "celldata/"
+
+objref time, Vol
+time = new Vector()
+Vol  = new Vector() 
+
+time.record(&t, Nd*dt)
+Vol.record(&pg.soma.v(0.5), Nd*dt)
+
+//====================================================
+//              Save DATA
+//====================================================	
+	
+proc save_data() {
+
+// Simulation time
+    sprint(filename, "%st",filepath)
+    f1.wopen(filename)
+    time.printf(f1)
+    f1.close()
+
+// Voltage 
+    sprint(filename, "%sVpg",filepath)
+    f1.wopen(filename)
+    Vol.printf(f1)
+    f1.close()
+
+// Somatic spike time
+    sprint(filename, "%sPGs",filepath)
+    f1.wopen(filename)
+    pg.spiketimes.printf(f1)
+    f1.close()
+	
+	// Somatic spike time
+    sprint(filename, "%sPGd",filepath)
+    f1.wopen(filename)
+    pg.dendspike.printf(f1)
+    f1.close()
+}
+
+

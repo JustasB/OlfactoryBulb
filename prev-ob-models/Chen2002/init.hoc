@@ -1,0 +1,31 @@
+// beginning of two electrode mitral cell simulations
+xopen("$(NEURONHOME)/lib/hoc/noload.hoc")
+xopen("mitral.hoc")
+xopen("memb.hoc")
+//xopen("electrode.hoc")
+xopen("param.hoc")
+xopen("syns.ses")
+proc init() {local dtsav, i, act
+	act = cvode.active()
+        finitialize(v_init)
+	cvode_active(0)
+        fcurrent()
+        forsec sad for(x) if (x>=0 && x<=1) {
+		e_pas(x) = (ina(x) + ik(x) + g_pas(x)*v_init)/g_pas(x)
+	} 
+        t = -200
+        dtsav = dt
+        dt = 10
+        for i = 0, 19 {
+        	fadvance()
+        }
+        dt = dtsav
+        t = 0
+	fcurrent()
+	if (act) {
+		cvode_active(act)
+		cvode.re_init()
+	}
+}
+tstop=80
+

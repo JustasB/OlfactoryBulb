@@ -1,0 +1,20 @@
+objref w_grph_, w_grph_handle_
+w_grph_ = new Graph()
+proc show_weight() { local i, x, nm localobj g, mgr, sr
+	g = w_grph_
+	g.erase()
+	for i=0, mgrs_list.count-1 {
+		mgr = mgrs_list.object(i)
+		mgr.granule.soma x = x3d(0)
+		w = mgr.gd2fi.weight[2]
+		g.mark(x, w, "O", 8, 3, 1)
+		w = mgr.md2ampanmda.weight[2]
+		g.mark(x, w, "O", 8, 2, 1)
+	}
+	cells.object(num_mitral+num_granule-1).soma x = x3d(0)
+	g.size(0, x, 0,1)
+	cvode.event(t+100, "show_weight()")
+}
+
+show_weight()
+w_grph_handle_ = new FInitializeHandler("cvode.event(0, \"show_weight()\")")

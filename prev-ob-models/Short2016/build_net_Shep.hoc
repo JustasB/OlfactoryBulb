@@ -1,0 +1,745 @@
+// build_net_Shep.hoc
+// builds simple model
+// OSN input goes to two mitral cells
+// which are connected to a granule cell
+
+load_file("mct_cells.hoc") // loads the McTavish cell templates Mitral and Granule
+load_file("event_generator/gen_events.hoc")
+
+// note that num_of_columns.hoc can be generated from other code
+xopen("num_of_columns.hoc") // reading in the number of columns is convenient for batch running jobs
+// n= 2 // num_of_columns = 1  // number of other columns than m1, n easier to type than num_of_columns
+
+objref m1, m2[n], gc1[n], gc2[n], pg1[n], pg2[n]
+// gc1's are granule cells that are close to m1 cell body, gc2's are gcs that are far from m1 cell bodies
+// likewise for pg1[n] (close to m1: dendrites on m1 tuft, axon on m2[i] primary dend) and 
+// pg2[n] (pg2 cell bodies far from m1 cell body: pg2[i] dendrites on m2[i] tuft, axon on m1 primary dend)
+
+m1 = new Mitral()
+for i=0,n-1 {
+  m2[i] = new Mitral()  // 
+  gc1[i] = new Granule()
+  gc2[i] = new Granule() 
+  pg1[i] = new PGcell(0) // the number 0 passed to PGcell() is the nicot. current
+  pg2[i] = new PGcell(0) // the number 0 passed to PGcell() is the nicot. current
+}
+
+// OSNXs will be representing breathing OSN activity while LightXs are repr. of light
+// stim. OSN activity (events)
+objref OSN1, OSN2[n], Light1, Light2[n]
+
+// Located arbitrarily because where they have an
+// effect is determined by the NetCon target not the 
+// VecStim (source) position
+breathing_period = 400 // 400 ms is typical breathing period
+breath_gauss_center = 0 // 0 makes peak occur right at start (and end) of breath
+breath_half_width = 10 // 10 makes for a narrow peak
+breath_peak_rate = 240 // 150 // 150 or 300 OK to represent thousands of OSN's converging onto a mc
+
+// share these parameters for mitral cell 1 and 2 except for 
+// lightX_peak_rate which can be used to turn off and on each
+light_period = 300 // 398 // 300 for debugging // light interval period
+light_gauss_center = 0 // 0 makes peak occur right at start (and end) of light
+light_half_width = 10 // 10 makes for a narrow peak
+
+light1_peak_rate = 240 // 40 for much less // 300 // 150 or 300 OK to represent thousands of OSN's converging onto a mc
+
+objref light2_peak_rate_vec
+light2_peak_rate_vec  = new Vector(n) // will store peak rates - develop later - to do
+
+light2_peak_rate = 0 // 150 or 300 OK to represent thousands of OSN's converging onto a mc
+
+// OSNX provides source events for breathing synaptic events
+m1.tuftden OSN1 = new VecStim(0.5) // previously ThetaStim(0.5)
+for i=0,n-1 {
+  m1.tuftden OSN2[i] = new VecStim(0.5) // breath inputs to all the external columns
+}
+// LightX provides source events for light synaptic events
+m1.tuftden Light1 = new VecStim(0.5) // previously ThetaStim(0.5)
+for i=0,n-1 {
+  m1.tuftden Light2[i] = new VecStim(0.5) // potential trains of inputs to external cols.
+}
+// backgroundX is representative of background activity that causes mitral cell tuft excitatory events
+// at any phase of the breath cycle. The _m1 is for input to the m1 mc tuft,
+// background1, background2 is for the inputs to the pg1[i] and pg2[i] cells.
+// background2 also shares it's input with the m2[i] tufts
+
+objref background_m1, background1[n], background2[n]
+
+m1.tuftden background_m1 = new NetStim(0.5) // additional constant input onto mitral 1.
+for i=0,n-1 {
+  m1.tuftden background1[i] = new NetStim(0.5)
+  m1.tuftden background2[i] = new NetStim(0.5)
+}
+// introduce synapses so they can be targets in NetCons:
+// name convention:
+// cell name of post synaptic partner _ cell name of pre synaptic partner _ synapse type
+
+objref m1_osn_glut, m2_osn_glut[n] // excitation of mitral tufts by osn cells
+objref m1_gc1_inhib[n], m2_gc1_inhib[n] // inhibition of mitral dends by gc
+objref m1_gc2_inhib[n], m2_gc2_inhib[n] // inhibition of mitral dends by gc2
+
+objref gc1_m1_glut[n], gc1_m2_glut[n] // excitation of gc by mitral cells
+objref gc2_m1_glut[n], gc2_m2_glut[n]
+
+// pg cells:
+objref pg1_glut[n], pg2_glut[n] // excitation of peri-glom cells by osn, mitral cells, light, background
+objref m1_inhib[n], m2_inhib[n] // inhibition in the mitral cell tufts by both the local (same number
+// as mitral cell)
+objref m1priden_inhib[n], m2priden_inhib[n]
+// and the remote pg cell (different number than mitral cell)
+
+tuft_excite_pos = 0.5
+// we could study multiple dendrites in the tuft later however for now there
+// is just one tuft dendrite per mitral cell
+m1.tuftden m1_osn_glut = new AmpaNmda(tuft_excite_pos)
+for i=0, n-1 {
+  m2[i].tuftden m2_osn_glut[i] = new AmpaNmda(tuft_excite_pos)
+}
+// the two below MC GC positions are reused for m1, m2, gc1, gc2
+mc_gc_close_recip_pos = 0.01
+mc_gc_far_recip_pos=.75
+
+// original reicprocal position on the secondary dendrite:
+for i=0,n-1 {
+  m1.secden m1_gc1_inhib[i] = new FastInhib(mc_gc_close_recip_pos)
+  m1.secden m1_gc2_inhib[i] = new FastInhib(mc_gc_far_recip_pos)
+
+  m2[i].secden m2_gc1_inhib[i] = new FastInhib(mc_gc_far_recip_pos)
+  m2[i].secden m2_gc2_inhib[i] = new FastInhib(mc_gc_close_recip_pos)
+}
+/**/ 
+
+// move the gc reciprocal inhibition position to mitral cell body
+// for maximum effect:
+// m1.soma m1_gc1_inhib = new FastInhib(0.5)
+// m2.soma m2_gc2_inhib = new FastInhib(0.5)
+
+gc_recip_pos1 = 0.55
+gc_recip_pos2 = 0.65
+for i=0, n-1 {
+  gc1[i].priden2 gc1_m1_glut[i] = new AmpaNmda(gc_recip_pos1)
+  gc1[i].priden2 gc1_m2_glut[i] = new AmpaNmda(gc_recip_pos2)
+
+  gc2[i].priden2 gc2_m1_glut[i] = new AmpaNmda(gc_recip_pos2)
+  gc2[i].priden2 gc2_m2_glut[i] = new AmpaNmda(gc_recip_pos1)
+}
+// these mitral cell tuft inhibitory synapses are contacted by both the local and remote pg cells
+// the local pg cell is from a reciprocal synapse and the remote is from an "axon"
+
+tuft_inhib_pos = 0.5 // for now make overlap with the tuft excitatory position
+for i=0, n-1 {
+  m1.tuftden m1_inhib[i] = new FastInhib(tuft_inhib_pos)
+  m2[i].tuftden m2_inhib[i] = new FastInhib(tuft_inhib_pos)
+
+  priden_inhib_pos = 0.9
+  m1.priden m1priden_inhib[i] = new FastInhib(priden_inhib_pos)
+  m2[i].priden m2priden_inhib[i] = new FastInhib(priden_inhib_pos)
+
+  // pg cell excitatory synapse part of reciprocal synapses and site of OSN input
+  pg1[i].gemmbody pg1_glut[i] = new AmpaNmda(0.5) // put in middle of pg spine
+  pg2[i].gemmbody pg2_glut[i] = new AmpaNmda(0.5) // put in middle of pg spine
+}
+
+/////////////////////////////////////////////////////
+//
+//  connect the network
+//
+/////////////////////////////////////////////////////
+
+// Connect the ThetaStims (OSN's) to the mc's
+
+objref nc[26][n]
+objref nclist
+nclist = new List()
+
+// connect the OSNs to the mcs
+// breath to mc1
+nc[0][0] = new NetCon(OSN1, m1_osn_glut, 0, 1, 1)
+// light to mc1
+nc[6][0] = new NetCon(Light1, m1_osn_glut, 0, 1, 1)  // arguments are source, target, threshold, delay, weight
+// connect the background stimulus
+
+nc[8][0] = new NetCon(background_m1, m1_osn_glut, 0, 1, 1)  // arguments are source, target, threshold, delay, weight
+
+// arguments are source, target, threshold, delay, weight
+for i=0, n-1 {
+  nc[1][i] = new NetCon(OSN2[i], m2_osn_glut[i])
+
+// connect the Lights to the mcs
+
+  nc[7][i] = new NetCon(Light2[i], m2_osn_glut[i])  // the 2's refer to the external col.
+
+// connect the reciprocal synapse between m1 and gc1
+
+  m1.secden[0] {nc[2][i] = new NetCon(&v(mc_gc_close_recip_pos), gc1_m1_glut[i], -20, 1, 1)}
+  gc1[i].priden2[0] {nc[3][i] = new NetCon(&v(gc_recip_pos1), m1_gc1_inhib[i], -20, 1, 1)}
+
+// load_file("sample_gc1_v_graph.ses")
+
+// connect the reciprocal synapse between m2 and gc1
+
+  m2[i].secden[0] {nc[4][i] = new NetCon(&v(mc_gc_far_recip_pos), gc1_m2_glut[i])}
+  gc1[i].priden2[0] {nc[5][i] = new NetCon(&v(gc_recip_pos2), m2_gc1_inhib[i])}
+print "for nc[3][i's] gc_recip_pos1 = ", gc_recip_pos1 
+print " for nc[5][i's] gc_recip_pos2= ", gc_recip_pos2
+// connect the reciprocal synapse between m1 and gc2
+
+  m1.secden[0] {nc[10][i] = new NetCon(&v(mc_gc_far_recip_pos), gc2_m1_glut[i], -20, 1, 1)}
+  gc2[i].priden2[0] {nc[11][i] = new NetCon(&v(gc_recip_pos2), m1_gc2_inhib[i])}
+print " for nc[11] gc_recip_pos2 = ", gc_recip_pos2
+
+// connect the reciprocal synapse between m2 and gc2
+
+  m2[i].secden[0] {nc[12][i] = new NetCon(&v(mc_gc_close_recip_pos), gc2_m2_glut[i])}
+// gc1.priden2[0] {nc[13] = new NetCon(&v(gc_recip_pos1), m2_gc2_inhib)} // typo of providing gc1.priden2[0]
+// location seems to take away from nc[3]?  Is that the intended behavior for NEURON?
+
+  gc2[i].priden2[0] {nc[13][i] = new NetCon(&v(gc_recip_pos1), m2_gc2_inhib[i])}
+print " for nc[13] gc_recip_pos1 = ", gc_recip_pos1
+
+// connect the background stimulus
+
+  nc[9][i] = new NetCon(background2[i], m2_osn_glut[i])
+
+// connect the periglomerular cells
+
+// all the connections to periglom 1:
+// excited by background, OSN1, Light1, mitral cell 1
+// output inhibits mitral cell 1 with dendro-dendritic reciprocal synapse
+// and inhibits mitral cell 2 with axonal synapse
+
+////////////////// 20150508 stopping place: keep going here later - finish loop - test - fix gui.
+
+  nc[14][i] = new NetCon(background1[i], pg1_glut[i])
+  nc[15][i] = new NetCon(OSN1, pg1_glut[i]) // makes it possible to connect the breath to all the pg1_glut[i]
+  nc[16][i] = new NetCon(Light1, pg1_glut[i]) // makes it possible to connect Light1 to all the pg1_glut[i]
+
+  m1.tuftden {nc[17][i] = new NetCon(&v(0.5), pg1_glut[i])} // excitatory connections from m1 onto pg1 dends
+  pg1[i].gemmbody {nc[18][i] = new NetCon(&v(0.5), m1_inhib)} // reciprocal connections from pg1 dends back to m1
+  pg2[i].soma {nc[19][i] = new NetCon(&v(0.5), m1priden_inhib) } // pg2's axon connections to m1
+
+// all the connections to periglom 2:
+// excited by background, OSN2, Light2, mitral cell 2
+// output inhibits mitral cell 2 with dendro-dendritic reciprocal synapse
+// and inhibits mitral cell 1 with axonal synapse
+
+  nc[20][i] = new NetCon(background2[i], pg2_glut[i])  // background2 input onto pg2's
+  nc[21][i] = new NetCon(OSN2[i], pg2_glut[i]) // breathing inputs onto pg2
+  nc[22][i] = new NetCon(Light2[i], pg2_glut[i]) // light inputs onto pg2
+
+  m2[i].tuftden {nc[23][i] = new NetCon(&v(0.5), pg2_glut[i])} // m2 inputs onto pg2
+  pg2[i].gemmbody {nc[24][i] = new NetCon(&v(0.5), m2_inhib[i])} // pg2 recip connections back to m2
+  pg1[i].soma {nc[25][i] = new NetCon(&v(0.5), m2priden_inhib[i]) } // pg1 axon connections to m2 pri dends
+}
+
+for columns=0,n-1 {
+  for i=0,25 {
+    nclist.append(nc[i][columns])
+  }
+}
+
+/////////////////////////////////////////////////////
+//
+// Adjust plasticity of FastInhib and AmpaNmda
+//
+/////////////////////////////////////////////////////
+
+// it was decided the easiest thing to do was turn off
+// plasticity in the AmpaNmda and FastInhib mod files
+/*
+// test section
+objref test_gc
+m1.tuftden test_gc = new ThetaStim(0.5) // stimulate granule cell synapse directly
+objref test_nc
+test_nc = new NetCon(test_gc, gc1_m1_glut)
+
+objref test_gc2
+m1.tuftden test_gc2 = new ThetaStim(0.5) // stimulate granule cell synapse directly
+objref test_nc2
+test_nc2 = new NetCon(test_gc2, gc1_m1_glut)
+
+nclist.append(test_nc)
+nclist.append(test_nc2)
+
+// end test section
+*/
+/////////////////////////////////////////////////////
+//
+// Graphical control of VecStims
+//
+/////////////////////////////////////////////////////
+objref breath_events_for_mc1,  breath_events_for_mc2[n]
+objref breath_poisson_rate_for_mc1, breath_poisson_rate_for_mc2[n]
+
+proc generate_mc1_breath_events() {
+  breath_events_for_mc1 = gen_events(tstop, breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate)
+  OSN1.play(breath_events_for_mc1)
+  breath_poisson_rate_for_mc1 = _poisson_rate // global vector set by gen_events
+  print "completed generating ",breath_events_for_mc1.size()," mc1 breath events"
+}
+proc generate_mc2_breath_events() { local i
+  for i=0, n-1 {
+    breath_events_for_mc2[i] = gen_events(tstop, breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate)
+    OSN2[i].play(breath_events_for_mc2[i])
+    breath_poisson_rate_for_mc2[i] = _poisson_rate // global vector set by gen_events
+    print "completed generating ", breath_events_for_mc2[i].size()," m2[",i,"] breath events"
+  }
+}
+proc generate_breath_events() {
+  generate_mc1_breath_events()
+  generate_mc2_breath_events()
+}
+strdef stim_file_name
+
+proc save_mc1_breath_events() { // writes a file
+  sprint(stim_file_name, "stimulation/breath_for_mc1_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+  write_vec(stim_file_name, breath_events_for_mc1)
+}
+proc save_mc2_breath_events() { // writes a file 
+  sprint(stim_file_name, "stimulation/breath_for_mc2_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+  write_vec(stim_file_name, breath_events_for_mc2)
+}
+proc save_breath_events() { // writes two files
+  save_mc1_breath_events()
+  save_mc2_breath_events()
+}
+
+chdir("py")
+nrnpython("import utilities")
+nrnpython("import os.path as path")
+chdir("..")
+objref p
+p=new PythonObject()
+
+proc load_mc1_breath_events() { // reads a file
+  sprint(stim_file_name, "stimulation/breath_for_mc1_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+  breath_events_for_mc1=p.utilities.read_nrn_vec(stim_file_name)
+  OSN1.play(breath_events_for_mc1)
+}
+proc load_mc2_breath_events() { // reads a file
+  sprint(stim_file_name, "stimulation/breath_for_mc2_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+  breath_events_for_mc2=p.utilities.read_nrn_vec(stim_file_name)
+  OSN2.play(breath_events_for_mc2)
+
+}
+proc load_breath_events() { // reads two files
+  load_mc1_breath_events()
+  load_mc2_breath_events()
+}
+
+objref light_events_for_mc1,  light_events_for_mc2
+objref light_poisson_rate_for_mc1, light_poisson_rate_for_mc2
+
+proc generate_mc1_light_events() {
+  light_events_for_mc1 = gen_events(tstop, light_period, light_gauss_center, light_half_width, light1_peak_rate)
+  Light1.play(light_events_for_mc1)
+  light_poisson_rate_for_mc1 = _poisson_rate // global vector set by gen_events
+  print "completed generating ", light_events_for_mc1.size()," mc1 light events"
+}
+proc generate_mc2_light_events() {
+  light_events_for_mc2 = gen_events(tstop, light_period, light_gauss_center, light_half_width, light2_peak_rate)
+  Light2.play(light_events_for_mc2)
+  light_poisson_rate_for_mc2 = _poisson_rate // global vector set by gen_events
+  print "completed generating ",light_events_for_mc2.size()," mc2 light events"
+}
+proc generate_light_events() {
+  generate_mc1_light_events()
+  generate_mc2_light_events()
+}
+
+proc save_mc1_light_events() { // writes a file
+  sprint(stim_file_name, "stimulation/light_for_mc1_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light1_peak_rate, tstop)
+  write_vec(stim_file_name, light_events_for_mc1)
+}
+proc save_mc2_light_events() { // writes a file
+  sprint(stim_file_name, "stimulation/light_for_mc2_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light2_peak_rate, tstop)
+  write_vec(stim_file_name, light_events_for_mc2)
+}
+proc save_light_events() { // writes two files
+  save_mc1_light_events()
+  save_mc2_light_events()
+}
+
+proc load_mc1_light_events() { // writes a file that is 
+  sprint(stim_file_name, "stimulation/light_for_mc1_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light1_peak_rate, tstop)
+  light_events_for_mc1=p.utilities.read_nrn_vec(stim_file_name)
+  Light1.play(light_events_for_mc1)
+}
+proc load_mc2_light_events() { // writes a file that is 
+  sprint(stim_file_name, "stimulation/light_for_mc2_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light2_peak_rate, tstop)
+  light_events_for_mc2=p.utilities.read_nrn_vec(stim_file_name)
+  Light2.play(light_events_for_mc2)
+}
+proc load_light_events() { // writes a file that is 
+  load_mc1_light_events()
+  load_mc2_light_events()
+}
+
+proc adjust_tstop() {
+    tstop=breathing_period*((breathing_period)/abs(breathing_period-light_period))+100
+}
+proc do_everything() {
+  print "Doing everything: load or regenerate input trains, run simulation, and store results in tdt2mat dir"
+  adjust_tstop() // tstop=breathing_period*((breathing_period)/abs(breathing_period-light_period))+100
+  print "First set tstop =",tstop," to accomdate all phase differences between breathing and light periods, plus arbitrary 100 ms"
+
+  // methodically check that each of the breath and light files (mc1 and mc2) (4 files total) are available
+  // breath for mc1
+  // breath for mc2
+  // light for mc1
+  // light for mc2
+  
+  sprint(stim_file_name, "stimulation/breath_for_mc1_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+/*  if (p.path.isfile(stim_file_name)) {
+    load_mc1_breath_events()
+  } else {
+    generate_mc1_breath_events()
+    save_mc1_breath_events()
+  }
+*/
+    // for now always generate: (can add file writing for columns later if desired)
+    generate_mc1_breath_events()  // always just generate the breath events
+
+  sprint(stim_file_name, "stimulation/breath_for_mc2_%f_%f_%f_%f_%f.dat",breathing_period, breath_gauss_center, breath_half_width, breath_peak_rate, tstop)
+/*  if (p.path.isfile(stim_file_name)) {
+    load_mc2_breath_events()
+  } else {
+    generate_mc2_breath_events()
+    save_mc2_breath_events()
+  }
+*/
+    generate_mc2_breath_events() // always generate
+
+  sprint(stim_file_name, "stimulation/light_for_mc1_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light1_peak_rate, tstop)
+/*  if (p.path.isfile(stim_file_name)) {
+    load_mc1_light_events()
+  } else {
+    generate_mc1_light_events()
+    save_mc1_light_events()
+  }
+*/
+    generate_mc1_light_events()  // always generate
+
+
+  sprint(stim_file_name, "stimulation/light_for_mc2_%f_%f_%f_%f_%f.dat",light_period, light_gauss_center, light_half_width, light2_peak_rate, tstop)
+
+/*
+  if (p.path.isfile(stim_file_name)) {
+    load_mc2_light_events()
+  } else {
+    generate_mc2_light_events()
+    save_mc2_light_events()
+  }
+*/
+    generate_mc2_light_events() // always generate
+
+  print "running simulation"
+  print "hide graphs for faster run"
+  init()
+  run()
+  print "saving tank"
+  save_tank()
+  print "Done everything!"
+}
+
+gc_connection_state=0
+gc_on = 4 // can use for particular global levels of gc connectivity strength
+proc toggle_gc_connection() {
+
+  if (gc_connection_state) {
+    for i=0, n-1 {
+      nc[2][i].weight = 0
+      nc[3][i].weight = 0
+      nc[4][i].weight = 0
+      nc[5][i].weight = 0
+      nc[10][i].weight = 0
+      nc[11][i].weight = 0
+      nc[12][i].weight = 0
+      nc[13][i].weight = 0
+    }
+    // automaticaly xstatebutton sets gc_connection_state=0
+  } else {
+    for i=0, n-1 {
+      nc[2][i].weight = gc_on
+      nc[3][i].weight = gc_on
+      nc[4][i].weight = gc_on
+      nc[5][i].weight = gc_on
+      nc[10][i].weight = gc_on
+      nc[11][i].weight = gc_on
+      nc[12][i].weight = gc_on
+      nc[13][i].weight = gc_on
+    }
+    // automatically xbuttonstate sets gc_connection_state=1
+  }
+}
+
+pg_connection_state=0
+pg_on = 1 // can use for particular global levels of pg connectivity strength
+proc toggle_pg_connection() {
+  if (pg_connection_state) {
+    for i=0, n-1 {
+      nc[14][i].weight = 0
+      nc[15][i].weight = 0
+      nc[16][i].weight = 0
+      nc[17][i].weight = 0
+      nc[18][i].weight = 0
+      nc[19][i].weight = 0
+      nc[20][i].weight = 0
+      nc[21][i].weight = 0
+      nc[22][i].weight = 0
+      nc[23][i].weight = 0
+      nc[24][i].weight = 0
+      nc[25][i].weight = 0
+    // xstatebutton automatically sets pg_connection_state=0
+    }
+  } else {
+    for i=0, i-1 {
+      nc[14][i].weight = pg_on
+      nc[15][i].weight = pg_on
+      nc[16][i].weight = pg_on
+      nc[17][i].weight = pg_on
+      nc[18][i].weight = pg_on
+      nc[19][i].weight = pg_on
+      nc[20][i].weight = pg_on
+      nc[21][i].weight = pg_on
+      nc[22][i].weight = pg_on
+      nc[23][i].weight = pg_on
+      nc[24][i].weight = pg_on
+      nc[25][i].weight = pg_on
+    // xstatebutton automatically sets pg_connection_state=1
+    }
+  }
+}
+
+objref hbox
+hbox = new HBox()
+hbox.intercept(1)
+
+xpanel("Seperate BREATHING inputs generated for each of two mitral cells.")
+xbutton("tstop=breathing_period*((breathing_period)/abs(breathing_period-light_period))+100","{ adjust_tstop() tstop_changed() }")
+// what the formula does above is compute how long the simulation needs to run to allow the breathing period and light
+// period to completly overlap and then adds 100 ms for good measure.
+
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 ) // from standard run control window
+xlabel("Far above sets tstop. Below OSN breathing input gauss. params. for mc1, mc2")
+xlabel("The breath period in milliseconds (ms):")
+xvalue("breathing_period")
+xlabel("The number of ms from the start of a breath to the peak fr:")
+xvalue("breath_gauss_center")
+xlabel("The half width of the gaussian:")
+xvalue("breath_half_width")
+xlabel("max firing rate")
+xvalue("breath_peak_rate")
+xbutton("regenerate and save breath event trains","{ generate_breath_events() save_breath_events() }")
+//xbutton("load stimulation file into breath events","load_breath_events()") // These will read or save breath events in a
+//xbutton("save breath events as stimulation","save_breath_events()")        // reusable format in the stimulation folder
+xlabel("   -   -   -   -   -   -   -   -   -")
+
+xlabel("LIGHT input to both mitral cells")
+xlabel("Light input gaussian parameters for mitral cell 1 and 2:")
+xlabel("parameters are shared except for lightX_peak_rate")
+xlabel("The light period in milliseconds (ms):")
+xvalue("light_period")
+xlabel("ms from the start of a light period to the peak fr:")
+xvalue("light_gauss_center")
+xlabel("The half width of the gaussian:")
+xvalue("light_half_width")
+xlabel("max firing rates (0 is off)")
+xvalue("light1_peak_rate")
+xvalue("light2_peak_rate")
+xbutton("regenerate light input trains","{ generate_light_events() save_light_events() }")
+// xbutton("load stimulation file into light events","load_light_events()") // These will read or save breath events in a
+// xbutton("save light events as stimulation","save_light_events()")        // reusable format in the stimulation folder
+xbutton("Everything!: regenerate any missing input events/run sim/store","do_everything()")
+xpanel()
+global_weight=1
+
+//xvalue("prompt", "variable" [, boolean_deflt, "action" [, boolean_canrun, boolean_usepointer]])
+//xvalue("global_weight","global_weight",2,"readjust_weights()",1, 0)
+xpanel("Synapse weights")
+xlabel("Synapse weights")
+xvalue("global_weight")
+xbutton("readjust_weights()")
+xlabel("OSN1 (breath1)->m1:")
+xvalue("nc[0][0].weight")
+xlabel("OSN2 (breath2)->m2:")
+xvalue("nc[1][0].weight")
+
+// background stimulation panel
+xlabel("background1 and 2")
+xlabel("background input to mitral cell 1:")
+xvalue("background1[0].interval")
+xvalue("background1[0].start")
+xvalue("background1[0].number")
+xvalue("background1[0].noise")
+// assign some default values
+background1[0].interval=100 // mean synaptic period in ms 
+background1[0].start=25
+background1[0].number=0 // 1e9 // (forever)
+background1[0].noise=1   // completely noisy
+
+xlabel("background input to mitral cell 2:")
+xvalue("background2[0].interval")
+xvalue("background2[0].start")
+xvalue("background2[0].number")
+xvalue("background2[0].noise")
+// assign some default values
+background2[0].interval=100
+background2[0].start=25
+background2[0].number=0 // 1e9 // (forever)
+background2[0].noise=1   // completely noisy
+
+xlabel("Below graphs stimulation events and poisson")
+xlabel("Note: poisson rates not shown to scale")
+xbutton("red - breath, purple-light","{graph_poisson()}") // see graph_fncs.hoc for details
+xlabel("click below to save selected data or save tank")
+xbutton("save event and voltage data","write_selected_vecs()")
+xbutton("save simulation to tank","save_tank()")
+
+xpanel()
+xpanel("connections that involve gc cells")
+xlabel("m1 to gc:")
+xvalue("nc[2][0].weight")
+xlabel("gc1 back to m1:")
+xvalue("nc[3][0].weight")
+xlabel("m2 to gc1")
+xvalue("nc[4][0].weight")
+xlabel("gc1 back to m2")
+xvalue("nc[5][0].weight")
+xlabel("m1 to gc2")
+xvalue("nc[10][0].weight")
+xlabel("gc2 to m1")
+xvalue("nc[11][0].weight")
+xlabel("m2 to gc2")
+xvalue("nc[12][0].weight")
+xlabel("gc2 to m2")
+xvalue("nc[13][0].weight")
+xstatebutton("toggle gc cell connection", &gc_connection_state, "toggle_gc_connection()")
+
+xlabel(" ")
+xlabel(" - - - - - - - - ")
+xlabel(" ")
+xbutton("Set weights, etc. from 0th column to all columns","adjust_netcons_from_top()")
+xpanel()
+
+// pg cell panel
+
+xpanel("connections to/from pg cells")
+xlabel("  pg1  ")
+xlabel("background1(14), OSN1(15), and Light1(16) to pg1")
+xvalue("nc[14][0].weight")
+xvalue("nc[15][0].weight")
+xvalue("nc[16][0].weight")
+xlabel("recip syn m1 tuft->pg1(17),<-(18)")
+xvalue("nc[17][0].weight")
+xvalue("nc[18][0].weight")
+xlabel("pg1 axon->m2 priden")
+xvalue("nc[25][0].weight")
+xlabel("  pg2  ")
+
+// all the connections to periglom 2:
+// excited by background, OSN2, Light2, mitral cell 2
+// output inhibits mitral cell 2 with dendro-dendritic reciprocal synapse
+// and inhibits mitral cell 1 with axonal synapse
+
+xlabel("background2(20), OSN2(21), and Light2(22) to pg2")
+xvalue("nc[20][0].weight")
+xvalue("nc[21][0].weight")
+xvalue("nc[22][0].weight")
+xlabel("m2 tuft->pg2(23),<-(24)")
+xvalue("nc[23][0].weight")
+xvalue("nc[24][0].weight")
+xlabel("pg2 axon->m1 priden")
+xvalue("nc[19][0].weight")
+xstatebutton("toggle pg cell connection", &pg_connection_state, "toggle_pg_connection()")
+xpanel()
+
+/*
+// spacer so scroll bars are OK in other panels
+for i=1,10 {
+xlabel(" ")
+}
+*/
+
+hbox.intercept(0)
+hbox.map()
+
+/////////////////////////////////////////////////////
+//
+// Setup vector and event recording for graphing/analysis
+//
+/////////////////////////////////////////////////////
+objref t_vec, m1_v_vec, m2_v_vec
+
+t_vec = new Vector()
+m1_v_vec = new Vector()
+m2_v_vec = new Vector()
+
+t_vec.record(&t)
+m1_v_vec.record(&m1.soma.v(0.5))
+m2_v_vec.record(&m2.soma.v(0.5))
+
+// create vectors to record synaptic events of the inputs and between cells
+objref light1_events, light2_events[i]
+objref OSN1_events, OSN2_events[i], m1_events, m2_events[i], gc1_events1[i], gc1_events2[i]
+objref gc2_events1[i], gc2_events2[i] // from gc2 to mc1 and mc2 respectively
+
+OSN1_events = new Vector()
+m1_events = new Vector()
+light1_events = new Vector()
+for i=0, n-1 {
+  OSN2_events[i] = new Vector()
+  m2_events[i] = new Vector()
+  gc1_events1[i] = new Vector()
+  gc1_events2[i] = new Vector()
+
+  light2_events[i] = new Vector()
+
+  gc2_events1[i] = new Vector()
+  gc2_events2 [i]= new Vector()
+}
+nc[2][0].record(m1_events)
+nc[0][0].record(OSN1_events)
+nc[6][0].record(light1_events)
+for i=0, n-1 {
+  nc[1][i].record(OSN2_events[i])
+  nc[3][i].record(gc1_events1[i]) // source position gc_recip_pos1 on granule priden2[0]
+
+  nc[4][i].record(m2_events[i])
+  nc[5][i].record(gc1_events2[i]) // source position gc_recip_pos2 on granule priden2[0]
+  nc[7][i].record(light2_events[i]) //for these connects the events are recorded into vectors here
+
+  nc[11][i].record(gc2_events1[i])
+  nc[13][i].record(gc2_events2[i])
+}
+//  activate all the synapses
+proc readjust_weights() {
+  for i=0,nclist.count-1 {
+      nclist.o[i].weight=global_weight
+  }
+}
+
+readjust_weights()
+// test_nc.weight=global_weight
+// test_nc2.weight=global_weight
+
+proc adjust_netcons_from_top() {
+// procedure will set appropriate netcons[X][Y>0} from netcons[X][0]
+  for i=0, 25 {
+    if ((i!=0)&&(i!=6)&&(i!=8)) {
+      for j=0, n-1 {  //extend the values into all the columns from the first column
+        nc[i][j].weight = nc[i][0].weight
+        nc[i][j].threshold = nc[i][0].threshold
+        nc[i][j].delay = nc[i][0].delay
+      }
+    }
+  }
+}
+
+load_file("cells_volt_graphs.ses")
+load_file("run_cntrl.ses")
+load_file("graph_fncs.hoc")
+load_file("tdt2mat_data.hoc")
+toggle_gc_connection()
+load_file("parameters.hoc") // set parameters for a batch run of the job.  parameters.hoc can be generated from other code

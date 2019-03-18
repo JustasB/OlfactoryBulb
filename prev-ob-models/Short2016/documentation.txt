@@ -1,0 +1,29 @@
+These netcon's should/should not have the first row extended into the other rows (for multiple columns)
+nc:
+i	j	status
+0	0	not: OSN1 -> m1_osn_glut
+6	0	not: Light1 -> m1_osn_glut
+8	0	not: background_m1 -> m1_osn_glut
+1	X	should: OSN2[i] -> m2_osn_glut[i]
+7	X	should: Light2[i] -> m2_osn_glut[i]
+2	X	should: m1.secden.v -> gc1_m1_glut
+3	X	should: gc1[i].priden2.v -> m1_gc1_inhib[i]
+4	X	should: m2[i].secden.v -> gc1_m2__glut[i]
+5	X	should: gc1.priden2[0].v -> m2_gc1_inhib[i]
+10	X	should: m1.secden[0].v -> gc2_m1_glut[i]
+11	X	should: gc2[i].priden2[0].v -> m1_gc2_inhib[i]
+12	X
+13	X
+9	X
+14	X
+15	X
+16	X
+17	X
+18	X
+19	X
+20	X
+21	X
+22	X
+23	X
+24	X
+25	X

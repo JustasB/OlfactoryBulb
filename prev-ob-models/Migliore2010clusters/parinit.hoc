@@ -1,0 +1,36 @@
+setuptime = startsw()
+{load_file("nrngui.hoc")}
+{load_file("lptiter.hoc")}
+{load_file("net-5mt-100-900.hoc")}
+{load_file("stim-odors-AB-seq.hoc")}
+{load_file("perfrun.hoc")}
+{load_file("netparmpi.hoc")}
+//if (pc.nhost == 1) { pc.nthread(4) cvode.cache_efficient(1) }
+objref pnm
+pnm = new ParallelNetManager(0)
+{load_file("weightsave.hoc")}
+{want_all_spikes()}
+
+tstop = 60000
+
+objref fih_progress
+if (pc.id == 0) fih_progress = new FInitializeHandler(2, "cvode.event(100, \"progress()\")")
+proc progress() {
+	print t
+	cvode.event(t + 100, "progress()")
+}
+
+//weight_snapshots(filename, starttime, interval_between_snapshots)
+weight_snapshots("weight-forfig3-bulb1.dat", tstop-100, 1e9)
+//weight_initialize("weight-seq-A1-B2-d200.dat")
+
+setuptime = startsw() - setuptime
+if (pc.id == 0) printf("setuptime=%g\n", setuptime)
+runtime = startsw()
+prun(tstop)
+spike2file()
+if (pc.id == 0) printf("runtime=%g\n", runtime)
+{pc.runworker()}
+getstat()
+print_spike_stat_info()
+{pc.done() quit()}

@@ -1,0 +1,535 @@
+// par_mitral.tem
+// Template for four-compartment mitral cell model
+// as described in:
+//    Davison, AP, Feng J and Brown D (2000)
+//    A reduced compartmental model of the mitral cell
+//      for use in network models of the olfactory bulb. 
+//    Brain Research Bulletin 51(5): 393-399.
+// Andrew Davison, The Babraham Institute, 2000 (non-parallel version)
+// 1st parallel version by Migliore et al
+// par_mitral.tem; this parallel version by Malin Sandström (KTH, Sweden) for NEUROCHEM
+// Note: do NOT change the order in which synapses are appended to the synapse list ("synlist")
+
+begintemplate Mit
+	public soma, glom, prim, dend, ampa_glom, nmda_glom, gabaa_glom, gabaa_dend, nmda_dend, ampa_prim, nmda_prim// compartments and synapses
+	public spiketimes, spikecount
+	public netconlist_ext // for external spikes (substituting ORNs)
+	public connect2target, synlist, sectionlist, noise_netconlist, ampa_netconlist, nmda_netconlist
+	// public methods
+	public add_random_exc_spikes_to_glom, add_random_inh_spikes_to_glom
+	public add_random_exc_spikes_to_soma_with_seed, add_random_inh_spikes_to_soma_with_seed
+	public add_random_exc_spikes_to_glom_with_seed, add_random_inh_spikes_to_glom_with_seed
+	public add_netcon_to_ampa_glom, add_netcon_to_nmda_glom // required to simulate offline, i.e. without EPTH
+	public add_netcon_for_external_spikes
+	public set_gid, get_gid, record_v, print_v, record_glom_v, print_glom_v, record_dend_v, print_dend_v, record_prim_v, print_prim_v
+	public record_iampa_glom, record_inmda_glom, record_igaba_glom
+	public print_iampa_glom, print_inmda_glom, print_igaba_glom
+
+	external thresh
+/*    thresh = 10*/
+	create soma, glom, prim, dend, s2d, s2p, p2g
+	objref spikecount, spiketimes, synlist, sectionlist, ampa_glom, nmda_glom, gabaa_glom, gabaa_dend, nmda_dend, ampa_prim, nmda_prim
+	objref noise_netconlist, ampa_netconlist, nmda_netconlist
+	objref netconlist_ext
+	objref recv, rect, glom_v, dend_v, prim_v
+	objref reci_ampa_glom, reci_nmda_glom, reci_gaba_glom // for recording synaptic input current --> noise measurements
+	objref nc, nullobject // a netcon and a dummy source for the netcon which is connected to a synapse and then triggered by spikes from a file
+	objref ns_exc, ns_inh // netstim objects for external noise input
+	objref nil, src_netcons_glom, src_netcons_dend, src_netcons_prim
+	objref v_netstim_exc, v_netstim_inh
+	public src_netcons_glom, src_netcons_dend, src_netcons_prim
+
+	proc init() { local Len, Erest, RM, p, q, r, Atotal, gsp, gsd, gpg, AMPAtau, AMPArev, GABAAtau, GABAArev
+		create soma, glom, prim, dend, s2d, s2p, p2g
+
+		my_seed = $1
+		synlist = new List()
+		sectionlist = new List() //for making sections accessible from outside (v_init)
+		ampa_netconlist = new List()
+		nmda_netconlist = new List()
+		noise_netconlist = new List()
+		netconlist_ext = new List()
+		spiketimes = new Vector()
+		lastspikecount = 0
+        rect = new Vector()
+        recv = new Vector()
+        reci_ampa_glom = new Vector()
+        reci_nmda_glom = new Vector()
+        reci_gaba_glom = new Vector()
+
+		glom_v = new Vector()
+		dend_v = new Vector()
+		prim_v = new Vector()
+		src_netcons_glom = new List()
+		src_netcons_dend = new List()
+		src_netcons_prim = new List()
+		v_netstim_exc = new List()
+		v_netstim_inh = new List()
+
+		Len		= 100
+		RM		= 100000
+		Erest	= -65		// mV
+		Atotal	= 100000	// um2
+		gsp		= 5.47e-11	// S/cm2
+		gpg		= 5.86e-11
+		gsd		= 1.94e-10
+		RM		= 100000	// ohm.cm2
+		p		= 0.051
+		q		= 0.084
+		r		= 0.328
+		AMPAtau	= 10		//ms
+		AMPArev	= 0		//mV
+		GABAAtau	= 18		// from Sc&98
+		GABAArev	= -80
+
+    soma {
+		insert pas
+		insert nafast
+		insert kfasttab
+		insert kslowtab
+		insert kA
+		insert kca
+		insert lcafixed
+		insert cad
+		depth_cad 	= 8
+		L			= Len
+		diam 		= p*Atotal/(PI*Len)
+		Ra 		= PI*diam*diam/(4*Len*Atotal)
+		e_pas 		= Erest		// reversal potential mV
+		g_pas 		= 1/RM		// membrane conductance siemen-cm^-2
+		gnabar_nafast 	= 0.1532
+		gkbar_kfasttab 	= 0.1956
+		gkbar_kslowtab 	= 0.0028
+		gkbar_kA 		= 0.00587
+		gkbar_kca		= 0.0142
+		gcabar_lcafixed 	= 0.0040
+		spikecount = new APCount(0.5)
+		spikecount.thresh = thresh
+		spikecount.record(spiketimes)
+    }
+    glom {
+		insert pas
+		insert kslowtab
+		insert lcafixed
+		insert cad
+		L			= Len
+		diam 		= q*Atotal/(PI*Len)
+		Ra 		= PI*diam*diam/(4*Len*Atotal)
+		e_pas 		= Erest
+		g_pas		= 1/RM
+		gkbar_kslowtab	= 0.02
+		gcabar_lcafixed	= 0.0095
+		ampa_glom = new ExpSyn(0.5)
+		synlist.append(ampa_glom) // synlist[0]: ORN ---< MIT
+		ampa_glom.tau	= AMPAtau
+		ampa_glom.e		= AMPArev
+		nmda_glom = new NMDA(0.5) 
+/*        nmda_glom = new ExpSyn(0.5) */
+		synlist.append(nmda_glom) // synlist[1]: ORN ---< MIT
+/*        nmda_glom.tau = 200*/
+/*        nmda_glom.e = 0*/
+/*        nmda_glom.Alpha = */
+/*        nmda_glom.Beta = */
+		gabaa_glom = new ExpSyn(0.5) 	
+		synlist.append(gabaa_glom) // synlist[2]: PG ---o MIT
+		gabaa_glom.tau	= GABAAtau
+		gabaa_glom.e	= GABAArev
+
+		// create a netcon object for detecting threshold crossing
+		delay = 0
+		src_netcons_glom.append(new NetCon(&v(0.5), nil, -40, delay, 0))
+    }
+
+    dend {
+		insert pas
+		insert kfasttab
+		insert nafast
+		L			= Len
+		diam		= (1-p-q-r)*Atotal/(PI*Len)
+		Ra		= PI*diam*diam/(4*Len*Atotal)
+		e_pas		= Erest
+		g_pas		= 1/RM
+		gkbar_kfasttab	= 0.0330
+		gnabar_nafast	= 0.0226
+		gabaa_dend = new ExpSyn(0.5)
+		synlist.append(gabaa_dend) // synlist[3]: Gran ---o MIT
+		gabaa_dend.tau	= GABAAtau
+		gabaa_dend.e	= GABAArev
+
+		nmda_dend = new NMDA(0.5)
+		synlist.append(nmda_dend) // synlist[4]: Gran ---o MIT
+
+		// create a netcon object for detecting threshold crossing
+		delay = 0
+		src_netcons_dend.append(new NetCon(&v(0.5), nil, -40, delay, 0))
+    }
+
+    prim {
+		insert pas
+		insert nafast
+		insert kfasttab
+		insert kslowtab
+		insert lcafixed
+		insert cad
+		depth_cad	= 8
+		L			= Len
+		diam		= r*Atotal/(PI*Len)
+		Ra		= PI*diam*diam/(4*Len*Atotal)
+		e_pas		= Erest
+		g_pas		= 1/RM
+		gkbar_kfasttab	= 0.00123
+		gnabar_nafast	= 0.00134
+		gkbar_kslowtab	= 0.00174
+		gcabar_lcafixed	= 0.0022
+		ampa_prim = new ExpSyn(0.5)
+		synlist.append(ampa_prim) // synlist[5]: AMPA Autoreceptors
+		ampa_prim.tau	= AMPAtau
+		ampa_prim.e		= AMPArev
+		nmda_prim = new NMDA(0.5) 
+		synlist.append(nmda_prim) // synlist[6]: NMDA Autoreceptors
+		// create a netcon object for detecting threshold crossing
+		delay = 0
+		src_netcons_prim.append(new NetCon(&v(0.5), nil, -40, delay, 0))
+    }
+
+    s2d {
+		diam		= 1
+		Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsd )
+		L		= 1
+    }
+    s2p {
+		diam		= 1
+		Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsp )
+		L		= 1
+    }
+    p2g {
+		diam		= 1
+		Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gpg )
+		L		= 1
+    }
+    soma connect s2p(0),0
+    s2p connect prim(0),1
+    prim connect p2g(0),1
+    p2g connect glom(0),1
+    soma connect s2d(0),1
+    s2d connect dend(0),1
+
+    // set reversal potentials, etc.
+    forall if (ismembrane("ca_ion")) {
+		eca = 70		// mV 
+		cai = 0.00001	// mM 
+		cao = 2		// mM
+		ion_style("ca_ion",3,2,0,0,1)
+    }
+
+    forall if (ismembrane("na_ion")) {
+		ena = 45		// mV
+    }
+    forall if (ismembrane("k_ion")) {
+		ek  = -70		//  mV
+    }
+
+	forall { // sections
+		// iterate over all sections and append a reference of it to the sectionlist
+		// which makes them accessible to 
+		sectionlist.append(new SectionRef())
+	}
+
+  }	// end init()
+
+	proc add_netcon_to_ampa_glom() {local threshold, delay
+		threshold = 10
+		delay = 0
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight)
+		ampa_netconlist.append(nc)
+	}
+
+	proc add_netcon_to_nmda_glom() {local threshold, delay
+		threshold = 10
+		delay = 0
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(1), threshold, delay, weight)
+		nmda_netconlist.append(nc)
+	}
+
+	proc add_netcon_for_external_spikes() {local threshold, delay
+		threshold = 10
+		delay = 0
+		weight1 = $1
+		weight2 = $2
+		nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight1)
+		netconlist_ext.append(nc)
+		nc = new NetCon(nullobject, synlist.o(1), threshold, delay, weight2)
+		netconlist_ext.append(nc)
+	}
+
+/*    proc set_gid() {*/
+/*    // this function receives the gid assigned to the instance of the cell*/
+/*        gid = $1*/
+/*    }*/
+
+/*    func get_gid() {*/
+/*        return gid*/
+/*    }*/
+	proc connect2target() {
+		// This function is called by ParallelNetManager.register_cell(gid, new Orn())
+		// This function has to construct a NetCon object and return it in the second argument
+		// with the following syntax:
+		soma $o2 = new NetCon(&v(0.5), $o1)
+		// the first argument of NetCon is the source cell (the cell which is being registered)
+		// the second argument of NetCon is the first argument of connect2target and
+		// represents the synapse object
+		$o2.threshold = thresh
+	}
+
+    proc record_v() {
+        recv.record(&soma.v(0.5))
+        rect.record(&t)
+    }
+
+    proc record_glom_v() {
+        glom_v.record(&glom.v(0.5))
+        rect.record(&t)
+    }
+
+    proc record_dend_v() {
+        dend_v.record(&dend.v(0.5))
+        rect.record(&t)
+    }
+
+    proc record_prim_v() {
+        prim_v.record(&prim.v(0.5))
+        rect.record(&t)
+    }
+
+    proc record_iampa_glom() {
+        reci_ampa_glom.record(&ampa_glom.i)
+        rect.record(&t)
+    }
+
+    proc record_inmda_glom() {
+        reci_nmda_glom.record(&nmda_glom.i)
+        rect.record(&t)
+    }
+
+    proc record_igaba_glom() {
+        reci_gaba_glom.record(&gabaa_glom.i)
+        rect.record(&t)
+    }
+
+
+
+    proc print_v() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(recv.size(), 1)
+        m.setcol(0, recv)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_glom_v() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(glom_v.size(), 1)
+        m.setcol(0, glom_v)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_dend_v() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(dend_v.size(), 1)
+        m.setcol(0, dend_v)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_prim_v() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(prim_v.size(), 1)
+        m.setcol(0, prim_v)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+	proc add_random_exc_spikes_to_glom (){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = thresh
+		delay = 0
+		w_exc = $1
+		ns_exc = new NetStim(0.5)
+		ns_exc.interval = (1. / $2) * 1000.
+		ns_exc.number = $2 * (($3-start) / 1000.)
+		ns_exc.noise = 1.0
+		ns_exc.start = start
+		ns_exc.seed(my_seed)
+/*        nc = new NetCon(ns_exc, synlist.o(0), threshold, delay, w_exc)*/
+		nc = new NetCon(ns_exc, ampa_glom, threshold, delay, w_exc)
+		noise_netconlist.append(nc) // netconlist[0]
+	}
+
+    proc print_iampa_glom() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_ampa_glom.size(), 1)
+        m.setcol(0, reci_ampa_glom)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_inmda_glom() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_nmda_glom.size(), 1)
+        m.setcol(0, reci_nmda_glom)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_igaba_glom() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_gaba_glom.size(), 1)
+        m.setcol(0, reci_gaba_glom)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+
+	proc add_random_inh_spikes_to_glom(){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = thresh
+		delay = 0
+		w_inh = $1
+		start = 0
+		ns_inh = new NetStim(0.5)
+		ns_inh.interval = (1. / $2) * 1000.
+		ns_inh.number = $2 * (($3-start) / 1000.)
+		ns_inh.noise = 1.0
+		ns_inh.start = start
+		ns_inh.seed(my_seed+1)
+/*        nc = new NetCon(ns_inh, synlist.o(2), threshold, delay, w_inh)*/
+		nc = new NetCon(ns_inh, gabaa_glom, threshold, delay, w_inh)
+		noise_netconlist.append(nc) // nectonlist[1]
+	}
+
+	proc add_random_exc_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		noise_netconlist.append(new NetCon(ns, synlist.o(0), threshold, delay, w_exc))
+		noise_netconlist.append(new NetCon(ns, synlist.o(1), threshold, delay, w_exc))
+		v_netstim_exc.append(ns)
+	}
+
+	proc add_random_inh_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc = new NetCon(ns, synlist.o(2), threshold, delay, w_exc)
+		v_netstim_inh.append(ns)
+		noise_netconlist.append(nc)
+	}
+
+	proc add_random_exc_spikes_to_glom_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		glom ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		noise_netconlist.append(new NetCon(ns, synlist.o(0), threshold, delay, w_exc))
+		v_netstim_exc.append(ns)
+	}
+
+	proc add_random_inh_spikes_to_glom_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		glom ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc = new NetCon(ns, synlist.o(2), threshold, delay, w_exc)
+		v_netstim_inh.append(ns)
+		noise_netconlist.append(nc)
+	}
+
+
+
+endtemplate Mit

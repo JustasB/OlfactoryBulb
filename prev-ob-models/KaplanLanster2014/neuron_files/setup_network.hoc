@@ -1,0 +1,4529 @@
+//////////////////////////////////////////////////////////////////////////////
+//	Network setup for epithelium, bulb and cortex
+//	----------------------------------------
+//	Author: bkaplan@kth.se
+//  File: setup_network.hoc
+//  start editing: 2010 Sept 9
+//////////////////////////////////////////////////////////////////////////////
+
+/*load_file("network_parameters.hoc")	// includes parameters defining the network model (ncells, connectivity, ...)*/
+/*load_file("sim*/
+// include the cell templates
+load_file("mitral.tem")
+load_file("periglomerular.tem")
+load_file("orn.tem")
+load_file("granule.tem")
+load_file("pyr_rs.tem")
+load_file("pyr_rs_no_bias.tem")
+load_file("pyr_lts.tem")
+load_file("pyr_lts_no_bias.tem")
+load_file("basket.tem")
+load_file("rsnp.tem")
+load_file("readout_cell.tem")
+load_file("readout_spiking.tem")
+load_file("readout_spiking_no_bias.tem")
+load_file("MyRandomStream.hoc")
+load_file("orn_sniffing.tem")
+
+// file names for cell parameters
+strdef orn_params_file
+sprint(orn_params_file, "%s%d.dat", orn_params_fn_base, pattern_nr)
+strdef mit_params_file
+sprint(mit_params_file, "%s%d.dat", mit_params_fn_base, pattern_nr)
+/*strdef pyr_params_file*/
+/*sprint(pyr_params_file, "%s%d.dat", pyr_params_fn_base, pattern_nr)*/
+
+// declare data structures representing cell matrices
+// cell ids are stored in matrices
+/*double mit_gid[n_mit_x][n_mit_y]	// n_mit_x : number of mitral cells per glomerulus*/
+/*                                    // n_mit_y : number of glomeruli*/
+/*double orn_gid[n_orn_x][n_orn_y]	// n_orn_x : number of orns expressing one olfactory receptor*/
+/*                                    // n_orn_y : number of different receptor families (each having a different affinity to an odour)*/
+/*                                    // 			 forming synapses in different glomeruli*/
+/*double pyr_gid[n_hc][n_mc][n_pyr_per_mc]*/
+/*double pg_gid[n_pg_x][n_pg_y]*/
+/*double gran_gid[n_gran_x][n_gran_y]*/
+/*double pyr_gid[n_pyr]*/
+
+
+// list of gids assigned to the current process are stored in vectors
+objref fih_noise_orn, fih_noise_pyr, fih_noise_basket, fih_stim_pyr, fih_stim_basket
+objref fih_spikes_from_epth_to_mit
+objref fih_spikes_from_epth_to_pg
+objref fih_spikes_from_oc_to_readout
+objref fih_spikes_from_mit_to_pyr
+objref fih_spikes_from_mit_to_rsnp
+objref fih_spikes	// initialization handler for putting spikes into a NetCons event queue
+objref fih_v		// init handler for setting initial membrane voltages
+objref id_vec
+objref nil // NULLobject
+objref ddi_nc // NetCon for dendro-dendritic inhibition
+objref ddi_netcons
+objref auto_rec_nc// NetCon for autoreceptors
+objref auto_rec_nc_dend// NetCon for autoreceptors
+objref auto_recs // NetCon for autoreceptors
+objref rnd_int // random number generator for integers
+objref rnd_testcells // random number generator for test cells (creates same 'random' ints in each run)
+objref testcells_gids
+objref volt_vec	// for recording voltages 'outside' the cell with coarser temporal resolution
+objref mit_pyr_connlist_w // list of lists storing the weights going out of each mitral cell
+objref mit_pyr_connlist_tgt // list of lists storing the target gids for each mitral cell
+objref mit_rsnp_connlist_w // list of lists storing the weights going out of each mitral cell
+objref mit_rsnp_connlist_tgt // list of lists storing the target gids for each mitral cell
+objref mit_spikes // list of lists storing the target gids for each mitral cell
+testcells_gids = new Vector()
+objref rnd_volt // random number generator for setting the initial voltages randomly
+objref orn_gid_vec, mit_gid_vec, gran_gid_vec, pg_gid_vec, pyr_gid_vec, basket_gid_vec, rsnp_gid_vec, readout_gid_vec
+id_vec = new Vector() // keeps track that the same global id is assigned to different cells
+orn_gid_vec = new Vector()
+mit_gid_vec = new Vector()
+pyr_gid_vec = new Vector()
+basket_gid_vec = new Vector()
+rsnp_gid_vec = new Vector()
+readout_gid_vec = new Vector()
+gran_gid_vec = new Vector()
+pg_gid_vec = new Vector()
+ddi_netcons = new List()
+auto_recs = new List()
+mit_pyr_connlist_w = new List()
+mit_pyr_connlist_tgt = new List()
+mit_rsnp_connlist_w = new List()
+mit_rsnp_connlist_tgt = new List()
+mit_spikes = new List()
+
+
+// arrays of vectors for recording membrane voltages
+/*objref volt_pg[n_pg]*/
+objref t_vector	// time_axis
+
+// parameter containers
+double v_orn_gor[n_orn]
+double v_orn_oor[n_orn]
+double v_orn_cKd[n_orn]
+double v_orn_gka_cag[n_orn]
+double v_orn_gka_hh[n_orn]
+double v_orn_gna_hh[n_orn]
+double v_orn_gca_l[n_orn]
+double v_orn_gleak[n_orn]
+double v_orn_tau_cadec[n_orn]
+double v_mit_gor[n_mit]
+double v_mit_oor[n_mit]
+double v_mit_cKd[n_mit]
+double w_mit_exc[n_mit]
+double w_mit_inh[n_mit]
+double v_pyr_gka[n_pyr]
+double v_readout_gka[n_readout]
+
+
+
+
+proc init_orn_noise() { local gid localobj cell
+	print "init_orn_noise"
+	// ORN
+    for (gid = global_offset; gid < n_orn + global_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_exc_connection_to_soma(w_exc_noise_orn)
+			cell.add_inh_connection_to_soma(w_inh_noise_orn)
+		}
+	}
+	fih_noise_orn = new FInitializeHandler("setup_noise_orn()") // draws events according to a Poisson distribution
+}
+
+proc init_artificial_orns() { local gid localobj cell
+
+	printf("DEBUG init_artificial_orns()\n")
+
+		// this is done already in create_cell_ob_only
+/*    add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_mit)*/
+/*    add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_pg)*/
+/*    fih_spikes_from_epth_to_mit = new FInitializeHandler(0, "insert_artificial_orn_spikes_to_mit_and_pg()")*/
+
+}
+
+
+proc init_spikes() {
+	print "INIT SPIKES"
+	// in add connections synapses are created to the soma of the cells
+	add_connections_to_soma() // adds synapses for noise insertion with the respective weight
+/*    fih_noise_orn = new FInitializeHandler("setup_noise_orn()") // draws events according to a Poisson distribution*/
+	fih_noise_pyr = new FInitializeHandler("setup_noise_pyr()") // reads in the noise files
+	fih_noise_basket = new FInitializeHandler("setup_noise_basket()")
+/*    if ((f_stim_pyr > 0) && (dur_stim_pyr > 0)) {*/
+/*        fih_stim_pyr = new FInitializeHandler("setup_stim_pyr()")*/
+/*    }*/
+	// basket cells should not get stimulus specific input [Ref, Poo & Isaacson 2009]
+/*    if ((f_stim_basket > 0) && (dur_stim_basket > 0)) {*/
+/*        fih_stim_basket = new FInitializeHandler("setup_stim_basket()")*/
+/*    }*/
+/*    fih_v = new FInitializeHandler(0, "init_voltages()")*/
+}
+
+double rnd_numbers[n_cells]
+proc init_voltages() {local i localobj cell
+	rnd_volt.normal(0, v_init_sigma)
+	// initialize rnd_numbers, the same for all runs (with or without orns), so that initial voltage is the same
+	for (i = 0; i < n_cells; i+= 1) {
+		rnd_numbers[i] = rnd_volt.repick()
+	}
+	for (i = orn_offset; i < mit_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -70 + rnd_numbers[i]
+		}
+	}
+	for (i = mit_offset; i < gran_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+/*            printf("debug, v_init for cell %d\n", %i)*/
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -65.4 + rnd_numbers[i]
+			cell.glom.v = -65.4 + rnd_numbers[i]
+			cell.prim.v = -65.4 + rnd_numbers[i]
+			cell.dend.v = -65.4 + rnd_numbers[i]
+		}
+	}
+
+	for (i = gran_offset; i < pg_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -65.2 + rnd_numbers[i]
+			cell.periph.v = -65.2 + rnd_numbers[i]
+			cell.deep.v = -65.2 + rnd_numbers[i]
+		}
+	}
+
+	for (i = pg_offset; i < pyr_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -65.2 + rnd_numbers[i]
+			cell.periph.v = -65.2 + rnd_numbers[i]
+			cell.deep.v = -65.2 + rnd_numbers[i]
+		}
+	}
+
+	for (i = pyr_offset; i < basket_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -70 + rnd_numbers[i]
+		}
+	}
+	for (i = basket_offset; i < rsnp_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -70 + rnd_numbers[i]
+		}
+	}
+	for (i = rsnp_offset; i < readout_offset; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -70 + rnd_numbers[i]
+		}
+	}
+	for (i = readout_offset; i < n_cells; i += 1) {
+		if (pnm.gid_exists(i)){
+			cell = pnm.pc.gid2cell(i)
+			cell.soma.v = -70 + rnd_numbers[i]
+		}
+	}
+}
+
+
+proc setup_noise_orn() {local i, gid, nrow, ncol, tdeliver localobj read_data, mat, cell, rnd
+	// Create a Poisson distribution and insert spike events to the 
+	// ORNs netcon event list
+	// dt_mean = mean interval between two spikes, gained from a negative exponential distribution
+	// time of an input spike
+    print "Setup_noise_orn"
+	print "Reading exc spikes from file ", noise_orn_exc_f
+	read_data = new File()
+	read_data.ropen(noise_orn_exc_f)
+	mat = new Matrix()      // the data to be read
+	mat.scanf(read_data)    // read spike data from file
+	nrow = mat.nrow()		// n_spikes
+	ncol = mat.ncol()		// id
+	for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.netconlist.o(0).event(mat.x[i][0]) //put it into netconlist
+		}
+	}
+
+	print "Reading inh spikes from file ", noise_orn_inh_f
+	read_data = new File()
+	read_data.ropen(noise_orn_inh_f)
+	mat = new Matrix()      // the data to be read
+	mat.scanf(read_data)    // read spike data from file
+	nrow = mat.nrow()		// n_spikes
+	ncol = mat.ncol()		// id
+	for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.netconlist.o(1).event(mat.x[i][0]) //put it into netconlist
+		}
+	}
+}
+
+proc setup_noise_pyr() {local i, nrow, ncol localobj read_data, mat, cell
+    print "Reading spikes from file ", noise_input_pyr_f
+    read_data = new File()
+    read_data.ropen(noise_input_pyr_f)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()		// id
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+/*            printf("DEBUG insert noise spike at: %f into cell %d \n", mat.x[i][0], gid)*/
+			cell.netconlist.o(0).event(mat.x[i][0]) //put it into netconlist
+		}
+    }
+}
+
+proc setup_noise_basket() {local i, nrow, ncol localobj read_data, mat, cell
+    print "Reading spikes from file ", noise_input_basket_f 
+    read_data = new File()
+    read_data.ropen(noise_input_basket_f)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()		// id
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.netconlist.o(0).event(mat.x[i][0]) //put it into netconlist
+		}
+    }
+}
+
+proc distribute_orn_gids() { 
+	distribute_orn()
+}
+
+proc distribute_ob_gids() { 
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+}
+
+
+//
+proc distribute_gids_without_oc() { 
+	distribute_orn()
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+}
+
+proc distribute_gids_ob_only(){
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+}
+
+proc distribute_gids_with_oc() { 
+	distribute_orn()
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+	distribute_pyr()
+	distribute_basket()
+	distribute_rsnp()
+	distribute_readout()
+}
+
+proc distribute_all_cells() {
+	distribute_orn()
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+	distribute_pyr()
+	distribute_basket()
+	distribute_rsnp()
+	distribute_readout()
+}
+
+proc distribute_gids_ob_oc() {
+	distribute_mit()
+	distribute_gran()
+	distribute_pg()
+	distribute_pyr()
+	distribute_basket()
+	distribute_rsnp()
+	distribute_readout()
+}
+
+proc distribute_gids_oc_only() {
+	distribute_pyr()
+	distribute_basket()
+	distribute_rsnp()
+	distribute_readout()
+}
+
+
+proc distribute_orn(){local gid, gid_offset, limit_min, limit_max, p, x, y
+	p = pnm.pc.id()
+	// EPITHELIUM LAYER: ORNs
+	gid_offset = global_offset + orn_offset
+	n_orn_y_p = n_orn_y / n_proc //num_rows in ORN array belonging to each process
+	y_limit_max = (p + 1) * n_orn_y_p
+	y_limit_min = p * n_orn_y_p
+/*    printf("debug n_orn_y_p %f ylimitmax %f ylimitmin%f \n", n_orn_y_p, y_limit_max, y_limit_min)*/
+	if ((n_orn_y_p % n_proc) != 0) {
+		printf("Number of processes does not divide the number of ORN evenly!\n")
+		printf("n_orn_y_p mod n_proc = %d n_proc %d \t n_orn_y %d\n", (n_orn_y_p % n_proc), n_proc, n_orn_y_p )
+		printf("Will distribute them equally\n")
+		distribute_orn_equally()
+		return
+	}
+
+	for (y = 0; y < n_orn_y; y += 1) { // y = glomerulus = n_mit_y
+		for (x = 0; x < n_orn_x; x += 1) { // column iteration
+			//calculate gid
+			gid = x + y * n_orn_x + gid_offset
+			if (id_vec.indwhere("==", gid) != -1) {
+				printf("ERROR: gid for orn: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+				quit()
+			}
+/*            debug_file.printf("%d\t%d\n", gid-gid_offset, gid)*/
+			// now decide whether this gid should be assigned to the process
+			if ( (id_vec.indwhere("==", gid) == -1) && (y < y_limit_max) && (y >= y_limit_min)) {
+/*                orn_gid[x][y] = gid*/
+/*                printf("Assigning orn %d from glomerulus %d with gid %d to process %d\n", x, y, gid, p)*/
+				pnm.set_gid2node(gid, p)
+				orn_gid_vec.append(gid)
+				id_vec.append(gid)
+			}
+		}
+	}
+}
+
+proc distribute_orn_equally(){ local gid, gid_offset, offset, limit_min, limit_max, n_orn_p, i, R, p
+	p = pnm.pc.id()
+	gid_offset = orn_offset + global_offset
+	n_orn_p = int(n_orn / n_proc)
+	R = n_orn % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_orn_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_orn_p + 1)
+	} else { 
+		limit_max = int(limit_min + n_orn_p)
+	}
+	for (i = 0; i < n_orn; i += 1) {
+		//calculate gid
+		gid = i + gid_offset
+		if (id_vec.indwhere("==", gid) != -1) {
+			printf("ERROR: gid for orn: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+			quit()
+		}
+		// now decide whether this gid should be assigned to the process
+		if ( (id_vec.indwhere("==", gid) == -1) && (i < limit_max) && (i >= limit_min)) {
+/*                    printf("Assigning cell %d with gid %d to process %d\n", i , gid, p)*/
+			pnm.set_gid2node(gid, p)
+			orn_gid_vec.append(gid)
+			id_vec.append(gid)
+		}
+	}
+}
+
+
+proc distribute_mit(){local gid, gid_offset, p, x, y
+	if (n_mit % n_proc) {
+		printf("Number of processes does not divide the number of glom evenly!\n")
+		printf("n_proc %d \t n_glom %d\n", n_proc, n_glom)
+		printf("Will distribute them equally\n")
+		distribute_mit_equally()
+		return
+	}
+	p = pnm.pc.id()
+	// BULBAR LAYER: MITRAL CELLS
+	gid_offset = mit_offset
+	n_mit_y_p = n_mit_y / n_proc //num rows in MIT array belonging to each process
+	y_limit_max = (p + 1) * n_mit_y_p
+	y_limit_min = p * n_mit_y_p
+	for (y = 0; y < n_mit_y; y += 1) { // y = glomerulus = n_mit_y (or concentration - depending on the "test" parameter)
+		for (x = 0; x < n_mit_x; x += 1) { // column iteration
+			//calculate gid
+			gid = x + y * n_mit_x + gid_offset
+			if (id_vec.indwhere("==", gid) != -1) {
+				printf("ERROR: gid for mit: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+				quit()
+			}
+			// now decide whether this gid should be assigned to the process
+			if ( (id_vec.indwhere("==", gid) == -1) && (y < y_limit_max) && (y >= y_limit_min)) {
+/*                printf("Assigning netcons %d %d mit %d from glomerulus %d with gid %d to process %d\n", gid + n_cells, gid + 2 * n_cells, x, y, gid, p)*/
+/*                printf("Assigning mit with gid %d from glomerulus %d to process %d\n", gid, y, p)*/
+				pnm.set_gid2node(gid, p)
+				mit_gid_vec.append(gid)
+				id_vec.append(gid)
+
+				// gids for additional NetCon objects for DDI
+				pnm.set_gid2node(gid + n_cells, p)
+				pnm.set_gid2node(gid + 2 * n_cells, p)
+				pnm.set_gid2node(gid + 3 * n_cells, p)
+				id_vec.append(gid + n_cells)
+				id_vec.append(gid + 2 * n_cells)
+				id_vec.append(gid + 3 * n_cells)
+			}
+		}
+	}
+}
+
+proc distribute_mit_equally(){ local gid, gid_offset, offset, limit_min, limit_max, n_mit_p, i, R, p
+	p = pnm.pc.id()
+	// CORTICAL LAYER: mitAMIDAL CELLS
+	gid_offset = mit_offset + global_offset
+	n_mit_p = int(n_mit / n_proc)
+	R = n_mit % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_mit_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_mit_p + 1)
+	} else { 
+		limit_max = int(limit_min + n_mit_p)
+	}
+	for (i = 0; i < n_mit; i += 1) {
+		//calculate gid
+		gid = i + gid_offset
+		if (id_vec.indwhere("==", gid) != -1) {
+			printf("ERROR: gid for mit: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+			quit()
+		}
+		// now decide whether this gid should be assigned to the process
+		if ( (id_vec.indwhere("==", gid) == -1) && (i < limit_max) && (i >= limit_min)) {
+/*            printf("Assigning cell %d with gid %d to process %d\n", i , gid, p)*/
+			pnm.set_gid2node(gid, p)
+			mit_gid_vec.append(gid)
+			id_vec.append(gid)
+
+			// gids for additional NetCon objects for DDI
+			pnm.set_gid2node(gid + n_cells, p) 		// for netcon in glom
+			pnm.set_gid2node(gid + 2 * n_cells, p) 	// for netcon in dend
+			pnm.set_gid2node(gid + 3 * n_cells, p) 	// for netcon in prim
+			id_vec.append(gid + n_cells)
+			id_vec.append(gid + 2 * n_cells)
+			id_vec.append(gid + 3 * n_cells)
+		}
+	}
+}
+
+proc distribute_gran(){local gid, gid_offset, p, x, y
+	if (n_gran % n_proc) {
+		printf("Number of processes does not divide the number of glom evenly!\n")
+		printf("n_proc %d \t n_glom %d\n", n_proc, n_glom)
+		printf("Will distribute them equally\n")
+		distribute_gran_equally()
+		return
+	}
+	p = pnm.pc.id()
+	// BULBAR LAYER: granRAL CELLS
+	gid_offset = gran_offset + global_offset
+	n_gran_y_p = n_gran_y / n_proc //num rows in gran array belonging to each process
+	y_limit_max = (p + 1) * n_gran_y_p
+	y_limit_min = p * n_gran_y_p
+	for (y = 0; y < n_gran_y; y += 1) { // y = glomerulus = n_gran_y
+		for (x = 0; x < n_gran_x; x += 1) { // column iteration
+			//calculate gid
+			gid = x + y * n_gran_x + gid_offset
+			if (id_vec.indwhere("==", gid) != -1) {
+				printf("ERROR: gid for gran: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+				quit()
+			}
+			// now decide whether this gid should be assigned to the process
+			if ( (id_vec.indwhere("==", gid) == -1) && (y < y_limit_max) && (y >= y_limit_min)) {
+/*                printf("Assigning gran %d from glomerulus %d with gid %d to process %d\n", x, y, gid, p)*/
+				pnm.set_gid2node(gid, p)
+				gran_gid_vec.append(gid)
+				id_vec.append(gid)
+
+				// gids for additional NetCon objects for DDI
+				pnm.set_gid2node(gid + n_cells, p)
+				id_vec.append(gid + n_cells)
+			}
+		}
+	}
+}
+
+proc distribute_gran_equally(){ local gid, gid_offset, offset, limit_min, limit_max, n_gran_p, i, R, p
+	p = pnm.pc.id()
+	// CORTICAL LAYER: granAMIDAL CELLS
+	gid_offset = gran_offset + global_offset
+	n_gran_p = int(n_gran / n_proc)
+	R = n_gran % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_gran_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_gran_p + 1)
+	} else { 
+		limit_max = int(limit_min + n_gran_p)
+	}
+	for (i = 0; i < n_gran; i += 1) {
+		//calculate gid
+		gid = i + gid_offset
+		if (id_vec.indwhere("==", gid) != -1) {
+			printf("ERROR: gid for gran: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+			quit()
+		}
+		// now decide whether this gid should be assigned to the process
+		if ( (id_vec.indwhere("==", gid) == -1) && (i < limit_max) && (i >= limit_min)) {
+/*            printf("Assigning gran %d with gid %d and netcon %d to process %d\n", i , gid, gid + n_cells, p)*/
+			pnm.set_gid2node(gid, p)
+			gran_gid_vec.append(gid)
+			id_vec.append(gid)
+
+			// gids for additional NetCon objects for DDI
+			pnm.set_gid2node(gid + n_cells, p)
+			id_vec.append(gid + n_cells)
+		}
+	}
+}
+
+
+
+proc distribute_pg(){local gid, gid_offset, p, x, y
+	if (n_pg % n_proc) {
+		printf("Number of processes does not divide the number of glom evenly!\n")
+		printf("n_proc %d \t n_glom %d\n", n_proc, n_glom)
+		printf("Will distribute them equally\n")
+		distribute_pg_equally()
+		return
+	}
+	p = pnm.pc.id()
+	// BULBAR LAYER: pgRAL CELLS
+	gid_offset = pg_offset + global_offset
+	n_pg_y_p = n_pg_y / n_proc //num rows in pg array belonging to each process
+	y_limit_max = (p + 1) * n_pg_y_p
+	y_limit_min = p * n_pg_y_p
+	for (y = 0; y < n_pg_y; y += 1) { // y = glomerulus = n_pg_y
+		for (x = 0; x < n_pg_x; x += 1) { // column iteration
+			//calculate gid
+			gid = x + y * n_pg_x + gid_offset
+			if (id_vec.indwhere("==", gid) != -1) {
+				printf("ERROR: gid for pg: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+				quit()
+			}
+			// now decide whether this gid should be assigned to the process
+			if ( (id_vec.indwhere("==", gid) == -1) && (y < y_limit_max) && (y >= y_limit_min)) {
+/*                printf("Assigning pg %d from glomerulus %d with gid %d to process %d\n", x, y, gid, p)*/
+				pnm.set_gid2node(gid, p)
+				pg_gid_vec.append(gid)
+				id_vec.append(gid)
+
+				// gids for additional NetCon objects for DDI
+				pnm.set_gid2node(gid + n_cells, p)
+				id_vec.append(gid + n_cells)
+			}
+		}
+	}
+}
+
+proc distribute_pg_equally(){ local gid, gid_offset, offset, limit_min, limit_max, n_pg_p, i, R, p
+	p = pnm.pc.id()
+	// CORTICAL LAYER: pgAMIDAL CELLS
+	gid_offset = pg_offset + global_offset
+	n_pg_p = int(n_pg / n_proc)
+	R = n_pg % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_pg_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_pg_p + 1)
+	} else { 
+		limit_max = int(limit_min + n_pg_p)
+	}
+	for (i = 0; i < n_pg; i += 1) {
+		//calculate gid
+		gid = i + gid_offset
+		if (id_vec.indwhere("==", gid) != -1) {
+			printf("ERROR: gid for pg: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+			quit()
+		}
+		// now decide whether this gid should be assigned to the process
+		if ( (id_vec.indwhere("==", gid) == -1) && (i < limit_max) && (i >= limit_min)) {
+/*            printf("Assigning cell %d with gid %d to process %d\n", i , gid, p)*/
+			pnm.set_gid2node(gid, p)
+			pg_gid_vec.append(gid)
+			id_vec.append(gid)
+
+			// gids for additional NetCon objects for DDI
+			pnm.set_gid2node(gid + n_cells, p)
+			id_vec.append(gid + n_cells)
+		}
+	}
+}
+
+
+
+
+proc distribute_pyr(){ local gid, gid_offset, offset, limit_min, limit_max, \
+	n_pyr_p, hc, mc, i, pyr_cnt, R, p
+
+	p = pnm.pc.id()
+	// CORTICAL LAYER: PYRAMIDAL CELLS
+	gid_offset = pyr_offset
+	n_pyr_p = int(n_pyr / n_proc)
+	R = n_pyr % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_pyr_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_pyr_p + 1)
+	} else { 
+		limit_max = int(limit_min + n_pyr_p)
+	}
+	for (hc = 0; hc < n_hc ; hc += 1) { // hypercolumn
+		for (mc = 0; mc < n_mc; mc += 1) { // minicolumn
+			for (i= 0; i < n_pyr_per_mc; i += 1) { // cells in minicolumn
+				//calculate gid
+				gid = hc * n_mc * n_pyr_per_mc + mc * n_pyr_per_mc + i + gid_offset
+				pyr_cnt = gid - gid_offset // must be within limit_min and limit_max
+				if (id_vec.indwhere("==", gid) != -1) {
+					printf("ERROR: gid for pyr: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+					quit()
+				}
+				// now decide whether this gid should be assigned to the process
+				if ( (id_vec.indwhere("==", gid) == -1) && (pyr_cnt < limit_max) && (pyr_cnt >= limit_min)) {
+/*                    printf("Assigning pyr %d with gid %d to process %d\n", pyr_cnt, gid, p)*/
+					pnm.set_gid2node(gid, p)
+					pyr_gid_vec.append(gid)
+					id_vec.append(gid)
+				} 
+			}
+		}
+	}
+}
+
+proc distribute_rsnp(){ local gid, gid_offset, offset, limit_min, limit_max, \
+	n_rsnp_p, hc, i, rsnp_cnt, R, p
+
+	p = pnm.pc.id()
+	// CORTICAL LAYER: RSNP CELLS
+	gid_offset = rsnp_offset
+	n_rsnp_p = int(n_rsnp / n_proc)
+	R = n_rsnp % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_rsnp_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_rsnp_p + 1)
+	} else {
+		limit_max = int(limit_min + n_rsnp_p)
+	}
+
+	for (hc = 0; hc < n_hc ; hc += 1) { // hypercolumn
+		for (mc = 0; mc < n_mc; mc += 1) { // minicolumn
+			for (i= 0; i < n_rsnp_per_mc; i += 1) { // cells in minicolumn
+				//calculate gid
+				gid = hc * n_mc * n_rsnp_per_mc + mc * n_rsnp_per_mc + i + gid_offset
+				rsnp_cnt = gid - gid_offset
+				if (id_vec.indwhere("==", gid) != -1) {
+					printf("ERROR: gid for rsnp: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+					quit()
+				}
+				// now decide whether this gid should be assigned to the process
+				if ( (id_vec.indwhere("==", gid) == -1) && (rsnp_cnt < limit_max) && (rsnp_cnt >= limit_min)) {
+/*                    printf("Assigning rsnp %d with gid %d to process %d\n", rsnp_cnt, gid, p)*/
+					pnm.set_gid2node(gid, p)
+					rsnp_gid_vec.append(gid)
+					id_vec.append(gid)
+				} 
+			}
+		}
+	}
+}
+
+
+proc distribute_basket(){ local gid, gid_offset, offset, limit_min, limit_max, \
+	n_basket_p, hc, i, basket_cnt, R, p
+
+	p = pnm.pc.id()
+	// CORTICAL LAYER: BASKET CELLS
+	gid_offset = basket_offset
+	n_basket_p = int(n_basket / n_proc)
+	R = n_basket % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_basket_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_basket_p + 1)
+	} else {
+		limit_max = int(limit_min + n_basket_p)
+	}
+	for (hc = 0; hc < n_hc ; hc += 1) { // hypercolumn
+		for (i= 0; i < n_basket_per_hc; i += 1) { // cells in minicolumn
+			//calculate gid
+			gid = hc * n_basket_per_hc + i + gid_offset
+			basket_cnt = gid - gid_offset
+			if (id_vec.indwhere("==", gid) != -1) {
+				printf("ERROR: gid for basket: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+				quit()
+			}
+			// now decide whether this gid should be assigned to the process
+			if ( (id_vec.indwhere("==", gid) == -1) && (basket_cnt < limit_max) && (basket_cnt >= limit_min)) {
+				pnm.set_gid2node(gid, p)
+				basket_gid_vec.append(gid)
+				id_vec.append(gid)
+			}
+		}
+	}
+}
+
+proc distribute_readout(){ local gid, gid_offset, offset, limit_min, limit_max, \
+	n_readout_p, hc, i, readout_cnt, R, p
+	p = pnm.pc.id()
+	gid_offset = readout_offset
+	n_readout_p = int(n_readout / n_proc)
+	R = n_readout % n_proc
+	offset = min(p, R) //possibly some processes have to deal with more cells
+	limit_min = int(p * n_readout_p + offset)
+	if (p < R) {
+		limit_max = int(limit_min + n_readout_p + 1)
+	} else {
+		limit_max = int(limit_min + n_readout_p)
+	}
+	for (i= 0; i < n_readout; i += 1) { // cells in minicolumn
+		//calculate gid
+		gid = i + gid_offset
+		readout_cnt = gid - gid_offset
+		if (id_vec.indwhere("==", gid) != -1) {
+			printf("ERROR: gid for readout: %d already assigned to a cell %d!\n", gid, id_vec.indwhere("==", gid))
+			quit()
+		}
+		// now decide whether this gid should be assigned to the process
+		if ( (id_vec.indwhere("==", gid) == -1) && (readout_cnt < limit_max) && (readout_cnt >= limit_min)) {
+			pnm.set_gid2node(gid, p)
+			readout_gid_vec.append(gid)
+			id_vec.append(gid)
+		}
+	}
+}
+
+proc read_orn_parameters(){  local i, nrow, ncol localobj read_data, mat
+	// 1) for each ORN one target mitrall cell id will be stored (or a vector)
+	strdef fn
+	fn = $s1
+/*    print "Reading ORN parameters from file ", fn*/
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// Parameters are stored in this order:
+/*(orn_id, voor[orn_id], vc_Kd[orn_id], vgor[orn_id], vgna[orn_id], vgk[orn_id], vgkcag[orn_id], vgcal[orn_id], vgleak_orn[orn_id], vtau_cadec[orn_id])*/
+	for (i = 0; i < nrow; i += 1) { //
+		id = mat.x[i][0]
+		v_orn_oor[id] = mat.x[i][1]
+		v_orn_cKd[id] = mat.x[i][2]
+		v_orn_gor[id] = mat.x[i][3]
+		v_orn_gna_hh[id] = mat.x[i][4]
+		v_orn_gka_hh[id] = mat.x[i][5]
+		v_orn_gka_cag[id] = mat.x[i][6]
+		v_orn_gca_l[id] = mat.x[i][7]
+		v_orn_gleak[id] = mat.x[i][8]
+		v_orn_tau_cadec[id] = mat.x[i][9]
+	}
+
+}
+
+proc read_mit_parameters(){  local i, nrow, ncol localobj read_data, mat
+	// 1) for each ORN one target mitrall cell id will be stored (or a vector)
+	strdef fn
+	fn = $s1
+/*    print "Reading MIT parameters from file", fn*/
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// Parameters are stored in this order:
+	// #gid        gor     oor     c_Kd
+	offset = n_orn
+	for (i = 0; i < nrow; i += 1) { //
+/*        id = mat.x[i][0] - offset*/
+		v_mit_oor[i] = mat.x[i][1]
+		v_mit_cKd[i] = mat.x[i][2]
+		v_mit_gor[i] = mat.x[i][3]
+	}
+}
+
+proc read_pyr_parameters(){  local i, nrow, ncol localobj read_data, mat
+	strdef fn
+	fn = $s1
+/*    print "Reading pyr parameters from file", fn*/
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// Parameters are stored in this order:
+	// #gid        g_ka
+	for (i = 0; i < nrow; i += 1) { //
+		v_pyr_gka[i] = mat.x[i][1]
+	}
+}
+
+proc read_readout_parameters(){  local i, nrow, ncol localobj read_data, mat
+	strdef fn
+	fn = $s1
+/*    print "Reading readout parameters from file", fn*/
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// Parameters are stored in this order:
+	// #gid        g_ka
+	for (i = 0; i < nrow; i += 1) { //
+		v_readout_gka[i] = mat.x[i][1]
+	}
+}
+
+
+/*proc write_orn_parameters_to_file() {local i, j, gid localobj parameterfile*/
+/*        strdef param_fn*/
+/*        param_fn = $s1*/
+/*        parameterfile = new File()*/
+/*        parameterfile.wopen(param_fn)*/
+/*        parameterfile.printf("#\tgid\tgor\toor\tc_Kd\tgka_cag\tgka_hh\tgna_hh\t\n")*/
+/*        // ORN*/
+/*        for (i = 0; i < n_orn; i += 1){*/
+/*            orn_gid = i + global_offset*/
+/*            if (pnm.gid_exists(orn_gid)){	// if cell has been assigned to this machine*/
+/*            // write parameters into param_file*/
+/*                parameterfile.printf("%d\t%.10f\t%.10f\t%.10f\t%.10f\t%.10f\t%.10f\n", orn_gid, v_orn_gor[orn_gid-global_offset], v_orn_oor[orn_gid-global_offset], v_orn_cKd[orn_gid-global_offset], v_orn_gka_cag[orn_gid-global_offset], v_orn_gka_hh[orn_gid-global_offset], v_orn_gna_hh[orn_gid-global_offset])*/
+/*            }*/
+/*        }*/
+/*}*/
+
+proc write_mit_parameters_to_file() {local i, j, gid, offset localobj parameterfile
+	strdef param_fn
+	param_fn = $s1
+	parameterfile = new File()
+	parameterfile.wopen(param_fn)
+	parameterfile.printf("#\tgid\tgor\toor\tc_Kd\tw_exc\tw_inh\n")
+	// MIT
+	// for each mitral cell print the parameters of the corresponding ORN into the parameterfile
+	// i.e. get the "corresponding orn" by offset
+	offset = n_orn + global_offset
+
+	// MIT
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + n_orn + global_offset
+		if (pnm.gid_exists(gid)) {
+				parameterfile.printf("%d\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\n", gid, v_mit_gor[gid-offset], v_mit_oor[gid-offset], \
+						v_mit_cKd[gid-offset], w_mit_exc[gid-offset], w_mit_inh[gid-offset])
+		}
+	}
+}
+
+proc write_pyr_parameters_to_file() {local i, j, gid localobj parameterfile
+	strdef param_fn
+	param_fn = $s1
+	parameterfile = new File()
+	parameterfile.wopen(param_fn)
+	parameterfile.printf("#\tgid\tsome_param\n")
+
+	for (i = 0; i < n_pyr; i += 1) {
+		gid = i + n_mit + n_orn + global_offset
+		if (pnm.gid_exists(gid)) {
+			gid = gid - offset  // - (n_orn + 1)
+			parameterfile.printf("%d\t%d", gid, x*n_mc*n_pyr_per_mc + y*n_pyr_per_mc + z)
+		}
+	}
+}
+
+
+proc write_orn_spikes_to_file() {local i, j, gid localobj orn_spikefile, orn
+		// ORN
+		strdef orn_spikefilename
+		orn_spikefilename = $s1
+		orn_spikefile = new File()
+		orn_spikefile.wopen(orn_spikefilename)
+		orn_spikefile.printf("#\tgid\tnspikes\tgor\toor\tc_Kd\tgka_cag\tgka_hh\tgna_hh\t\n")
+
+		for (i = 0; i < n_orn; i += 1){
+			gid = i + global_offset
+			if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			// write spikes into spikefile
+				orn = pnm.pc.gid2cell(gid)
+				orn_spikefile.printf("%d\t%d\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\n", gid, orn.spiketimes.size(), \
+					v_orn_gor[gid-global_offset], v_orn_oor[gid-global_offset], v_orn_cKd[gid-global_offset], \
+					v_orn_gka_cag[gid-global_offset], v_orn_gka_hh[gid-global_offset], v_orn_gna_hh[gid-global_offset])
+			}
+		}
+}
+
+proc write_mit_spikes_to_file() {local i, j, gid localobj mit_spikefile, mit
+	// MIT
+	strdef mit_spikefilename
+	mit_spikefilename = $s1
+	mit_spikefile = new File()
+	mit_spikefile.wopen(mit_spikefilename)
+	mit_spikefile.printf("#\tgid\tnspikes\tgor\toor\tc_Kd\tw_exc\tw_inh\n")
+	offset = n_orn + global_offset
+
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + n_orn + global_offset
+		if (pnm.gid_exists(gid)) {
+			j = gid - global_offset - n_orn
+		// write spikes into spikefile
+			mit = pnm.pc.gid2cell(gid)
+			mit_spikefile.printf("%d\t%d\t%.10e\t%.10e\t%.10e\t%.10e\t%.10e\n", gid, mit.spiketimes.size(), \
+					v_mit_gor[j], v_mit_oor[j], v_mit_cKd[j], w_mit_exc[j], w_mit_inh[j])
+		}
+	}
+}
+
+
+proc write_spikes_to_files_epth_ob() {
+	orn_write_spikes_to_file()
+	mit_write_spikes_to_file()
+	gran_write_spikes_to_file()
+	pg_write_spikes_to_file()
+}
+
+proc write_spikes_to_files_ob_only() {
+	mit_write_spikes_to_file()
+	gran_write_spikes_to_file()
+	pg_write_spikes_to_file()
+}
+
+proc write_spikes_to_files() {
+/*    pn = $1*/
+	orn_write_spikes_to_file()
+	mit_write_spikes_to_file()
+	gran_write_spikes_to_file()
+	pg_write_spikes_to_file()
+	pyr_write_spikes_to_file()
+	basket_write_spikes_to_file()
+	rsnp_write_spikes_to_file()
+	readout_write_spikes_to_file()
+}
+		
+proc orn_write_spikes_to_file() {
+	// orn
+	// nspikes
+	strdef orn_spike_fn
+	sprint(orn_spike_fn ,"%s%d_%d.dat", orn_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(orn_spike_fn, orn_offset, n_orn + orn_offset)
+	// spiketrains
+	strdef orn_spiketimes_fn
+	sprint(orn_spiketimes_fn, "%s%d_%d.dat", orn_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(orn_spiketimes_fn, orn_offset, n_orn + orn_offset)
+}
+
+proc mit_write_spikes_to_file() {
+	// mit
+	// nspikes
+	strdef mit_spike_fn
+	sprint(mit_spike_fn ,"%s%d_%d.dat", mit_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(mit_spike_fn, mit_offset, mit_offset + n_mit)
+	// spiketrains
+	strdef mit_spiketimes_fn
+	sprint(mit_spiketimes_fn, "%s%d_%d.dat", mit_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(mit_spiketimes_fn, mit_offset, mit_offset + n_mit)
+}
+
+proc gran_write_spikes_to_file() {
+	// gran
+	// nspikes
+	strdef gran_spike_fn
+	sprint(gran_spike_fn ,"%s%d_%d.dat", gran_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(gran_spike_fn, gran_offset, gran_offset + n_gran)
+	// spiketrains
+	strdef gran_spiketimes_fn
+	sprint(gran_spiketimes_fn, "%s%d_%d.dat", gran_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(gran_spiketimes_fn, gran_offset, gran_offset + n_gran)
+}
+
+proc pg_write_spikes_to_file() {
+	// pg
+	// nspikes
+	strdef pg_spike_fn
+	sprint(pg_spike_fn ,"%s%d_%d.dat", pg_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(pg_spike_fn, pg_offset, pg_offset + n_pg)
+	// spiketrains
+	strdef pg_spiketimes_fn
+	sprint(pg_spiketimes_fn, "%s%d_%d.dat", pg_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(pg_spiketimes_fn, pg_offset, pg_offset + n_pg)
+}
+
+proc pyr_write_spikes_to_file() {
+	// pyr
+	// nspikes
+	strdef pyr_spike_fn
+	sprint(pyr_spike_fn ,"%s%d_%d.dat", pyr_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(pyr_spike_fn, pyr_offset, pyr_offset + n_pyr)
+	// spiketrains
+	strdef pyr_spiketimes_fn
+	sprint(pyr_spiketimes_fn, "%s%d_%d.dat", pyr_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(pyr_spiketimes_fn, pyr_offset, pyr_offset + n_pyr)
+}
+
+proc basket_write_spikes_to_file() {
+	// basket
+	// nspikes
+	strdef basket_spike_fn
+	sprint(basket_spike_fn ,"%s%d_%d.dat", basket_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(basket_spike_fn, basket_offset, basket_offset + n_basket)
+	// spiketrains
+	strdef basket_spiketimes_fn
+	sprint(basket_spiketimes_fn, "%s%d_%d.dat", basket_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(basket_spiketimes_fn, basket_offset, basket_offset + n_basket)
+}
+
+proc rsnp_write_spikes_to_file() {
+	// rsnp
+	// nspikes
+	strdef rsnp_spike_fn
+	sprint(rsnp_spike_fn ,"%s%d_%d.dat", rsnp_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(rsnp_spike_fn, rsnp_offset, rsnp_offset + n_rsnp)
+	// spiketrains
+	strdef rsnp_spiketimes_fn
+	sprint(rsnp_spiketimes_fn, "%s%d_%d.dat", rsnp_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(rsnp_spiketimes_fn, rsnp_offset, rsnp_offset + n_rsnp)
+}
+
+proc readout_write_spikes_to_file() {local i, gid localobj readout_spikefile, readout
+	// readout
+	// nspikes
+	strdef readout_spike_fn
+	sprint(readout_spike_fn ,"%s%d_%d.dat", readout_spike_fn_base, pattern_nr, pnm.pc.id())
+	write_nspikes_to_file(readout_spike_fn, readout_offset, readout_offset + n_readout)
+	// spiketrains
+	strdef readout_spiketimes_fn
+	sprint(readout_spiketimes_fn, "%s%d_%d.dat", readout_spiketimes_fn_base, pattern_nr, pnm.pc.id())
+	write_spiketimes_to_file(readout_spiketimes_fn, readout_offset, readout_offset + n_readout)
+}
+
+proc write_nspikes_to_file() {local n_min, n_max, i, gid, n_spikes localobj spikefile, cell 
+	/* Every process writes the number of spikes for cells with 
+	 * gif between n_min and n_max into a file given by spikefilename
+	 */
+	strdef spikefilename
+	spikefilename = $s1
+	n_min = $2
+	n_max = $3 
+	// check whether cells assigned to the process have spiked at all
+	n_spikes = 0
+	for (i = n_min; i < n_max; i += 1){
+		gid = i
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+		// write spikes into spikefile
+			cell = pnm.pc.gid2cell(gid)
+			n_spikes += cell.spiketimes.size()	
+		}
+	}
+
+	if (n_spikes > 0){
+		spikefile = new File()
+		spikefile.wopen(spikefilename)
+		spikefile.printf("#\tgid\tnspikes\n")
+		for (i = n_min; i < n_max; i += 1){
+			gid = i
+			if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			// write spikes into spikefile
+				cell = pnm.pc.gid2cell(gid)
+				spikefile.printf("%d\t%d\n", gid, cell.spiketimes.size())
+			}
+		}
+	}
+}
+
+proc write_spiketimes_to_file() {local i, j, n_min, n_max, n_spikes localobj spikefile, cell
+	strdef spikefilename
+	spikefilename = $s1
+	n_min = $2
+	n_max = $3 
+	// check whether cells assigned to the process did spike at all
+	n_spikes = 0
+	for (i = n_min; i < n_max; i += 1){
+		gid = i
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+		// write spikes into spikefile
+			cell = pnm.pc.gid2cell(gid)
+			n_spikes += cell.spiketimes.size()	
+		}
+	}
+
+	if (n_spikes > 0){
+		spikefile = new File()
+		spikefile.wopen(spikefilename)
+		for (i = n_min; i < n_max; i += 1){
+			if (pnm.gid_exists(i)){	// if cell has been assigned to this machine
+				cell = pnm.pc.gid2cell(i)
+				for (j = 0; j < cell.spiketimes.size(); j += 1){
+					spikefile.printf("%.2f\t%d\n", cell.spiketimes.x[j], i)
+				}
+			}
+		}
+	}
+}
+
+
+proc init_testcell_generator() {local gid_max, i, n_testcells
+	// this function is supposed to draw the same 'random' testcells for each pattern
+	gid_max = $1	
+	rnd_testcells = new Random()
+	rnd_testcells.MCellRan4(seed)
+	rnd_testcells.discunif(0 + global_offset, gid_max + global_offset-1)
+	n_testcells = 10	
+	for (i = 0; i < n_testcells; i += 1) {
+		testcells_gids.append(rnd_testcells.repick())
+	}
+/*    for (i = 0; i < n_testcells; i += 1) {*/
+/*        printf("DEBUG, pid %d draws testcell_gids: %d\n", pnm.pc.id(), testcells_gids.x[i])*/
+/*    }*/
+}
+
+proc init_rnd() {
+	// same seed for all patterns
+	rnd_int = new Random()
+	rnd_int.MCellRan4(seed)
+	rnd_int.discunif(0, 100000000)
+	rnd_volt = new Random()
+	rnd_volt.MCellRan4(seed)
+}
+
+
+proc create_orns() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	if (with_sniffing_input){
+		create_orn_sniffing()
+	} else {
+		create_orn()
+	}
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_orn, w_inh_noise_orn, f_exc_noise_orn, f_inh_noise_orn, n_orn, orn_offset)
+	}
+}
+
+
+proc create_ob_cells() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	create_mit()
+	create_gran()
+	create_pg()
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_mit, w_inh_noise_mit, f_exc_noise_mit, f_inh_noise_mit, n_mit, mit_offset)
+		add_noise_to_cells(w_exc_noise_gran, w_inh_noise_gran, f_exc_noise_gran, f_inh_noise_gran, n_gran, gran_offset)
+		add_noise_to_cells(w_exc_noise_pg, w_inh_noise_pg, f_exc_noise_pg, f_inh_noise_pg, n_pg, pg_offset)
+	}
+}
+
+proc create_cells_mit_only() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	create_mit()
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_mit, w_inh_noise_mit, f_exc_noise_mit, f_inh_noise_mit, n_mit, mit_offset)
+	}
+	add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_mit)
+/*    add_netcons_to_mit()*/
+}
+
+proc create_cells_ob_only() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	create_mit()
+	create_gran()
+	create_pg()
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_mit, w_inh_noise_mit, f_exc_noise_mit, f_inh_noise_mit, n_mit, mit_offset)
+		add_noise_to_cells(w_exc_noise_gran, w_inh_noise_gran, f_exc_noise_gran, f_inh_noise_gran, n_gran, gran_offset)
+		add_noise_to_cells(w_exc_noise_pg, w_inh_noise_pg, f_exc_noise_pg, f_inh_noise_pg, n_pg, pg_offset)
+	}
+	// read the orn ---< mt / pg conn lists and add netcon to the target cells
+	add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_mit)
+	add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_pg)
+
+	fih_spikes_from_epth_to_mit = new FInitializeHandler("insert_artificial_orn_spikes_to_mit_and_pg()")
+
+/*    add_netcons_to_mit()*/
+/*    add_netcons_to_pg()*/
+}
+
+proc create_cells_with_oc() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	if (with_sniffing_input){
+		create_orn_sniffing()
+	} else {
+		create_orn()
+	}
+	create_mit()
+	create_gran()
+	create_pg()
+	if (with_lts_pyr_neurons) {
+		create_pyr_lts(with_bias)
+	} else {
+		create_pyr(with_bias)
+	}
+	create_rsnp()
+	create_basket()
+	create_readout(with_bias)
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_orn, w_inh_noise_orn, f_exc_noise_orn, f_inh_noise_orn, n_orn, orn_offset)
+		add_noise_to_cells(w_exc_noise_mit, w_inh_noise_mit, f_exc_noise_mit, f_inh_noise_mit, n_mit, mit_offset)
+		add_noise_to_cells(w_exc_noise_gran, w_inh_noise_gran, f_exc_noise_gran, f_inh_noise_gran, n_gran, gran_offset)
+		add_noise_to_cells(w_exc_noise_pg, w_inh_noise_pg, f_exc_noise_pg, f_inh_noise_pg, n_pg, pg_offset)
+		add_noise_to_cells(w_exc_noise_pyr, w_inh_noise_pyr, f_exc_noise_pyr, f_inh_noise_pyr, n_pyr, pyr_offset)
+		add_noise_to_cells(w_exc_noise_basket, w_inh_noise_basket, f_exc_noise_basket, f_inh_noise_basket, n_basket, basket_offset)
+		add_noise_to_cells(w_exc_noise_rsnp, w_inh_noise_rsnp, f_exc_noise_rsnp, f_inh_noise_rsnp, n_rsnp, rsnp_offset)
+	}
+}
+
+proc create_cells_ob_oc() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	create_mit()
+	create_gran()
+	create_pg()
+	if (with_lts_pyr_neurons) {
+		create_pyr_lts(with_bias)
+	} else {
+		create_pyr(with_bias)
+	}
+	create_rsnp()
+	create_basket()
+	create_readout(with_bias)
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_mit, w_inh_noise_mit, f_exc_noise_mit, f_inh_noise_mit, n_mit, mit_offset)
+		add_noise_to_cells(w_exc_noise_gran, w_inh_noise_gran, f_exc_noise_gran, f_inh_noise_gran, n_gran, gran_offset)
+		add_noise_to_cells(w_exc_noise_pg, w_inh_noise_pg, f_exc_noise_pg, f_inh_noise_pg, n_pg, pg_offset)
+		add_noise_to_cells(w_exc_noise_pyr, w_inh_noise_pyr, f_exc_noise_pyr, f_inh_noise_pyr, n_pyr, pyr_offset)
+		add_noise_to_cells(w_exc_noise_basket, w_inh_noise_basket, f_exc_noise_basket, f_inh_noise_basket, n_basket, basket_offset)
+		add_noise_to_cells(w_exc_noise_rsnp, w_inh_noise_rsnp, f_exc_noise_rsnp, f_inh_noise_rsnp, n_rsnp, rsnp_offset)
+	}
+
+	// this is for simulations with the EPTH input into OB, without resimulating the EPTH
+	if (with_artificial_orns) {
+		add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_mit)
+		add_netcons_for_artificial_orns_by_conn_list(conn_list_orn_pg)
+	} else { 
+		add_netcons_to_mit()
+		add_netcons_to_pg()
+	}
+	// insertion of spikes into the netcons happens by the respective FInitializeHandler
+}
+
+
+proc create_cells_oc_only() {
+	fih_v = new FInitializeHandler(0, "init_voltages()")
+	if (with_lts_pyr_neurons) {
+		create_pyr_lts(with_bias)
+	} else {
+		create_pyr(with_bias)
+	}
+	create_rsnp()
+	create_basket()
+	create_readout(with_bias)
+	if (with_noise){
+		add_noise_to_cells(w_exc_noise_pyr, w_inh_noise_pyr, f_exc_noise_pyr, f_inh_noise_pyr, n_pyr, pyr_offset)
+		add_noise_to_cells(w_exc_noise_basket, w_inh_noise_basket, f_exc_noise_basket, f_inh_noise_basket, n_basket, basket_offset)
+		add_noise_to_cells(w_exc_noise_rsnp, w_inh_noise_rsnp, f_exc_noise_rsnp, f_inh_noise_rsnp, n_rsnp, rsnp_offset)
+	}
+
+	// this is for simulations with the OB input but without simulating the epth and OB again
+	//
+/*    strdef fn1 	*/
+/*    sprint(fn1, "%s%d.dat", mit_pyr_spiketimes_tgt_netcon_fn_merged, pattern_nr)*/
+	add_vecstims_to_cortex()
+/*    strdef fn2*/
+/*    sprint(fn2, "%s%d.dat", mit_rsnp_spiketimes_tgt_netcon_fn_merged, pattern_nr)*/
+/*    add_netcons_with_spiketimes_to_cortex(mit_rsnp_tgt_netcon_weight_fn_merged, fn2)*/
+	// first load the spike times to be inserted into the cortical cells
+	//
+	
+/*    add_netcons_to_cortex_cells(mit_pyr_tgt_netcon_weight_fn_merged)*/
+/*    add_netcons_to_cortex_cells(mit_rsnp_tgt_netcon_weight_fn_merged)*/
+/*    add_stim_to_mcs()*/
+
+	// insertion of spikes into the netcons happens by the respective FInitializeHandler
+/*    fih_spikes_from_mit_to_pyr = new FInitializeHandler(3, "add_netcons_to_pyr_cells()") // will be called before the simulation*/
+/*    fih_spikes_from_mit_to_rsnp = new FInitializeHandler(3, "add_netcons_to_rsnp_cells()") // will be called before the simulation*/
+/*    fih_spikes_from_mit_to_pyr = new FInitializeHandler(3, "insert_exc_spikes_from_mit_to_pyr()") // will be called before the simulation*/
+/*    fih_spikes_from_mit_to_rsnp = new FInitializeHandler(3, "insert_exc_spikes_from_mit_to_rsnp()") // will be called before the simulation*/
+/*    insert_exc_spikes_from_mit_to_pyr()*/
+/*    insert_exc_spikes_from_mit_to_rsnp()*/
+	waittime = pnm.pc.barrier()
+	printf("waittime after create_cells_oc_only = %f\n", waittime)
+}
+
+
+
+
+proc load_mit_pyr_conn_list(){local i, src_gid, tgt_gid, nrow, ncol, weight localobj read_data, mat
+	strdef fn
+	fn = conn_list_mit_pyr
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()
+    mat.scanf(read_data)	
+    nrow = mat.nrow()		
+    ncol = mat.ncol()
+	for (i = 0; i < n_mit; i += 1){
+		mit_pyr_connlist_w.append(new Vector())
+		mit_pyr_connlist_tgt.append(new Vector())
+	}
+	for (i = 0; i < nrow; i += 1){
+		src_gid = int(mat.x[i][0])
+		tgt_gid = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		mit_pyr_connlist_w.o(src_gid - mit_offset).append(weight)
+		mit_pyr_connlist_tgt.o(src_gid - mit_offset).append(tgt_gid)
+	}
+}
+
+
+proc load_mit_rsnp_conn_list(){local i, src_gid, tgt_gid, nrow, ncol, weight localobj read_data, mat
+	strdef fn
+	fn = conn_list_mit_rsnp
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()
+    mat.scanf(read_data)	
+    nrow = mat.nrow()		
+    ncol = mat.ncol()
+	for (i = 0; i < n_mit; i += 1){
+		mit_rsnp_connlist_w.append(new Vector())
+		mit_rsnp_connlist_tgt.append(new Vector())
+	}
+	for (i = 0; i < nrow; i += 1){
+		src_gid = int(mat.x[i][0])
+		tgt_gid = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		mit_rsnp_connlist_w.o(src_gid - mit_offset).append(weight)
+		mit_rsnp_connlist_tgt.o(src_gid - mit_offset).append(tgt_gid)
+	}
+}
+
+
+proc load_mit_spiketimes(){local i, j, src_gid, spiketime, nrow, ncol localobj read_data, mat
+	strdef fn 	
+	sprint(fn, "%sfor_neuron_%d.dat", mit_spiketimes_merged_fn_base, pattern_nr)
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()
+    mat.scanf(read_data)	
+    nrow = mat.nrow()		
+    ncol = mat.ncol()
+	for (i = 0; i < n_mit; i += 1){
+		mit_spikes.append(new Vector())
+	}
+	for (i = 0; i < nrow; i += 1){
+		spiketime = mat.x[i][0]
+		src_gid = int(mat.x[i][1])
+/*        printf("DEBUG mit_spikes: %f %d\n", spiketime, src_gid)*/
+		mit_spikes.o(src_gid - mit_offset).append(spiketime)
+	}
+/*    for (i = 0; i < n_mit; i += 1){*/
+/*        for (j = 0; j < mit_spikes.o(i).size(); j += 1){*/
+/*            printf("FUCKING DEBUG mit %d spikes at t: %.2f\n", i + mit_offset, mit_spikes.o(i).x[j])*/
+/*        }*/
+/*    }*/
+}
+
+objref vecstim // the vecstim is a container for the input spike train
+objref vecstim_list // vecstim_list is a container for storing vecstims created on this node
+objref local_mit_ctx_conns // container for the netcons to be created when connecting the spike trains to the cortical cells (necessary?)
+local_mit_ctx_conns = new List()
+vecstim_list = new List()
+proc add_vecstims_to_cortex() { local i, tgt_idx, tgt_gid, weight localobj spike_vec, cell
+	// This function is called when the OC is simulated with input from OB, without resimulating the EPTH and the OB
+	
+	// first load the outgoing connections from mitral cells
+	printf("Loading mitral - pyr connections\n")
+	load_mit_pyr_conn_list()
+	printf("Loading mitral - rsnp connections\n")
+	// TODO:
+	load_mit_rsnp_conn_list()
+
+	// load the spikes fired by mitral cells during pre-learning 
+	printf("Loading mitral cells' spiketimes\n")
+	load_mit_spiketimes()
+	printf("Adding VecStim objects to pyr cells\n")
+	for (i = 0; i < n_mit; i += 1){
+		// PYR
+		for (tgt_idx = 0; tgt_idx < mit_pyr_connlist_tgt.o(i).size(); tgt_idx += 1){
+			tgt_gid = mit_pyr_connlist_tgt.o(i).x[tgt_idx]
+			if (pnm.gid_exists(tgt_gid)) {
+				vecstim = new VecStim()
+				vecstim_list.append(vecstim)
+				vecstim_list.o(vecstim_list.count()-1).play(mit_spikes.o(i))
+				cell = pnm.pc.gid2cell(tgt_gid)
+/*                cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+				weight = mit_pyr_connlist_w.o(i).x[tgt_idx]
+				local_mit_ctx_conns.append(cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight))
+/*                printf("DEBUG adding ampa/nmda synapses to pyr %d with weight %f prj from mit %d, nspikes %d \n", tgt_gid, weight, i + mit_offset, mit_spikes.o(i).size())//, mit_spikes.o(i).x[0])*/
+				weight = mit_pyr_connlist_w.o(i).x[tgt_idx] * w_nmda_mult_oc 
+/*                cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+				local_mit_ctx_conns.append(cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight))
+
+/*                cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+/*                cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+/*                cell.add_ampa_synapse_to_soma(vecstim, weight)*/
+			}
+		}
+		// RSNP
+		for (tgt_idx = 0; tgt_idx < mit_rsnp_connlist_tgt.o(i).size(); tgt_idx += 1){
+			tgt_gid = mit_rsnp_connlist_tgt.o(i).x[tgt_idx]
+			if (pnm.gid_exists(tgt_gid)) {
+				vecstim = new VecStim()
+				vecstim_list.append(vecstim)
+				vecstim_list.o(vecstim_list.count()-1).play(mit_spikes.o(i))
+				cell = pnm.pc.gid2cell(tgt_gid)
+				weight = mit_rsnp_connlist_w.o(i).x[tgt_idx]
+/*                printf("DEBUG adding ampa/nmda synapses to rsnp %d with weight %f prj from mit %d, nspikes %d \n", tgt_gid, weight, i + mit_offset, mit_spikes.o(i).size())//, mit_spikes.o(i).x[0])*/
+				cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)
+				weight = mit_rsnp_connlist_w.o(i).x[tgt_idx] * w_nmda_mult_oc
+				cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)
+
+/*                vecstim.play(mit_spikes.o(i))*/
+/*                printf("DEBUG adding ampa/nmda synapses to rsnp %d with weight %f prj from mit %d\n", tgt_gid, weight, i + mit_offset)*/
+/*                cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+/*                cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight)*/
+/*                local_mit_ctx_conns.append(cell.add_ampa_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight))*/
+/*                local_mit_ctx_conns.append(cell.add_nmda_synapse_to_soma(vecstim_list.o(vecstim_list.count()-1), weight))*/
+			}
+		}
+	}
+}
+
+/*proc add_netcons_with_spiketimes_to_cortex() { local i, tgt, ncol_nc, nrow_nc, ncol_st, nrow_st, weight localobj cell, read_data_nc, mat_nc, read_data_st, mat_st*/
+/*    // Read the netcons and connection weights*/
+/*    strdef fn_nc*/
+/*    fn_nc = $s1*/
+/*    print "Adding netcons via file: ", fn_nc*/
+/*    read_data_nc = new File()*/
+/*    read_data_nc.ropen(fn_nc)*/
+/*    mat_nc = new Matrix()*/
+/*    mat_nc.scanf(read_data_nc)	*/
+/*    nrow_nc = mat_nc.nrow()		*/
+/*    ncol_nc = mat_nc.ncol()*/
+/*    // read in the spikes for this pattern*/
+/*    strdef fn_st*/
+/*    fn_st = $s2*/
+/*    print "Reading spikes from file: ", fn_st*/
+/*    read_data_st = new File()*/
+/*    read_data_st.ropen(fn_st)*/
+/*    mat_st = new Matrix()		*/
+/*    mat_st.scanf(read_data_st)	*/
+/*    nrow_st = mat_st.nrow()		*/
+/*    ncol_st = mat_st.ncol()*/
+/*    for (i = 0; i < nrow_nc; i += 1) {*/
+/*        gid = mat_nc.x[i][0]*/
+/*        printf("DEBUG BBBB pnm.gid_exist(%d) on pid %d = %d\n", gid, pnm.pc.id(), pnm.gid_exists(gid))*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            weight = mat_nc.x[i][2]*/
+/*            if (weight > 0) {*/
+/*                printf("DEBUG_ADD_AMPA_SYNAPSE %d weight= %.6e\n", gid, weight)*/
+/*                cell.add_ampa_synapse_to_soma(weight)*/
+/*                cell.add_nmda_synapse_to_soma(weight)*/
+/*                printf("DEBUG valid %d\n", cell.ampa_netconlist.o(cell.ampa_netconlist.count()-1).valid())*/
+/*            } else { // weight < 0*/
+/*                // should never occur ...*/
+/*                cell.add_gabaa_synapse_to_soma(-weight)*/
+/*            }*/
+/*            printf("DEBUG add_netcons_to_cortex_cells on proc %d: row=%d cell=%d weight=%.2e netconlist len %d \n", pnm.pc.id(), i, gid, weight, cell.ampa_netconlist.count())*/
+/*        }*/
+/*    }*/
+/*    // */
+/*    for (i = 0; i < nrow_st; i += 1) {*/
+/*        gid = mat_st.x[i][0]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            t_event = mat_st.x[i][1]*/
+/*            netcon_id = mat_st.x[i][2]*/
+/*            if (netcon_id == cell.ampa_netconlist.count()){*/
+/*            printf("DEBUG CORTEX CELL gid %d netconid %d t_event %.2f \n", gid, netcon_id, t_event)*/
+/*            }*/
+/*            cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*            cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*        }*/
+/*    }*/
+
+
+proc insert_exc_spikes_from_mit_to_pyr() { local i, nrow, ncol, netcon_id, t_event localobj read_data, mat, cell
+	// This function assumes that spikes will be inserted via two 
+	// excitatory synapses represented by ampa_netconlist and nmda_netconlist owned by the target cell
+    read_data = new File()
+	strdef fn 	
+	sprint(fn, "%s%d.dat", mit_pyr_spiketimes_tgt_netcon_fn_merged, pattern_nr)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+/*    printf("DEBUG AAAA fn: %s\n", fn)*/
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][1]
+			netcon_id = mat.x[i][2]
+/*            if (netcon_id == cell.ampa_netconlist.count()){*/
+/*            printf("DEBUG PYR gid %d netconid %d t_event %.2f \n", gid, netcon_id, t_event)*/
+/*            }*/
+			cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+			cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+		}
+    }
+}
+
+proc insert_exc_spikes_from_mit_to_rsnp() { local i, nrow, ncol, netcon_id, t_event localobj read_data, mat, cell
+	// This function assumes that spikes will be inserted via two 
+	// excitatory synapses represented by ampa_netconlist and nmda_netconlist owned by the target cell
+    read_data = new File()
+	strdef fn 	
+	sprint(fn, "%s%d.dat", mit_rsnp_spiketimes_tgt_netcon_fn_merged, pattern_nr)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+/*    printf("DEBUG AAAA-RSNP fn: %s\n", fn)*/
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][1]
+			netcon_id = mat.x[i][2]
+			cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+			cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+		}
+    }
+}
+
+
+proc add_netcons_to_cortex_cells() { local gid, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OC is simulated with input from OB, without resimulating the EPTH and the OB
+	strdef fn
+	fn = $s1
+	print "Adding netcons via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]
+/*        printf("DEBUG BBBB pnm.gid_exist(%d) on pid %d = %d\n", gid, pnm.pc.id(), pnm.gid_exists(gid))*/
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			weight = mat.x[i][2]
+			if (weight > 0) {
+/*                printf("DEBUG_ADD_AMPA_SYNAPSE %d weight= %.6e\n", gid, weight)*/
+				cell.add_ampa_synapse_to_soma(weight)
+				cell.add_nmda_synapse_to_soma(weight)
+			} else { // weight < 0
+				// should never occur ...
+				cell.add_gabaa_synapse_to_soma(-weight)
+			}
+/*            printf("DEBUG add_netcons_to_cortex_cells on proc %d: row=%d cell=%d weight=%.2e netconlist len %d \n", pnm.pc.id(), i, gid, weight, cell.ampa_netconlist.count())*/
+		}
+    }
+}
+
+
+
+
+proc add_netcons_to_mit() { local gid, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OB is simulated and EPTH input is inserted to OB via files
+    read_data = new File()
+	strdef fn
+	sprint(fn, "%s", epth_mit_tgt_weight_netcon_fn)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]	// cell gid
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			weight = mat.x[i][1]
+			if (weight > 0) {
+/*                printf("DEBUG adding a netcon to MT %d with weight %.4e netconid: %d\n", gid, weight, cell.ampa_netconlist.count())*/
+				cell.add_netcon_to_ampa_glom(weight) // increase the ampa_netconlist by one
+				cell.add_netcon_to_nmda_glom(weight * w_nmda_mult) // increase the nmda_netconlist by one
+			} 
+/*            else { // weight < 0*/
+/*                weight *= (-1)*/
+/*                cell.add_netcon_to_synlist1(weight)*/
+/*            }*/
+		}
+    }
+	fih_spikes_from_epth_to_mit = new FInitializeHandler("insert_spikes_from_epth_to_mit()")
+}
+
+
+proc insert_spikes_from_epth_to_mit() { local i, nrow, ncol, netcon_id, t_event, w, gid localobj read_data, mat, cell
+    read_data = new File()
+	strdef fn 	
+	sprint(fn, "%s%d.dat", epth_mit_spiketimes_tgt_netcon_fn_base, pattern_nr)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][0]
+			netcon_id = mat.x[i][2]
+			w = mat.x[i][3]
+			cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+			cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+/*            printf("DEBUG, wrong weight in insert_spikes_from_epth_to_mit: t %.2f\t%d\t%d\t%.8e != %.8e %d %d \n", t_event, gid, netcon_id, w, cell.netconlist.o(netcon_id).weight, cell.netconlist.o(netcon_id).delay, cell.netconlist.o(netcon_id).threshold)*/
+/*            printf("DEBUG inserting spike into MT: %d at time %.2f via netcon_id %d and weight %.4e\n", gid, t_event, netcon_id, w)*/
+/*            if (w < 0){*/
+/*                w = w * (-1.0)*/
+/*            }*/
+/*            if (cell.netconlist.o(netcon_id).weight != w) {*/ // this happens even though they are equal .... don't know why, maybe wrong type
+/*                printf("DEBUG, wrong weight in insert_spikes_from_epth_to_mit: t %.2f\t%d\t%d\t%.8e != %.8e %d %d \n", t_event, gid, netcon_id, w, cell.netconlist.o(netcon_id).weight, cell.netconlist.o(netcon_id).delay, cell.netconlist.o(netcon_id).threshold)*/
+/*            }*/
+/*            cell.netconlist.o(netcon_id).event(mat.x[i][0]) //put it into netconlist*/
+/*            cell.netconlist.o(0).event(mat.x[i][0]) //put it into netconlist*/
+/*            cell.netconlist.o(0).event(t_event) //put it into netconlist*/
+		}
+    }
+}
+
+
+proc add_netcons_for_artificial_orns_by_conn_list() { local tgt_id, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OB is simulated and EPTH input is inserted to OB via files
+	strdef fn
+	fn = $s1
+/*    sprint(fn, "%s", conn_list_orn_mit)*/
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 0		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		tgt_id = int(mat.x[i][1])
+		if (pnm.gid_exists(tgt_id)){
+			weight = mat.x[i][2]
+			cell = pnm.pc.gid2cell(tgt_id)
+			if (weight > 0) {
+/*                printf("DEBUG adding a netcon to cell %d with weight %.4e netconid: %d\n", tgt_id, weight, cell.ampa_netconlist.count())*/
+				cell.add_netcon_to_ampa_glom(weight) // increase the ampa_netconlist by one
+				cell.add_netcon_to_nmda_glom(weight * w_nmda_mult) // increase the nmda_netconlist by one
+			} 
+		}
+	}
+/*    fih_spikes_from_epth_to_mit = new FInitializeHandler("insert_artificial_orn_spikes_to_mit()") // deprecated! take insert_spikes_to_cell instead*/
+}
+
+
+proc insert_artificial_orn_spikes_to_mit_and_pg() { local tgt_gid, ncol, nrow localobj cell, read_data, mat
+	// for those cells that should receive exc input from orns insert spikes saved in their respective file
+	strdef conn_fn
+	strdef fn 	 // filename containing the netcon_id and the time of spikes (t_event)
+	read_data = new File()
+	// ORN ---< MIT
+	conn_fn = conn_list_orn_mit
+    read_data.ropen(conn_fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	for (i = 0; i < m; i += 1) { //
+		tgt_gid = int(mat.x[i][1])
+		if (pnm.gid_exists(tgt_gid)){
+			sprint(fn, "%s%d.dat", mit_input_spikes_fn_base, tgt_gid) // open file named for this target MT cell
+			insert_spikes_to_cell_from_file(tgt_gid, fn)
+		}
+	}
+	read_data.close()
+
+	// ORN ---< PG
+	conn_fn = conn_list_orn_pg
+    read_data.ropen(conn_fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	for (i = 0; i < m; i += 1) { //
+		tgt_gid = int(mat.x[i][1])
+		if (pnm.gid_exists(tgt_gid)){
+			sprint(fn, "%s%d.dat", pg_input_spikes_fn_base, tgt_gid) // open file named for this target MT cell
+			insert_spikes_to_cell_from_file(tgt_gid, fn)
+		}
+	}
+	read_data.close()
+/*            printf("DEBUG, insert_spikes_to_cell_from_file(%d, %s)\n", tgt_gid, fn)*/
+}
+
+proc insert_spikes_to_cell_from_file() { local tgt_gid, i, nrow, ncol, netcon_id, t_event localobj read_data, mat, cell
+	strdef input_fn
+	tgt_gid = $1
+	input_fn = $s2
+	printf("DEBUG insert_spikes_to_cell_from_file(%d) fn = %s\n", tgt_gid, input_fn)
+	if (pnm.gid_exists(tgt_gid)) { // just an extra check
+		read_data = new File()
+		printf("DEBUG %d reading spikes to cell %d from %s\n", pnm.pc.id(), tgt_gid, input_fn)
+		read_data.ropen(input_fn)
+		mat = new Matrix()      // the data to be read
+		mat.scanf(read_data)    // read spike data from file
+		nrow = mat.nrow()		// n_spikes
+		ncol = mat.ncol()
+		for (i = 0; i < nrow; i += 1) {
+			cell = pnm.pc.gid2cell(tgt_gid)
+			netcon_id = mat.x[i][1]
+			t_event = mat.x[i][0]
+			cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+			cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+/*            printf("DEBUG inserting spike into cell: %d at time %.2f via netcon_id %d and new %d len netconlist:%d\n", tgt, t_event, mat.x[i][0], netcon_id, cell.ampa_netconlist.count())*/
+		}
+	}
+}
+
+
+/*proc insert_artificial_orn_spikes_to_mit() { local x, y, tgt, i, nrow, ncol, netcon_id, t_event, w, gid localobj read_data, mat, cell*/
+/*    for (y = 0; y < n_mit_y; y += 1){*/
+/*        for (x = 0; x < n_mit_x; x += 1){*/
+/*            tgt = mit_offset + y * n_mit_x*/
+/*            if (pnm.gid_exists(tgt)) {*/
+/*                read_data = new File()*/
+/*                strdef fn 	*/
+/*                sprint(fn, "%s%d.dat", spikes_conc_sweep_fn, tgt) // open file named for this target MT cell*/
+/*                printf("DEBUG reading spikes to MIT from %s\n", fn)*/
+/*                read_data.ropen(fn)*/
+/*                mat = new Matrix()      // the data to be read*/
+/*                mat.scanf(read_data)    // read spike data from file*/
+/*                nrow = mat.nrow()		// n_spikes*/
+/*                ncol = mat.ncol()*/
+/*                for (i = 0; i < nrow; i += 1) {*/
+/*                    cell = pnm.pc.gid2cell(tgt)*/
+/*                    netcon_id = mat.x[i][0] % rel_orn_mit*/
+/*                    t_event = mat.x[i][1]*/
+/*                    printf("DEBUG inserting spike into MT: %d at time %.2f via netcon_id %d and new %d len netconlist:%d\n", tgt, t_event, mat.x[i][0], netcon_id,cell.ampa_netconlist.count())*/
+/*                    cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*                    cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*                }*/
+/*            }*/
+/*        }*/
+/*    }*/
+/*}*/
+
+proc add_netcons_to_pg_for_artificial_orns() { local tgt_id, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OB is simulated and EPTH input is inserted to OB via files
+	strdef fn
+	sprint(fn, "%s", conn_list_orn_pg)
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		tgt_id = int(mat.x[i][1])
+		if (pnm.gid_exists(tgt_id)){
+			weight = mat.x[i][2]
+			cell = pnm.pc.gid2cell(tgt_id)
+			if (weight > 0) {
+/*                printf("DEBUG adding a netcon to PG %d with weight %.4e netconid: %d\n", tgt_id, weight, cell.ampa_netconlist.count())*/
+				cell.add_netcon_to_ampa_glom(weight) // increase the ampa_netconlist by one
+				cell.add_netcon_to_nmda_glom(weight * w_nmda_mult) // increase the nmda_netconlist by one
+			} 
+		}
+	}
+	fih_spikes_from_epth_to_pg = new FInitializeHandler("insert_artificial_orn_spikes_to_pg()")
+}
+
+proc add_netcons_to_pg() { local gid, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OC is simulated with input from OB, without resimulating the EPTH and the OB
+    read_data = new File()
+	strdef fn
+	sprint(fn, "%s", epth_pg_tgt_weight_netcon_fn)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]	// cell gid
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			weight = mat.x[i][1]
+			if (weight > 0) {
+/*                printf("DEBUG adding a netcon to PG %d with weight %.4e netconid: %d\n", gid, weight, cell.ampa_netconlist.count())*/
+				cell.add_netcon_to_ampa_glom(weight)
+				cell.add_netcon_to_nmda_glom(weight * w_nmda_mult)
+			} 
+		}
+    }
+	fih_spikes_from_epth_to_pg = new FInitializeHandler("insert_spikes_from_epth_to_pg()")
+}
+
+proc insert_spikes_from_epth_to_pg() { local i, nrow, ncol, netcon_id, t_event, w, gid localobj read_data, mat, cell
+    read_data = new File()
+	strdef fn 	
+	sprint(fn, "%s%d.dat", epth_pg_spiketimes_tgt_netcon_fn_base, pattern_nr)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][0]
+			netcon_id = mat.x[i][2]
+			w = mat.x[i][3]
+			cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+			cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist
+/*            printf("DEBUG, wrong weight in insert_spikes_from_epth_to_pg: t %.2f\t%d\t%d\t%.8e != %.8e %d %d \n", t_event, gid, netcon_id, w, cell.netconlist.o(netcon_id).weight, cell.netconlist.o(netcon_id).delay, cell.netconlist.o(netcon_id).threshold)*/
+/*            printf("DEBUG inserting spike into PG: %d at time %.2f via netcon_id %d and weight %.4e\n", gid, t_event, netcon_id, w)*/
+/*            if (w < 0){*/
+/*                w = w * (-1.0)*/
+/*            }*/
+/*            if (cell.netconlist.o(netcon_id).weight != w) {*/ // this happens even though they are equal .... don't know why, maybe wrong type
+/*                printf("DEBUG, wrong weight in insert_spikes_from_epth_to_pg: t %.2f\t%d\t%d\t%.8e != %.8e %d %d \n", t_event, gid, netcon_id, w, cell.netconlist.o(netcon_id).weight, cell.netconlist.o(netcon_id).delay, cell.netconlist.o(netcon_id).threshold)*/
+/*            }*/
+/*            cell.netconlist.o(netcon_id).event(mat.x[i][0]) //put it into netconlist*/
+/*            cell.netconlist.o(0).event(mat.x[i][0]) //put it into netconlist*/
+/*            cell.netconlist.o(0).event(t_event) //put it into netconlist*/
+		}
+    }
+}
+
+
+
+
+/*proc insert_spikes_from_epth_to_pg() { local i, nrow, ncol, netcon_id, t_event, w, gid localobj read_data, mat, cell*/
+/*    read_data = new File()*/
+/*    strdef fn 	*/
+/*    sprint(fn, "%s%d.dat", epth_pg_spiketimes_tgt_netcon_fn_base, pattern_nr)*/
+/*    read_data.ropen(fn)*/
+/*    mat = new Matrix()      // the data to be read*/
+/*    mat.scanf(read_data)    // read spike data from file*/
+/*    nrow = mat.nrow()		// n_spikes*/
+/*    ncol = mat.ncol()*/
+/*    for (i = 0; i < nrow; i += 1) {*/
+/*        gid = mat.x[i][1]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            t_event = mat.x[i][0]*/
+/*            netcon_id = mat.x[i][2]*/
+/*            w = mat.x[i][3]*/
+/*            cell.ampa_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*            cell.nmda_netconlist.o(netcon_id).event(t_event) //put it into netconlist*/
+/*            printf("DEBUG inserting spike into PG: %d at time %.2f via netcon_id %d and weight %.8E\n", gid, t_event, netcon_id, w)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+
+proc add_netcons_to_readout() { local gid, ncol, nrow, weight localobj cell, read_data, mat
+	// This function is called when the OC is simulated with input from OB, without resimulating the EPTH and the OB
+    read_data = new File()
+	strdef fn
+	sprint(fn, "%s", oc_readout_tgt_weight_netcon_fn)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0]	// cell gid
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			weight = mat.x[i][1]
+			if (weight > 0) {
+				cell.add_netcon_to_synlist0(weight)
+			} else { // weight < 0
+				weight *= (-1)
+				cell.add_netcon_to_synlist1(weight)
+			}
+		}
+    }
+	fih_spikes_from_oc_to_readout = new FInitializeHandler("insert_spikes_from_oc_to_readout()")
+}
+
+proc insert_spikes_from_oc_to_readout() { local i, nrow, ncol, netconid, t_event localobj read_data, mat, cell
+    read_data = new File()
+	strdef fn 	
+	sprint(fn, "%s%d.dat", oc_readout_spiketimes_tgt_netcon_fn_base, pattern_nr)
+    read_data.ropen(fn)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow()		// n_spikes
+    ncol = mat.ncol()
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][0]
+			netcon_id = mat.x[i][2]
+			w = mat.x[i][3]
+			cell.netconlist.o(netcon_id).event(t_event) //put it into netconlist
+/*            if (w < 0){*/
+/*                w = w * (-1.0)*/
+/*            }*/
+/*            if (cell.netconlist.o(netcon_id).weight != w) {*/ // this happens even though they are equal .... don't know why, maybe wrong type
+/*                printf("DEBUG, wrong weight in insert_spikes_from_epth_to_ob: t %.2f\t%d\t%d\t%.8e != %.8e %d %d \n", t_event, gid, netcon_id, w, cell.netconlist.o(netcon_id).weight, cell.netconlist.o(netcon_id).delay, cell.netconlist.o(netcon_id).threshold)*/
+/*            }*/
+		}
+    }
+}
+
+
+
+proc insert_spikes_to_mit_from_file() { local i, nrow, ncol, netconid, t_event localobj read_data, mat, cell
+	strdef fn
+	fn = $s1
+	print "Connecting cells via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// add netcons to 
+	w1 = w_orn_mit_target / rel_orn_mit
+	w2 = w1 * w_nmda_mult
+    for (i = 0; i < n_mit; i += 1) {
+		gid = mat.x[i][0] + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_netcon_for_external_spikes(w1, w2)
+		}
+	}
+
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][0] + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			t_event = mat.x[i][1]
+			cell.netconlist_ext.o(0).event(t_event) //put it into netconlist
+		}
+    }
+}
+
+
+// -------------- C R E A T E     C E L L S ---------------------
+proc create_orn() { local i, gid localobj cell
+	for (i = 0; i < n_orn; i += 1){
+		gid = i + orn_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Orn(v_orn_gor[gid-global_offset], v_orn_oor[gid-global_offset], \
+					 t_start, t_stop, v_orn_gna_hh[gid-global_offset], v_orn_gka_hh[gid-global_offset], \
+					 v_orn_gka_cag[gid-global_offset], v_orn_gca_l[gid-global_offset], v_orn_gleak[gid-global_offset],\
+					 v_orn_tau_cadec[gid-global_offset])
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+proc create_orn_sniffing() { local i, gid localobj cell
+	for (i = 0; i < n_orn; i += 1){
+		gid = i + orn_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new OrnSniffing(v_orn_gor[gid-global_offset], v_orn_oor[gid-global_offset], \
+					 t_start, t_stop, v_orn_gna_hh[gid-global_offset], v_orn_gka_hh[gid-global_offset], \
+					 v_orn_gka_cag[gid-global_offset], v_orn_gca_l[gid-global_offset], v_orn_gleak[gid-global_offset],\
+					 v_orn_tau_cadec[gid-global_offset], sniff_period, t_shift_sniff)
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+
+proc create_mit() { local i, gid localobj cell
+	for (i = 0; i < n_mit; i += 1){
+		gid = i + mit_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Mit(gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+/*            cell = new Mit(rnd_int.repick() * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns*/
+			pnm.register_cell(gid, cell)
+			pnm.pc.outputcell(gid)
+
+			// for dendro-dendritic inhibition: mit_glom o----< pg_periph
+			// same as pc.cell( ... ) ?
+			cell.glom ddi_nc = new NetCon(&v(0.5), nil, ddi_mit_glom_thresh, 1, 0)
+			pnm.pc.cell(gid + n_cells, ddi_nc) // associate gid+n_cells with the netcon in the source cell's compartment
+			ddi_netcons.append(ddi_nc)
+			pnm.pc.outputcell(gid + n_cells)
+
+			// for dendro-dendritic inhibition: mit_dend o----< gran_periph
+			cell.dend ddi_nc = new NetCon(&v(0.5), nil, ddi_mit_dend_thresh, 1, 0)
+			pnm.pc.cell(gid + 2 * n_cells, ddi_nc) // associate gid+n_cells with the netcon in the source cell's compartment
+			ddi_netcons.append(ddi_nc)
+			pnm.pc.outputcell(gid + 2 * n_cells)
+
+			// autoreceptors on secondary dendrite (only NMDA)
+			cell.dend auto_rec_nc_dend = new NetCon(&v(0.5), nil, autorec_mit_dend_thresh, 1, 0)
+			pnm.nc_append(gid + 4 * n_cells, gid, 6, w_mit_nmda_autoreceptors, mit_autoreceptor_delay)
+			auto_recs.append(auto_rec_nc_dend)
+
+			// NetCon for autoreceptors on primary dendrites: AMPA and NMDA receptors
+			cell.prim auto_rec_nc = new NetCon(&v(0.5), nil, autorec_mit_prim_thresh, 1, 0)
+			pnm.pc.cell(gid + 3 * n_cells, auto_rec_nc) // associate gid+n_cells with the netcon in the source cell's compartment
+			pnm.nc_append(gid + 3 * n_cells, gid, 5, w_mit_ampa_autoreceptors, mit_autoreceptor_delay)
+			pnm.nc_append(gid + 3 * n_cells, gid, 6, w_mit_nmda_autoreceptors, mit_autoreceptor_delay)
+			auto_recs.append(auto_rec_nc)
+
+		}
+	}
+}
+
+proc create_gran() { local i, gid localobj cell
+	for (i = 0; i < n_gran; i += 1){
+		gid = i + gran_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Gran(gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+/*            cell = new Gran(rnd_int.repick() * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns*/
+			pnm.register_cell(gid, cell)
+			
+			// for dendro-dendritic inhibition
+			cell.periph ddi_nc = new NetCon(&v(0.5), nil, ddi_gran_periph_thresh, 1, 0)
+			pnm.pc.cell(gid + n_cells, ddi_nc) // associate gid+n_cells with the netcon in the source cell's compartment
+			ddi_netcons.append(ddi_nc)
+			pnm.pc.outputcell(gid)
+			pnm.pc.outputcell(gid + n_cells)
+		}
+	}
+}
+
+proc create_pg() { local i, gid localobj cell
+	for (i = 0; i < n_pg; i += 1){
+		gid = i + pg_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Perig(gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+/*            cell = new Perig(rnd_int.repick() * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns*/
+			pnm.register_cell(gid, cell)
+
+			// for dendro-dendritic inhibition
+			cell.periph ddi_nc = new NetCon(&v(0.5), nil, ddi_pg_periph_thresh, 1, 0)
+			pnm.pc.cell(gid + n_cells, ddi_nc) // associate gid+n_cells with the netcon in the source cell's compartment
+			ddi_netcons.append(ddi_nc)
+			pnm.pc.outputcell(gid)
+			pnm.pc.outputcell(gid + n_cells)
+		}
+	}
+}
+
+proc create_pyr() { local gid, i, g_ka, iclamp_amp, with_bias localobj cell
+
+	with_bias = $1
+	for (i = 0; i < n_pyr; i += 1){
+		gid = i + pyr_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			if (with_bias){
+				if (with_curr_bias) { // with current input
+					cell = new Pyr_rs_no_bias(g_m_pyr, g_kcag_pyr, g_cal_pyr, gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+					iclamp_amp = v_pyr_gka[i]
+					cell.add_iclamp_input(iclamp_amp, 0, t_sim)
+				} else {   // the AType-K channel is used to provide a bias modelling intrinsic excitability
+					g_ka = v_pyr_gka[i]
+					cell = new Pyr_rs(g_m_pyr, g_ka, gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+				}
+			} else { // no current, no ion channel used
+					cell = new Pyr_rs_no_bias(g_m_pyr, gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+			}
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+
+proc create_pyr_lts() { local gid, i, g_ka, iclamp_amp, with_bias localobj cell
+	// Create Low-Threshold-Spiking neurons http://senselab.med.yale.edu/ModelDb/ShowModel.asp?model=123623&file=\PospischilEtAl2008\sPYr_template
+	with_bias = $1
+	for (i = 0; i < n_pyr; i += 1){
+		gid = i + pyr_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			if (with_bias){
+				if (with_curr_bias) { // with current input
+					cell = new Pyr_lts_no_bias(gid * (pattern_nr + 1), g_m_pyr) // seed value is depending on pattern_nr in order to get different noise for different patterns
+					iclamp_amp = v_pyr_gka[i]
+					cell.add_iclamp_input(iclamp_amp, 0, t_sim)
+				} else {  // the AType K channel is used to provide a bias modelling intrinsic excitability
+					g_ka = v_pyr_gka[i]
+					cell = new Pyr_lts(gid * (pattern_nr + 1), g_m_pyr, g_ka) // seed value is depending on pattern_nr in order to get different noise for different patterns
+				}
+			} else { // no current, no ion channel used
+					cell = new Pyr_lts_no_bias(gid * (pattern_nr + 1), g_m_pyr) // seed value is depending on pattern_nr in order to get different noise for different patterns
+			}
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+
+proc create_basket() { local gid, i localobj cell
+	for (i = 0; i < n_basket; i += 1){
+		gid = i + basket_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Basket(g_m_basket, gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+/*            cell = new Basket(g_m_basket, rnd_int.repick() * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns*/
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+proc create_rsnp() { local gid, i localobj cell
+	for (i = 0; i < n_rsnp; i += 1){
+		gid = i + global_offset + rsnp_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			cell = new Rsnp(g_m_rsnp, gid * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns
+/*            cell = new Rsnp(g_m_rsnp, rnd_int.repick() * (pattern_nr+1)) // seed value is depending on pattern_nr in order to get different noise for different patterns*/
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+proc create_readout() { local gid, i, g_ka, iclamp_amp, with_bias localobj cell
+	with_bias = $1
+	for (i = 0; i < n_readout; i += 1){
+		gid = i + readout_offset
+		if (pnm.gid_exists(gid)){	// if cell has been assigned to this machine
+			if (with_bias){
+				if (with_curr_bias) { // with current input
+					cell = new Readout_spiking_no_bias(g_leak_readout, tau_syn_exc, tau_syn_inh)
+					iclamp_amp = v_readout_gka[i]
+					cell.add_iclamp_input(iclamp_amp, 0, t_sim)
+				} else {  // the AType K channel is used to provide a bias modelling intrinsic excitability
+					g_ka = v_readout_gka[i]
+					cell = new Readout_spiking(g_leak_readout, tau_syn_exc, tau_syn_inh, g_ka)
+				}
+			} else { // no current, no ion channel used
+				cell = new Readout_spiking_no_bias(g_leak_readout, tau_syn_exc, tau_syn_inh)
+			}
+			pnm.register_cell(gid, cell)
+		}
+	}
+}
+
+
+proc add_connections() {local i, nrow, ncol localobj stvec, read_data, mat, cell
+    print "Reading spikes from file ", noise_input_pyr_f
+    w = w_noise_pyr
+    read_data = new File()
+    read_data.ropen(noise_input_pyr_f)
+    mat = new Matrix()      // the data to be read
+    mat.scanf(read_data)    // read spike data from file
+    nrow = mat.nrow() 		// n_spikes
+    ncol = mat.ncol()		// id
+    for (i = 0; i < nrow; i += 1) {
+		gid = mat.x[i][1]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_connection_to_soma(w) // argument is the connection weight
+/*            printf("%.1f\t%d\n", mat.x[i][0], gid)*/
+		}
+    }
+}
+
+
+
+proc connect_orns_to_ob() {
+	connect_orn_mit(conn_list_orn_mit)
+	connect_orn_pg(conn_list_orn_pg)
+}
+proc connect_cells_ob_dendrodendritic() {
+	connect_pg_mit_dd(conn_list_pg_mit_serial)
+	connect_pg_mit_dd(conn_list_pg_mit_reciprocal)
+	connect_mit_pg_dd(conn_list_mit_pg_reciprocal)
+	connect_mit_pg_dd(conn_list_mit_pg_serial)
+	connect_mit_gran_dd(conn_list_mit_gran_local)
+	connect_mit_gran_dd(conn_list_mit_gran_global)
+	connect_gran_mit_dd(conn_list_gran_mit_local)
+	connect_gran_mit_dd(conn_list_gran_mit_global)
+}
+
+
+
+proc connect_cells_with_oc() {
+	connect_orn_mit(conn_list_orn_mit)
+	connect_orn_pg(conn_list_orn_pg)
+	connect_pg_mit_dd(conn_list_pg_mit_serial)
+	connect_pg_mit_dd(conn_list_pg_mit_reciprocal)
+	connect_mit_pg_dd(conn_list_mit_pg_reciprocal)
+	connect_mit_pg_dd(conn_list_mit_pg_serial)
+	connect_mit_gran_dd(conn_list_mit_gran_local)
+	connect_mit_gran_dd(conn_list_mit_gran_global)
+	connect_gran_mit_dd(conn_list_gran_mit_local)
+	connect_gran_mit_dd(conn_list_gran_mit_global)
+	if (with_auto_receptors){
+		connect_mit_autoreceptors()
+	}
+	connect_cells_via_file(conn_list_mit_pyr)
+	connect_cells_via_file(conn_list_mit_rsnp)
+	connect_cells_via_file(conn_list_layer23) // hc and mc connections: pyr <-> pyr, pyr <-> basket
+	connect_cells_via_file(conn_list_pyr_readout) // pyr -> readout cells
+	if (with_oc_oc_rec){
+		connect_cells_via_file(conn_list_pyr_pyr)
+		connect_cells_via_file(conn_list_pyr_rsnp)
+	}
+}
+
+proc connect_cells_oc_only() {
+	connect_cells_via_file(conn_list_layer23) // hc and mc connections: pyr <-> pyr, pyr <-> basket
+	connect_cells_via_file(conn_list_pyr_readout) // pyr -> readout cells
+	if (with_oc_oc_rec){
+		connect_cells_via_file(conn_list_pyr_pyr)// pyr <-> pyr connections across hypercolumns
+		connect_cells_via_file(conn_list_pyr_rsnp)// pyr <-> rsnp across hypercolumns
+	}
+}
+
+/*objref vec*/
+/*proc open_binary_file() {local i, n localobj f*/
+/*    strdef fn*/
+/*    fn = $s1*/
+/*    vec = $o1 // vec object*/
+/*    f = new File()*/
+/*    f.vread(n, &vec)*/
+/*    for i=0, v.size-1 {*/
+/*        print "v[",i,"]:", vec.x[i]*/
+/*    }*/
+/*}*/
+
+proc connect_cells_via_file() {local m, n, i, src_id, tgt_id, weight, delay, w_inh, n_data localobj read_data, mat
+	// This function reads connections from a file given in the format
+	// source	target	weight
+	// if weight > 0: excitatory connection via the synapse target.synlist[0]
+	//                and  excitatory connection via the synapse target.synlist[1]
+	// if weight < 0: inhibitory connection via the synapse target.synlist[2]
+	// CHECK THIS IN THE UTILIZED TARGET CELL TEMPLATE
+	// if the synlist is set up differently in the cell template, you have to write a seperate function
+	// and change the synapse_id accordingly
+	strdef fn
+	fn = $s1
+	print "Connecting cells via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+/*        printf("debug src_id: %d\n", src_id)*/
+		if (weight < 0){
+/*            printf("Connecting cells: %d to %d with inh weight: %f\n", src_id, tgt_id, weight)*/
+			w_inh = weight * (-1.0) // weights must be positive
+			synapse_id = 2			// inhibitory connections to MIT are done via this synapse type
+			// GABAA synapse
+			pnm.nc_append(src_id, tgt_id, synapse_id, w_inh, delay)
+		}
+		if (weight > 0){
+/*            printf("Connecting cells: %d to %d with exc weight: %f\n", src_id, tgt_id, weight)*/
+			synapse_id = 0 // AMPA synapse
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay) 
+			synapse_id = 1 // NMDA synapse
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight * w_nmda_mult_oc, delay)
+		}
+	}
+}
+
+
+proc connect_orn_mit() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting ORNs ---< mit via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (weight > 0){
+/*            printf("Connecting cells: ORN %d to MIT %d with exc weight: %f\n", src_id, tgt_id, weight)*/
+			// AMPA synapse
+			synapse_id = 0 
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+			// NMDA synapse
+			synapse_id = 1
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight * w_nmda_mult, delay)
+		}
+	}
+}
+
+proc connect_orn_pg() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting ORNs ---< PG via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (weight > 0){
+/*            printf("Connecting cells: ORN %d to PG %d with exc weight: %f\n", src_id, tgt_id, weight)*/
+			// AMPA synapse
+			synapse_id = 0 
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+			// NMDA synapse
+			synapse_id = 1
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight * w_nmda_mult, delay)
+		}
+	}
+}
+
+proc connect_pg_mit() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting PG ---o MIT serial via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		// GABAA synapse
+		synapse_id = 2 
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+}
+
+// basically the same as connect_pg_mit
+proc connect_gran_mit() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting Gran ---o MIT serial via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		// GABAA synapse
+		synapse_id = 2 
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+}
+
+proc connect_mit_pg() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting MIT ---< PG via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		// AMPA synapse
+		synapse_id = 0 
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+		// NMDA synapse
+		synapse_id = 1
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+}
+
+proc connect_mit_gran() { local m, n, i, src_id, tgt_id, weight localobj read_data, mat
+	strdef fn
+	fn = $s1
+	print "Connecting MIT ---< GRAN via file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		// AMPA synapse
+		synapse_id = 0 
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+		// NMDA synapse
+		synapse_id = 1
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+}
+
+proc connect_mit_autoreceptors() { local i, src_id, src_nc_id, tgt_id, weight_ampa, weight_nmda localobj tgt_cell
+	print "Connecting Mitral cell autoreceptors"
+	for (i = 0; i < n_mit; i += 1) { //
+		tgt_id = i + mit_offset
+		if (pnm.pc.gid_exists(tgt_id)) {
+			tgt_cell = pnm.pc.gid2cell(tgt_id)
+			src_nc_id = src_id + 3 * n_cells // gid of the source netcon
+/*            printf("DEBUG, mit %d gets autoreceptors with gid %d\n", tgt_id, src_nc_id)*/
+			// target: AMPA synapse in primary dendrite
+			synapse_id = 5
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = w_mit_ampa_autoreceptors
+			ddi_nc.delay = mit_autoreceptor_delay
+			ddi_netcons.append(ddi_nc)
+			// target: NMDA synapse in primary dendrite
+			synapse_id = 6
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = w_mit_nmda_autoreceptors
+			ddi_nc.delay = mit_autoreceptor_delay
+			ddi_netcons.append(ddi_nc)
+
+			// target: NMDA synapse in lateral dendrite
+			synapse_id = 4
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = w_mit_nmda_autoreceptors
+			ddi_nc.delay = mit_autoreceptor_delay
+			ddi_netcons.append(ddi_nc)
+		}
+	}
+}
+
+
+proc connect_pg_mit_dd() { local m, n, i, src_id, src_nc_id, tgt_id, weight localobj read_data, mat, tgt_cell
+	strdef fn
+	fn = $s1
+	print "Connecting PG ---o MIT serial via DDI and file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (pnm.pc.gid_exists(tgt_id)) {
+			tgt_cell = pnm.pc.gid2cell(tgt_id)
+			src_nc_id = src_id + n_cells
+			// target: GABAA synapse
+			synapse_id = 2 
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight
+			ddi_nc.delay = ddi_pg_mit_delay
+			ddi_netcons.append(ddi_nc)
+/*            printf("Connecting cells: PG %d to MIT %d via DDI synapse weight: %f\n", src_id, tgt_id, weight)*/
+		}
+	}
+}
+
+proc connect_mit_pg_dd() { local m, n, i, src_id, src_nc_id, tgt_id, weight localobj read_data, mat, tgt_cell
+	strdef fn
+	fn = $s1
+	print "Connecting PG ---o MIT via DDI and file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (pnm.pc.gid_exists(tgt_id)) {
+			tgt_cell = pnm.pc.gid2cell(tgt_id)
+			src_nc_id = src_id + n_cells
+			// target: AMPA synapse
+			synapse_id = 0 
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight
+			ddi_nc.delay = ddi_pg_mit_delay
+			ddi_netcons.append(ddi_nc)
+			// target: NMDA synapse
+			synapse_id = 1
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight * w_nmda_mult
+			ddi_nc.delay = ddi_pg_mit_delay
+			ddi_netcons.append(ddi_nc)
+/*            printf("Connecting cells: PG %d to MIT %d via DDI synapse weight: %f\n", src_id, tgt_id, weight)*/
+		}
+	}
+}
+
+proc connect_mit_gran_dd() { local m, n, i, src_id, src_nc_id, tgt_id, weight localobj read_data, mat, tgt_cell
+	strdef fn
+	fn = $s1
+	print "Connecting GRAN ---o MIT via DDI and file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (pnm.pc.gid_exists(tgt_id)) {
+			tgt_cell = pnm.pc.gid2cell(tgt_id)
+			src_nc_id = src_id + 2 * n_cells
+			// target: AMPA synapse
+			synapse_id = 0 
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight
+			ddi_nc.delay = ddi_gran_mit_delay
+			ddi_netcons.append(ddi_nc)
+			// target: NMDA synapse
+			synapse_id = 1
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight * w_mit_gran_nmda_mult // adjust NMDA / AMPA weights: Schoppa'98 weak AMPA, dominant NMDA
+			ddi_nc.delay = ddi_gran_mit_delay
+			ddi_netcons.append(ddi_nc)
+/*            printf("Connecting cells: GRAN %d to MIT %d via DDI synapse weight: %f\n", src_id, tgt_id, weight)*/
+		}
+	}
+}
+
+
+
+proc connect_ob_oc_via_binary_files() {local i, j, cnt, n_row, n_col, src_gid, tgt_gid, weight, index localobj f_size, conn_file, data_vec
+	// Connectivity OB -> OC is stored in several binary files
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 2) for filename in all_connlist:
+	// 		open file for reading
+	// 		while !file.eof(): append the to buffer_vector
+	// 		connect cells according to data stored in vector
+	strdef fn_base	
+	sprint(fn_base, "%s", conn_list_mit_oc_base)
+	strdef mit_oc_conn_fn
+/*    printf ("debug n_mit_oc_conn_files %d", n_mit_oc_conn_files)*/
+	for (i = 0; i < n_mit_oc_conn_files; i += 1){
+		// create the filename where connectivity data is stored
+		sprint(mit_oc_conn_fn, "%s%d.dat", fn_base, i)
+		print "Connecting cells via file: ", mit_oc_conn_fn
+		conn_file = new File(mit_oc_conn_fn)
+		conn_file.ropen()
+		data_vec = new Vector(1) // 1 element
+		cnt = 0
+		while (conn_file.eof() != 1){
+			conn_file.vread(1, &data_vec.x[cnt])
+			data_vec.append(0)
+			cnt += 1
+		}
+		data_vec.remove(cnt) // remove the last 0 element
+		n_row = data_vec.size() / 3
+		n_col = 3
+		n_data = int(n_row * n_col)
+		// process the data
+		for (j = 0; j < n_row; j += 1) {
+			src_gid = data_vec.x[j]
+			tgt_gid = data_vec.x[n_row + j]
+			weight = data_vec.x[2*n_row + j]
+/*            connect_two_cells(src_gid, tgt_gid, weight)*/
+			connect_mit_pyr(src_gid, tgt_gid, weight)
+/*            printf("DEBUG, my_pid %d connect_mit_pyr %d -> %d: %f\n", pnm.pc.id(), src_gid, tgt_gid, weight)*/
+		}
+	}
+}
+
+proc connect_gran_mit_dd() { local m, n, i, src_id, src_nc_id, tgt_id, weight localobj read_data, mat, tgt_cell
+	strdef fn
+	fn = $s1
+	print "Connecting GRAN ---o MIT serial via DDI and file: ", fn
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (pnm.pc.gid_exists(tgt_id)) {
+			tgt_cell = pnm.pc.gid2cell(tgt_id)
+			src_nc_id = src_id + n_cells
+			// target: GABAA synapse
+			synapse_id = 2 
+			ddi_nc = pnm.pc.gid_connect(src_nc_id, tgt_cell.synlist.o(synapse_id))
+			ddi_nc.weight = weight
+			ddi_nc.delay = ddi_gran_mit_delay
+			ddi_netcons.append(ddi_nc)
+/*            printf("Connecting cells: GRAN %d to MIT %d via DDI synapse weight: %f\n", src_id, tgt_id, weight)*/
+		}
+	}
+}
+
+
+proc connect_oc_oc_via_binary_files() {local i, j, cnt, n_row, n_col, src_gid, tgt_gid, weight, index localobj f_size, conn_file, data_vec
+	// Connectivity OC -> OC is stored in several binary files
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 2) for filename in all_connlist:
+	// 		open file for reading
+	// 		while !file.eof(): append the to buffer_vector
+	// 		connect cells according to data stored in vector
+	strdef fn_base	
+	sprint(fn_base, "%s", conn_list_pyr_pyr_base)
+/*    printf ("debug n_mit_oc_conn_files %d", n_mit_oc_conn_files)*/
+	for (i = 0; i < n_oc_oc_conn_files; i += 1){
+		// create the filename where connectivity data is stored
+		sprint(pyr_pyr_conn_fn, "%s%d.dat", fn_base, i)
+		print "Connecting cells via file: ", pyr_pyr_conn_fn
+		conn_file = new File(pyr_pyr_conn_fn)
+		conn_file.ropen()
+		data_vec = new Vector(1) // 1 element
+		cnt = 0
+		if (conn_file.eof() != 1) { // if the file is not empty
+			while (conn_file.eof() != 1){ // while the file is not empty read the data
+				conn_file.vread(1, &data_vec.x[cnt])
+				data_vec.append(0)
+				cnt += 1
+			}
+			data_vec.remove(cnt) // remove the last 0 element
+			n_row = data_vec.size() / 3
+			n_col = 3
+			n_data = int(n_row * n_col)
+			// process the data
+			for (j = 0; j < n_row; j += 1) {
+				src_gid = data_vec.x[j]
+				tgt_gid = data_vec.x[n_row + j]
+				weight = data_vec.x[2*n_row + j]
+				printf("DEBUG, connect_two_cells %d -> %d: %f\n", src_gid, tgt_gid, weight)
+				connect_two_cells(src_gid, tgt_gid, weight)
+			}
+		}
+	}
+}
+
+
+
+
+proc connect_ob_oc_via_binary_files_old() {local i, j, f_id, n_row, n_col, src_gid, tgt_gid, weight, index localobj f_size, conn_file, data_vec
+	// Connectivity OB -> OC is stored in several binary files
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 2) for filename in all_connlist:
+	// 		(filename = conn_list_X_Y)
+	// 		* get the size of the file (n_rows, n_cols)
+	// 		* call connect_cells_via_binary_file(filename, n_rows, n_cols)
+	//			-> connect_cells_via_binary_file calls the actual connect function
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 	the binary files have a name like: conn_list_mit_oc_X.dat 
+	// 	X = tgt_minicolumn index to which the MIT cells connect
+	//	X = [0, ... , n_tgt_mcs] n_tgt_mcs is read from the simulation_parameters.py which 
+	//e.g.
+/*    n_mit_oc_conn_files = 1000*/
+	strdef fn_base	
+	sprint(fn_base, "%s", conn_list_mit_oc_base)
+	strdef mit_oc_conn_fn
+/*    printf ("debug n_mit_oc_conn_files %d", n_mit_oc_conn_files)*/
+	for (i = 0; i < n_mit_oc_conn_files; i += 1){
+		// create the filename where connectivity data is stored
+		sprint(mit_oc_conn_fn, "%s%d.dat", fn_base, i)
+		// get index and size of this file which stores information in binary format from the filename_lookup_table
+		f_id = get_index_for_filename(mit_oc_conn_fn)	// file index
+		if (f_id == -1) {
+			printf("Error reading file: %s \n f_id = %d \n Will now quit\n", mit_oc_conn_fn, f_id)
+			quit()
+		}
+		f_size = get_filesize(f_id)						// look up the filesize
+		if (f_size.x[0] == -1) {
+			printf("Error reading file: %s \n f_size = %d \n Will now quit\n",  mit_oc_conn_fn, f_size.x[0])
+			quit()
+		}
+		// read the binary data into an array
+		n_row = int(f_size.x[0])
+		n_col = int(f_size.x[1])
+		printf("debug f_size, %s f_id %d n_row %d n_col %d\n", mit_oc_conn_fn, f_id, n_row, n_col)
+		n_data = int(n_row * n_col)
+		data_vec = new Vector(n_data)
+		conn_file = new File(mit_oc_conn_fn)
+		conn_file.ropen()
+		data_vec.vread(conn_file)
+		// process the data
+		n_row = data_vec.size() / 3
+		for (j = 0; j < n_row; j += 1) {
+			src_gid = data_vec.x[j]
+			tgt_gid = data_vec.x[n_row + j]
+			weight = data_vec.x[2*n_row + j]
+			connect_two_cells(src_gid, tgt_gid, weight)
+/*            printf("DEBUG, connect_two_cells %d -> %d: %f\n", src_gid, tgt_gid, weight)*/
+		}
+/*        data_vec.fread(conn_file, n_data)*/
+		// process the data
+/*        for (j = 0; j < n_row; j += 1) {*/
+/*            src_gid = data_vec.x[j]*/
+/*            tgt_gid = data_vec.x[n_row + j]*/
+/*            weight = data_vec.x[2*n_row + j]*/
+/*            connect_two_cells(src_gid, tgt_gid, weight)*/
+/*        }*/
+	}
+}
+
+
+proc connect_oc_recurrent_via_binary_files() {local i, j, f_id, n_row, n_col, src_gid, tgt_gid, weight, index localobj f_size, conn_file, data_vec
+	// Connectivity OB -> OC is stored in several binary files
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 2) for filename in all_connlist:
+	// 		(filename = conn_list_X_Y)
+	// 		* get the size of the file (n_rows, n_cols)
+	// 		* call connect_cells_via_binary_file(filename, n_rows, n_cols)
+	//			-> connect_cells_via_binary_file calls the actual connect function
+	// 1) get the number of conn_lists from the parameter file (written by a method in network_parameters.py called by the main program)
+	// 	the binary files have a name like: conn_list_pyr_pyr_X.dat 
+	// 	X = tgt_minicolumn index to which the MIT cells connect
+	//	X = [0, ... , n_tgt_mcs] n_tgt_mcs is read from the simulation_parameters.py which 
+	//
+	//e.g.
+/*    n_pyr_pyr_files = 1000*/
+	strdef fn_base	
+	sprint(fn_base, "%s", conn_list_pyr_pyr_base)
+	strdef pyr_pyr_conn_fn
+	for (i = 0; i < n_pyr_pyr_files; i += 1){
+		// create the filename where connectivity data is stored
+		sprint(pyr_pyr_conn_fn, "%s%d.dat", fn_base, i)
+
+		conn_file = new File(mit_oc_conn_fn)
+		conn_file.ropen()
+		data_vec = new Vector(1) // 1 element
+		cnt = 0
+		while (conn_file.eof() != 1){
+			conn_file.vread(1, &data_vec.x[cnt])
+			data_vec.append(0)
+			cnt += 1
+		}
+		data_vec.remove(cnt) // remove the last 0 element
+		n_row = data_vec.size() / 3
+		n_col = 3
+		n_data = int(n_row * n_col)
+		// process the data
+		for (j = 0; j < n_row; j += 1) {
+			src_gid = data_vec.x[j]
+			tgt_gid = data_vec.x[n_row + j]
+			weight = data_vec.x[2*n_row + j]
+			connect_two_cells(src_gid, tgt_gid, weight)
+		}
+	}
+}
+
+
+
+proc connect_two_cells() {local src_id, tgt_id, weight, synapse_id, delay, w_inh
+	src_id = $1
+	tgt_id = $2
+	weight = $3
+	delay = 1
+/*    printf("DEBUG Connecting cells: %d to %d with weight: %f\n", src_id, tgt_id, weight)*/
+	if (weight < 0){
+/*        printf("Connecting cells: %d to %d with inh weight: %f\n", src_id, tgt_id, weight)*/
+		w_inh = weight * (-1.0) // weights must be positive
+		synapse_id = 2			// inhibitory connections to MIT are done via this synapse type
+		// GABAA synapse
+		pnm.nc_append(src_id, tgt_id, synapse_id, w_inh, delay)
+	}
+/*        if ((weight > 0) && (tgt_id < n_orn + n_mit + global_offset)){*/
+	if (weight > 0){
+/*        printf("Connecting cells: %d to %d with exc weight: %f\n", src_id, tgt_id, weight)*/
+		// AMPA synapse
+		synapse_id = 0 
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+		// NMDA synapse
+		synapse_id = 1
+/*        weight = weight * w_nmda_mult*/
+/*        weight = weight * w_nmda_mult_oc*/
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+}
+
+proc connect_mit_pyr() {local src_id, tgt_id, weight, synapse_id, delay, w_inh localobj cell
+	src_id = $1
+	tgt_id = $2
+	weight = $3
+	delay = 1
+/*    printf("DEBUG Connecting cells: %d to %d with weight: %f\n", src_id, tgt_id, weight)*/
+	if (weight < 0){
+/*        printf("Connecting cells: %d to %d with inh weight: %f\n", src_id, tgt_id, weight)*/
+		w_inh = weight * (-1.0) // weights must be positive
+		synapse_id = 2			// inhibitory connections to MIT are done via this synapse type
+		// GABAA synapse
+		pnm.nc_append(src_id, tgt_id, synapse_id, w_inh, delay)
+	}
+
+	if (weight > 0){
+		synapse_id = 0
+		// AMPA synapse
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+		synapse_id = 1
+		// NMDA synapse
+		weight = weight * w_nmda_mult_oc
+		pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+	}
+
+	// referring to Franks and Isaacson 2005: w_ampa : w_nmda = 1.2
+/*    if (weight >= w_ampa_thresh){*/
+/*        synapse_id = 0*/
+/*        // AMPA synapse*/
+/*        pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)*/
+/*    }*/
+/*    if ((weight > 0) && (weight < w_ampa_thresh)){*/
+/*        synapse_id = 2*/
+/*        // NMDA synapse*/
+/*        weight = weight * w_mit_pyr_nmda_mult*/
+/*        pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)*/
+/*    }*/
+}
+
+
+/*proc read_binary_file() {local n_row, n_col localobj file*/
+/*    file = $o1*/
+/*    n_row = $2*/
+/*    n_col = $3*/
+/*    double d[n_row * n_col]*/
+/*    file.vread(n_row*n_col, &d)*/
+/*}*/
+func get_index_for_filename() {local f_id localobj file, strobj
+	fn = $s1 // filename
+	file = new File()
+	file.ropen(filename_lookup) // filename - index information is stored in file name "filename_lookup"
+	strobj = new StringFunctions()// class for string operations
+
+	strdef file_index 
+	strdef line
+	while (file.gets(line) != -1) {
+		strobj.tail(line, fn, file_index) // strobj.tail(str, "regexp", result), result contains the tail of the string from the char following regexp to the end of the string
+		if (strobj.len(file_index) > 0) { // if fn was found in this line
+			sscanf(file_index, "%d", &f_id) // put the string representing the file index in f_id
+			return f_id
+		}
+	}
+	return -1
+}
+
+obfunc get_filesize() {local f_id, n_row, n_col localobj file, strobj, return_vec
+	f_id = $1
+	return_vec = new Vector(2)
+	// convert int to string in order to search for in the file
+	strdef search_f_id
+	sprint(search_f_id, "^%d\t", f_id) // regexp: ^(beginning of line) f_id as int followed by a tab
+	file = new File()
+	file.ropen(filesize_lookup) // file_index - filesize information is stored in file name "filesize_lookup"
+	strobj = new StringFunctions()// class for string operations
+
+	strdef file_size 
+	strdef line
+	while (file.gets(line) != -1) {
+		strobj.tail(line, search_f_id, file_size) // strobj.tail(str, "regexp", result), result contains the tail of the string from the char following regexp to the end of the string
+		if (strobj.len(file_size) > 0) { // if fn was found in this line
+			sscanf(file_size, "%d\t%d", &n_row, &n_col) // put the string representing the file index in n_row
+/*            printf("get_filesize for f_id %d strobj.tail: %s \t line: %s, n_row %d n_col %d \n", f_id, file_size, line, n_row, n_col)*/
+			return_vec.x[0] = n_row
+			return_vec.x[1] = n_col
+			return return_vec
+		}
+	}
+	return -1
+}
+
+proc connect_cells_via_binary_file() {local m, n, i, src_id, tgt_id, weight, w_inh localobj read_data, mat
+	// This function reads connections from a file given in a binary format
+	// The binary file must be written in the following format:
+	// source	target	weight
+	// if weight > 0: excitatory connection via the synapse target.synlist[0]
+	// if weight < 0: inhibitory connection via the synapse target.synlist[1]
+	// CHECK THIS IN THE UTILIZED TARGET CELL TEMPLATE
+	// if the synlist is set up differently in the cell template, you have to write a seperate function
+	// and change the synapse_id accordingly
+	strdef fn
+	fn = $s1
+	print "Connect_cells_via_binary_file:", fn
+
+/*    n = 50*/
+/*    double d[n]*/
+/*    f.vread(n, &d)*/
+
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    m = mat.nrow()
+    n = mat.ncol()
+	delay = 1		// [ms]
+	for (i = 0; i < m; i += 1) { //
+		src_id = int(mat.x[i][0])
+		tgt_id = int(mat.x[i][1])
+		weight = mat.x[i][2]
+		if (weight < 0){
+/*            printf("Connecting cells: %d to %d with inh weight: %f\n", src_id, tgt_id, weight)*/
+			w_inh = weight * (-1.0) // weights must be positive
+			synapse_id = 2			// inhibitory connections to MIT are done via this synapse type
+			// GABAA synapse
+			pnm.nc_append(src_id, tgt_id, synapse_id, w_inh, delay)
+		}
+/*        if ((weight > 0) && (tgt_id < n_orn + n_mit + global_offset)){*/
+		if (weight > 0){
+/*            printf("Connecting cells: %d to %d with exc weight: %f\n", src_id, tgt_id, weight)*/
+			synapse_id = 0 
+			// AMPA synapse
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight, delay)
+			// NMDA synapse
+			synapse_id = 1
+			pnm.nc_append(src_id, tgt_id, synapse_id, weight * w_nmda_mult , delay)
+		}
+	}
+}
+
+
+
+proc print_gids(){local i localobj cell
+	for (i = 0; i < n_cells; i += 1) {
+        if (pnm.gid_exists(i)) {
+			cell = pnm.pc.gid2cell(i)
+			printf("myid: %d cell.get_gid(): %d\t%d\n", pnm.pc.id(), cell.get_gid(), i)
+		}
+	}
+}
+
+proc record_orn_voltages() {local gid, i localobj cell
+	// ORN
+	for (i = 0; i < n_orn; i += 1) {
+		gid = i + global_offset + orn_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_mit_voltages() {local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + global_offset + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+
+proc record_mit_glom_voltages() {local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + global_offset + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_glom_v()
+		}
+	}
+}
+
+proc record_mit_dend_voltages() {local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + global_offset + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_dend_v()
+		}
+	}
+}
+
+proc record_mit_prim_voltages() {local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + global_offset + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_prim_v()
+		}
+	}
+}
+
+proc record_gran_voltages() {local gid, i localobj cell
+	// gran
+	for (i = 0; i < n_gran; i += 1) {
+		gid = i + global_offset + gran_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_gran_periph_voltages() {local gid, i localobj cell
+	// gran
+	for (i = 0; i < n_gran; i += 1) {
+		gid = i + global_offset + gran_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_periph_v()
+		}
+	}
+}
+
+proc record_pg_voltages() {local gid, i localobj cell
+	// pg
+	for (i = 0; i < n_pg; i += 1) {
+		gid = i + global_offset + pg_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_pg_periph_voltages() {local gid, i localobj cell
+	// pg
+	for (i = 0; i < n_pg; i += 1) {
+		gid = i + global_offset + pg_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_periph_v()
+		}
+	}
+}
+
+proc record_pyr_voltages() {local gid, i localobj cell
+	// pyr
+	for (i = 0; i < n_pyr; i += 1) {
+		gid = i + global_offset + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_pyr_voltages_mc() {local mc, gid, i localobj cell
+	// record the voltages from a certain minicolumn (mc = 0 .. n_mc * n_hc)
+	mc = $1	
+	for (i = mc * n_pyr_per_mc; i < (mc + 1) * n_pyr_per_mc; i += 1) {
+		gid = i + global_offset + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_basket_voltages() {local gid, i localobj cell
+	// basket
+	for (i = 0; i < n_basket; i += 1) {
+		gid = i + global_offset + basket_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_rsnp_voltages() {local gid, i localobj cell
+	// rsnp
+	for (i = 0; i < n_rsnp; i += 1) {
+		gid = i + global_offset + rsnp_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc record_readout_voltages() {local gid, i localobj cell
+	// readout
+	for (i = 0; i < n_readout; i += 1) {
+		gid = i + readout_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+
+proc print_orn_voltages(){local gid, i localobj cell
+	// ORN
+	for (i = 0; i < n_orn; i += 1) {
+		gid = i + orn_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", orn_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_mit_voltages(){local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", mit_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_mit_glom_voltages(){local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", mit_glom_volt_fn_base, pattern_nr, gid)
+			cell.print_glom_v(fn)
+		}
+	}
+}
+
+proc print_mit_dend_voltages(){local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", mit_dend_volt_fn_base, pattern_nr, gid)
+			cell.print_dend_v(fn)
+		}
+	}
+}
+
+proc print_mit_prim_voltages(){local gid, i localobj cell
+	// mit
+	for (i = 0; i < n_mit; i += 1) {
+		gid = i + mit_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", mit_prim_volt_fn_base, pattern_nr, gid)
+			cell.print_prim_v(fn)
+		}
+	}
+}
+
+proc print_gran_voltages(){local gid, i localobj cell
+	// gran
+	for (i = 0; i < n_gran; i += 1) {
+		gid = i + gran_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", gran_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_gran_periph_voltages(){local gid, i localobj cell
+	// gran
+	for (i = 0; i < n_gran; i += 1) {
+		gid = i + gran_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", gran_periph_volt_fn_base, pattern_nr, gid)
+			cell.print_periph_v(fn)
+		}
+	}
+}
+
+proc print_pg_voltages(){local gid, i localobj cell
+	// pg
+	for (i = 0; i < n_pg; i += 1) {
+		gid = i + pg_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", pg_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_pg_periph_voltages(){local gid, i localobj cell
+	// pg
+	for (i = 0; i < n_pg; i += 1) {
+		gid = i + pg_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", pg_periph_volt_fn_base, pattern_nr, gid)
+			cell.print_periph_v(fn)
+		}
+	}
+}
+
+
+proc print_pyr_voltages(){local gid, i localobj cell
+	// pyr
+	for (i = 0; i < n_pyr; i += 1) {
+		gid = i + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_pyr_voltages_mc(){local gid, i localobj cell
+	// print the voltages from a certain minicolumn (mc = 0 .. n_mc * n_hc)
+	// pyr
+	mc = $1	
+	for (i = mc * n_pyr_per_mc; i < (mc + 1) * n_pyr_per_mc; i += 1) {
+		gid = i + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_basket_voltages(){local gid, i localobj cell
+	// basket
+	for (i = 0; i < n_basket; i += 1) {
+		gid = i + basket_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", basket_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_rsnp_voltages(){local gid, i localobj cell
+	// rsnp
+	for (i = 0; i < n_rsnp; i += 1) {
+		gid = i + rsnp_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", rsnp_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+proc print_readout_voltages(){local gid, i localobj cell
+	// readout
+	for (i = 0; i < n_readout; i += 1) {
+		gid = i + readout_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", readout_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+/*double orn_testcells[n_test_orn]*/
+/*proc record_orn_testcells() {local i, gid, curve localobj cell*/
+/*    rnd_int.discunif(0, n_orn-1)*/
+/*    for (i=0; i < n_test_orn; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        orn_testcells[i] = orn_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_orn; i += 1) {*/
+/*        gid = orn_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_iampa()*/
+/*            cell.record_igaba()*/
+/*            cell.record_iodor()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_orn_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_orn; i += 1) {*/
+/*        gid = orn_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", orn_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", orn_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", orn_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", orn_iodor_fn_base, pattern_nr, gid)*/
+/*            cell.print_iodor(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+// list of vectors which this process records the sampled cells to with a larger time step than the simulation time_step
+objref my_orn_volt_vector_list
+objref my_mit_soma_volt_vector_list, my_mit_dend_volt_vector_list, my_mit_prim_volt_vector_list, my_mit_glom_volt_vector_list
+objref my_gran_soma_volt_vector_list, my_gran_periph_volt_vector_list, my_gran_deep_volt_vector_list
+objref my_pg_soma_volt_vector_list, my_pg_periph_volt_vector_list, my_pg_deep_volt_vector_list
+objref my_pyr_volt_vector_list // list of vectors
+objref my_rsnp_volt_vector_list // list of vectors
+objref my_basket_volt_vector_list // list of vectors
+my_orn_volt_vector_list = new List()
+my_mit_soma_volt_vector_list = new List()
+my_mit_dend_volt_vector_list = new List()
+my_mit_prim_volt_vector_list = new List()
+my_mit_glom_volt_vector_list = new List()
+my_gran_soma_volt_vector_list = new List()
+my_gran_periph_volt_vector_list = new List()
+my_gran_deep_volt_vector_list = new List()
+my_pg_soma_volt_vector_list = new List()
+my_pg_periph_volt_vector_list = new List()
+my_pg_deep_volt_vector_list = new List()
+my_pyr_volt_vector_list = new List()
+my_rsnp_volt_vector_list = new List()
+my_basket_volt_vector_list = new List()
+
+objref my_sample_orns, my_sample_mits, my_sample_grans, my_sample_pgs, my_sample_pyrs, my_sample_baskets, my_sample_rsnps
+my_sample_orns = new Vector()
+my_sample_mits = new Vector()
+my_sample_grans = new Vector()
+my_sample_pgs = new Vector()
+my_sample_pyrs = new Vector()
+my_sample_baskets = new Vector()
+my_sample_rsnps = new Vector()
+
+obfunc sample_gids_to_record(){local i, gid localobj sample_gids
+	// returns a vector with random gids within a give range
+	n_sample = $1
+	max_gid = $2
+	gid_offset = $3
+	sample_gids = new Vector()
+	rnd_int.discunif(gid_offset, max_gid) // rnd number between in range(0, n_pyr_per_mc)
+	for (i=0; i < n_sample; i+=1){
+		gid = rnd_int.repick()
+		if (pnm.gid_exists(gid)) {
+			printf("debug sample_gids_to_record gid %d exists %d\n", gid, pnm.gid_exists(gid))
+			sample_gids.append(gid)
+		}
+	}
+	return sample_gids
+}
+
+proc record_sample_orn_cells(){
+	// orn
+	my_sample_orns = sample_gids_to_record(n_sample_orn, mit_offset-1, orn_offset)
+	record_sample_soma_voltages(my_sample_orns, my_orn_volt_vector_list)
+}
+
+proc record_sample_mit_cells(){
+	// mit
+	my_sample_mits = sample_gids_to_record(n_sample_mit, gran_offset-1, mit_offset)
+ 	// record different compartments
+	record_sample_soma_voltages(my_sample_mits, my_mit_soma_volt_vector_list)
+	record_sample_glom_voltages(my_sample_mits, my_mit_glom_volt_vector_list)
+	record_sample_dend_voltages(my_sample_mits, my_mit_dend_volt_vector_list)
+	record_sample_prim_voltages(my_sample_mits, my_mit_prim_volt_vector_list)
+}
+
+proc record_sample_gran_cells(){
+	// gran
+	my_sample_grans = sample_gids_to_record(n_sample_gran, pg_offset-1, gran_offset)
+	record_sample_soma_voltages(my_sample_grans, my_gran_soma_volt_vector_list)
+	record_sample_periph_voltages(my_sample_grans, my_gran_periph_volt_vector_list)
+	record_sample_deep_voltages(my_sample_grans, my_gran_deep_volt_vector_list)
+}
+
+proc record_sample_pg_cells(){
+	// pg
+	my_sample_pgs = sample_gids_to_record(n_sample_pg, pyr_offset-1, pg_offset)
+	record_sample_soma_voltages(my_sample_pgs, my_pg_soma_volt_vector_list)
+	record_sample_periph_voltages(my_sample_pgs, my_pg_periph_volt_vector_list)
+	record_sample_deep_voltages(my_sample_pgs, my_pg_deep_volt_vector_list)
+}
+
+proc record_sample_pyr_cells(){
+	// pyr
+	my_sample_pyrs = sample_gids_to_record(n_sample_pyr, basket_offset-1, pyr_offset)
+	record_sample_soma_voltages(my_sample_pyrs, my_pyr_volt_vector_listtor_list)
+}
+
+proc record_sample_basket_cells(){
+	// basket
+	my_sample_baskets = sample_gids_to_record(n_sample_basket, rsnp_offset-1, basket_offset)
+	record_sample_soma_voltages(my_sample_baskets, my_basket_volt_vector_list)
+}
+
+proc record_sample_rsnp_cells(){
+	// rsnp
+	my_sample_rsnps = sample_gids_to_record(n_sample_rsnp, readout_offset-1, rsnp_offset)
+	record_sample_soma_voltages(my_sample_rsnps, my_rsnp_volt_vector_list)
+}
+
+
+// ------------ PRINTING -------------------
+proc print_sample_orn_cells(){
+	strdef fn
+	// orn
+	sprint(fn, "%s%d", orn_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_orns, my_orn_volt_vector_list)
+	
+}
+
+proc print_sample_mit_cells(){
+	// take care that printed variables match the ones in record_cells
+	strdef fn
+	// mit
+	sprint(fn, "%s%d", mit_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_mits, my_mit_soma_volt_vector_list)
+	sprint(fn, "%s%d", mit_dend_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_mits, my_mit_dend_volt_vector_list)
+	sprint(fn, "%s%d", mit_glom_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_mits, my_mit_glom_volt_vector_list)
+	sprint(fn, "%s%d", mit_prim_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_mits, my_mit_prim_volt_vector_list)
+}
+
+proc print_sample_gran_cells(){
+	// take care that printed variables match the ones in record_cells
+	strdef fn
+	// gran
+	sprint(fn, "%s%d", gran_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_grans, my_gran_soma_volt_vector_list)
+	sprint(fn, "%s%d", gran_deep_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_grans, my_gran_deep_volt_vector_list)
+	sprint(fn, "%s%d", gran_periph_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_grans, my_gran_periph_volt_vector_list)
+}
+
+proc print_sample_pg_cells(){
+	// take care that printed variables match the ones in record_cells
+	strdef fn
+	// pg
+	sprint(fn, "%s%d", pg_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_pgs, my_pg_soma_volt_vector_list)
+	sprint(fn, "%s%d", pg_deep_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_pgs, my_pg_deep_volt_vector_list)
+	sprint(fn, "%s%d", pg_periph_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_pgs, my_pg_periph_volt_vector_list)
+}
+
+proc print_sample_pyr_cells(){
+	strdef fn
+	// pyr
+	sprint(fn, "%s%d", pyr_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_pyrs, my_pyr_volt_vector_list)
+}
+
+proc print_sample_basket_cells(){
+	strdef fn
+	// basket
+	sprint(fn, "%s%d", basket_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_baskets, my_basket_volt_vector_list)
+}
+
+proc print_sample_rsnp_cells(){
+	strdef fn
+	// rsnp
+	sprint(fn, "%s%d", rsnp_volt_fn_base, pattern_nr)
+	print_sample_voltages(fn, my_sample_rsnps, my_rsnp_volt_vector_list)
+}
+
+// ----------------------------------- recording procedure for soma
+proc record_sample_soma_voltages() {local i, gid localobj cell, gid_vec, my_volt_vector_list 
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			volt_vec = new Vector(t_sim / time_step_rec)
+			volt_vec.record(&cell.soma.v(0.5), time_step_rec)
+			my_volt_vector_list.append(volt_vec)
+		}
+	}
+}
+
+// ----------------------------------- recording procedure for soma
+proc print_sample_voltages(){local i, gid localobj cell, gid_vector, volt_vec_list
+	strdef fn_base
+	fn_base = $s1
+	gid_vector = $o2
+	volt_vec_list = $o3
+	for (i = 0; i < gid_vector.size; i += 1) {
+		gid = gid_vector.x(i)
+		sprint(fn, "%s_%d.v", fn_base, gid)
+		print_vec(fn, volt_vec_list.o(i))
+	}
+}
+
+// ----------------------------------- recording procedures for different compartments
+proc record_sample_glom_voltages() {local i, gid localobj cell, my_volt_vector_list, gid_vec
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		cell = pnm.pc.gid2cell(gid)
+		volt_vec = new Vector(t_sim / time_step_rec)
+		volt_vec.record(&cell.glom.v(0.5), time_step_rec)
+		my_volt_vector_list.append(volt_vec)
+	}
+}
+
+proc record_sample_dend_voltages() {local i, gid localobj cell, my_volt_vector_list, gid_vec
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		cell = pnm.pc.gid2cell(gid)
+		volt_vec = new Vector(t_sim / time_step_rec)
+		volt_vec.record(&cell.dend.v(0.5), time_step_rec)
+		my_volt_vector_list.append(volt_vec)
+	}
+}
+
+proc record_sample_prim_voltages() {local i, gid localobj cell, my_volt_vector_list, gid_vec
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		cell = pnm.pc.gid2cell(gid)
+		volt_vec = new Vector(t_sim / time_step_rec)
+		volt_vec.record(&cell.prim.v(0.5), time_step_rec)
+		my_volt_vector_list.append(volt_vec)
+	}
+}
+
+proc record_sample_periph_voltages() {local i, gid localobj cell, my_volt_vector_list, gid_vec
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		cell = pnm.pc.gid2cell(gid)
+		volt_vec = new Vector(t_sim / time_step_rec)
+		volt_vec.record(&cell.periph.v(0.5), time_step_rec)
+		my_volt_vector_list.append(volt_vec)
+	}
+}
+
+proc record_sample_deep_voltages() {local i, gid localobj cell, my_volt_vector_list, gid_vec
+	gid_vec = $o1
+	my_volt_vector_list = $o2
+	for (i = 0; i < gid_vec.size; i += 1) {
+		gid = gid_vec.x(i)
+		cell = pnm.pc.gid2cell(gid)
+		volt_vec = new Vector(t_sim / time_step_rec)
+		volt_vec.record(&cell.deep.v(0.5), time_step_rec)
+		my_volt_vector_list.append(volt_vec)
+	}
+}
+
+
+/*objref mit_testcells*/
+/*n_test_mit = 2 * 3*/
+/*double mit_testcells[n_test_mit]*/
+/*proc record_mit_testcells() {local i, gid, curve localobj cell*/
+/*    rnd_int.discunif(0, n_mit-1)*/
+/*    for (i=0; i < n_test_mit; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        mit_testcells[i] = mit_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_mit; i += 1) {*/
+/*        gid = mit_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_glom_v(fn)*/
+/*            cell.record_dend_v(fn)*/
+/*            cell.record_prim_v(fn)*/
+/*            cell.record_iampa_glom()*/
+/*            cell.record_inmda_glom()*/
+/*            cell.record_igaba_glom()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_mit_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_mit; i += 1) {*/
+/*        gid = mit_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", mit_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.v", mit_glom_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_glom_v(fn)*/
+/*            sprint(fn, "%s%d_%d.v", mit_dend_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_dend_v(fn)*/
+/*            sprint(fn, "%s%d_%d.v", mit_prim_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_prim_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", mit_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa_glom(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", mit_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda_glom(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", mit_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba_glom(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+objref gid_to_record_vec
+gid_to_record_vec = new Vector()
+proc record_cells_from_file() {local i, gid localobj read_data, cell
+	// read from file which gids to record
+	strdef fn
+/*    sprint(fn, "%s%d.txt", gids_to_record_fn_base, pattern_nr)*/
+	sprint(fn, "%s.dat", gids_to_record_fn_base)
+	printf("Recording cell gids stored in %s\n", gids_to_record_fn_base)
+	read_data = new File()
+	read_data.ropen(fn)
+	if (read_data.isopen()) {
+		while (!read_data.eof()) {
+			gid_to_record_vec.append(read_data.scanvar())
+/*            print "debug gid_to_record_vec:", gid_to_record_vec.x(gid_to_record_vec.size()-1)*/
+		}
+	}
+
+	for (i = 0; i < gid_to_record_vec.size(); i += 1) {
+		gid = gid_to_record_vec.x[i]
+		if (pnm.gid_exists(gid)){
+			if ((gid >= orn_offset) && (gid < orn_offset + n_orn)){ // it's a MT cell
+				my_sample_orns.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+			}
+			if ((gid >= mit_offset) && (gid < mit_offset + n_mit)){ // it's a MT cell
+				my_sample_mits.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+/*                cell.record_glom_v()*/
+/*                cell.record_dend_v()*/
+/*                cell.record_prim_v()*/
+			}
+			if ((gid >= gran_offset) && (gid < gran_offset + n_gran)){
+				my_sample_grans.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+/*                cell.record_periph_v()*/
+			}
+			if ((gid >= pg_offset) && (gid < pg_offset + n_pg)){
+				my_sample_pgs.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+/*                cell.record_periph_v()*/
+			}
+			if ((gid >= pyr_offset) && (gid < pyr_offset + n_pyr)){ // it's a MT cell
+				my_sample_pyrs.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+/*                cell.record_ca()*/
+			}
+			if ((gid >= basket_offset) && (gid < basket_offset + n_basket)){ // it's a MT cell
+				my_sample_baskets.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+			}
+			if ((gid >= rsnp_offset) && (gid < rsnp_offset + n_rsnp)){ // it's a MT cell
+				my_sample_rsnps.append(gid)
+/*                cell = pnm.pc.gid2cell(gid)*/
+/*                cell.record_v()*/
+			}
+		}
+	}
+	record_sample_soma_voltages(my_sample_orns, my_orn_volt_vector_list)
+	// mit
+	record_sample_glom_voltages(my_sample_mits, my_mit_glom_volt_vector_list)
+	record_sample_dend_voltages(my_sample_mits, my_mit_dend_volt_vector_list)
+	record_sample_prim_voltages(my_sample_mits, my_mit_prim_volt_vector_list)
+	// gran
+	record_sample_soma_voltages(my_sample_grans, my_gran_soma_volt_vector_list)
+	record_sample_periph_voltages(my_sample_grans, my_gran_periph_volt_vector_list)
+	record_sample_deep_voltages(my_sample_grans, my_gran_deep_volt_vector_list)
+	// pg
+	my_sample_pgs = sample_gids_to_record(n_sample_pg, pyr_offset-1, pg_offset)
+	record_sample_soma_voltages(my_sample_pgs, my_pg_soma_volt_vector_list)
+	record_sample_periph_voltages(my_sample_pgs, my_pg_periph_volt_vector_list)
+	record_sample_deep_voltages(my_sample_pgs, my_pg_deep_volt_vector_list)
+	// cortical cells
+	record_sample_soma_voltages(my_sample_pyrs, my_pyr_volt_vector_list)
+	record_sample_soma_voltages(my_sample_baskets, my_basket_volt_vector_list)
+	record_sample_soma_voltages(my_sample_rsnps, my_rsnp_volt_vector_list)
+}
+
+
+proc print_cells_from_file() {
+	print_sample_orn_cells()
+	print_sample_mit_cells()
+	print_sample_pg_cells()
+	print_sample_pyr_cells()
+	print_sample_rsnp_cells()
+	print_sample_basket_cells()
+}
+
+
+
+/*    strdef fn*/
+/*    for (i = 0; i < gid_to_record_vec.size(); i += 1) {*/
+/*        gid = gid_to_record_vec.x(i)*/
+/*        if (pnm.gid_exists(gid)){*/
+/*            for (i = 0; i < gid_to_record_vec.size(); i += 1) {*/
+/*                gid = gid_to_record_vec.x(i)*/
+/*                if (pnm.gid_exists(gid)){*/
+/*                    if ((gid >= orn_offset) && (gid < orn_offset + n_orn)){ // it's a MT cell*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", orn_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                    }*/
+/*                    if ((gid >= mit_offset) && (gid < mit_offset + n_mit)){ // it's a MT cell*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", mit_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", mit_glom_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_glom_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", mit_dend_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_dend_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", mit_prim_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_prim_v(fn)*/
+/*                    }*/
+/*                    if ((gid >= gran_offset) && (gid < gran_offset + n_gran)){*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", gran_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", gran_periph_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_periph_v(fn)*/
+/*                    }*/
+/*                    if ((gid >= pg_offset) && (gid < pg_offset + n_pg)){*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", pg_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", pg_periph_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_periph_v(fn)*/
+/*                    }*/
+/*                    if ((gid >= pyr_offset) && (gid < pyr_offset + n_pyr)){ // it's a MT cell*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                        sprint(fn, "%s%d_%d.v", pyr_ca_fn_base, pattern_nr, gid)*/
+/*                        cell.print_ca(fn)*/
+/*                    }*/
+/*                    if ((gid >= basket_offset) && (gid < basket_offset + n_basket)){ // it's a MT cell*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", basket_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                    }*/
+/*                    if ((gid >= rsnp_offset) && (gid < rsnp_offset + n_rsnp)){ // it's a MT cell*/
+/*                        cell = pnm.pc.gid2cell(gid)*/
+/*                        sprint(fn, "%s%d_%d.v", rsnp_volt_fn_base, pattern_nr, gid)*/
+/*                        cell.print_v(fn)*/
+/*                    }*/
+/*                }*/
+/*            }*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+/*double gran_testcells[n_test_gran]*/
+/*proc record_gran_testcells() {local i, gid, curve localobj cell*/
+/*    rnd_int.discunif(0, n_gran-1)*/
+/*    for (i=0; i < n_test_gran; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        gran_testcells[i] = gran_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_gran; i += 1) {*/
+/*        gid = gran_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_periph_v()*/
+/*            cell.record_iampa_periph()*/
+/*            cell.record_inmda_periph()*/
+/*            cell.record_igaba_periph()*/
+/*            cell.record_deep_v()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_gran_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_gran; i += 1) {*/
+/*        gid = gran_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", gran_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.v", gran_periph_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_periph_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", gran_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", gran_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", gran_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.v", gran_deep_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_deep_v(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+/*double pg_testcells[n_test_pg]*/
+/*proc record_pg_testcells() {local i, gid, curve localobj cell*/
+/*    rnd_int.discunif(0, n_pg-1)*/
+/*    for (i=0; i < n_test_pg; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        pg_testcells[i] = pg_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_pg; i += 1) {*/
+/*        gid = pg_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_periph_v()*/
+/*            cell.record_iampa_periph()*/
+/*            cell.record_inmda_periph()*/
+/*            cell.record_igaba_periph()*/
+/*            cell.record_deep_v()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_pg_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_pg; i += 1) {*/
+/*        gid = pg_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", pg_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.v", pg_periph_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_periph_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pg_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pg_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pg_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba_periph(fn)*/
+/*            sprint(fn, "%s%d_%d.v", pg_deep_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_deep_v(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+objref time_vec, time_vec_2
+time_vec = new Vector(t_sim / dt)
+time_vec_2 = new Vector(t_sim / time_step_rec) // for some reason this does not seem to work --> damn it!
+proc record_time_vec() {
+	if (pnm.pc.id() == 0){
+/*        printf("debug, time_vec.size %d   %f\n", time_vec.size(), t_sim / dt)*/
+		time_vec.record(&t)
+		time_vec_2.record(&t, time_step_rec) // this doesn't work for some unknown reason, it works for the other soma.v recording though
+	}
+}
+
+
+n_sample_pyr = n_sample_pyr_per_mc*n_hc*n_mc
+double pyr_sample[n_sample_pyr] // array storing the cell gid to record from
+double pyr_sample_vec_ids[n_sample_pyr] // array storing the indices in the list of vectors corresponding to the cell gids
+// e.g. 
+// pyr_sample[0] = 9123 
+// pyr_sample_vec_ids[0] = 0  means that cell 9123 is recorded in my_pyr_volt_vector_list.o(0)
+proc sample_pyr_gids_to_record(){local cnt, mc, i
+	rnd_int.discunif(0, n_pyr_per_mc-1) // rnd number between in range(0, n_pyr_per_mc)
+	cnt = 0
+	for (mc=0; mc < n_hc * n_mc; mc += 1){
+		for (i=0; i < n_sample_pyr_per_mc; i+=1){
+			gid = rnd_int.repick()
+			pyr_sample[cnt] = pyr_offset + gid + mc * n_pyr_per_mc
+			cnt += 1
+		}
+	}
+}
+
+proc record_pyr_sample() {local i, cnt, mc, gid localobj cell
+	sample_pyr_gids_to_record() // set the gids to record from
+	for (i = 0; i < n_sample_pyr; i += 1) {
+		gid = pyr_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			volt_vec = new Vector(t_sim / time_step_rec)
+			volt_vec.record(&cell.soma.v(0.5), time_step_rec)
+			pyr_sample_vec_ids[i] = my_pyr_volt_vector_list.count()
+			my_pyr_volt_vector_list.append(volt_vec)
+/*            printf("debug pid %d, my_pyr_volt_vector_list.o(%d) records gid %d\n", pnm.pc.id(), my_pyr_volt_vector_list.count(), gid)*/
+/*            cell.record_v()*/
+		}
+	}
+}
+
+proc print_pyr_sample(){local i, gid localobj cell
+	strdef fn
+	for (i = 0; i < n_sample_pyr; i += 1) {
+		gid = pyr_sample[i]
+		if (pnm.gid_exists(gid)) {
+			sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)
+			print_vec(fn, my_pyr_volt_vector_list.o(pyr_sample_vec_ids[i]))
+/*            printf("debug pid %d, my_pyr_volt_vector_list.o(%d) prints gid %d\n", pnm.pc.id(), pyr_sample_vec_ids[i], gid)*/
+				// old
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+		}
+	}
+}
+
+proc print_time_vec() {localobj file
+	if (pnm.pc.id() == 0){
+		strdef fn1
+		sprint(fn1, "%s.t", time_vec_fn_base)
+		print_vec(fn1, time_vec)
+		strdef fn2
+		sprint(fn2, "%s_2.t", time_vec_fn_base)
+		print_vec(fn2, time_vec_2)
+	}
+}
+
+
+proc print_vec() {localobj file, vec, m 
+    strdef fn1
+    fn1 = $s1
+	vec = $o2
+    file = new File()
+    file.wopen(fn1)
+	vec.printf(file, "%.4e\n")
+
+    // create a matrix out of these two vectors in order to print them to a file
+/*    m = new Matrix()*/
+/*    m.resize(vec.size(), 1)*/
+/*    m.setcol(0, vec)*/
+/*    m.fprint(file, "\t%f")*/
+	file.close()
+/*    m.setcol(0, time_vec)*/
+}
+
+
+
+proc record_pyr_ca_sample() {local gid, i localobj cell
+	// Assert that record_pyr_sample has been called and that pyr_sample array has been filled with the same gids
+	// pyr
+	for (i = 0; i < n_sample_pyr; i += 1) {
+		gid = pyr_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_ca()
+		}
+	}
+}
+
+proc print_pyr_ca_sample(){local gid, i localobj cell
+	// pyr
+	for (i = 0; i < n_sample_pyr; i += 1) {
+		gid = pyr_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.dat", pyr_ca_fn_base, pattern_nr, gid)
+			cell.print_ca(fn)
+		}
+	}
+}
+
+
+proc record_pyr_ca_all() {local gid, i localobj cell
+	// pyr
+	for (i = 0; i < n_pyr; i += 1) {
+		gid = i + global_offset + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_ca()
+		}
+	}
+}
+
+proc print_pyr_ca_all(){local gid, i localobj cell
+	// pyr
+	for (i = 0; i < n_pyr; i += 1) {
+		gid = i + pyr_offset
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.dat", pyr_ca_fn_base, pattern_nr, gid)
+			cell.print_ca(fn)
+		}
+	}
+}
+
+
+/*double pyr_testcells[n_test_pyr]*/
+/*proc record_pyr_testcells() {local i, gid localobj cell*/
+/*    rnd_int.discunif(0, n_pyr-1)*/
+/*    for (i=0; i < n_test_pyr; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        pyr_testcells[i] = pyr_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_pyr; i += 1) {*/
+/*        gid = pyr_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_iampa()*/
+/*            cell.record_inmda()*/
+/*            cell.record_igaba()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_pyr_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_pyr; i += 1) {*/
+/*        gid = pyr_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", pyr_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pyr_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pyr_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", pyr_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+double basket_sample[n_sample_basket_per_hc*n_hc]
+proc record_basket_sample() {local i, cnt, hc, gid localobj cell
+	rnd_int.discunif(0, n_basket_per_hc-1) // rnd number between in range(0, n_basket_per_hc)
+	cnt = 0
+	for (hc=0; hc < n_hc; hc+= 1){
+		for (i=0; i < n_sample_basket_per_hc; i+=1){
+			gid = rnd_int.repick()
+			basket_sample[cnt] = basket_offset + gid + mc * n_basket_per_hc
+			cnt += 1
+		}
+	}
+	for (i = 0; i < n_sample_basket_per_hc * n_hc; i += 1) {
+		gid = basket_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+proc print_basket_sample(){local i, gid localobj cell
+	strdef fn
+	for (i = 0; i < n_sample_basket_per_hc * n_hc; i += 1) {
+		gid = basket_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", basket_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+/*double basket_testcells[n_test_basket]*/
+/*proc record_basket_testcells() {local i, gid localobj cell*/
+/*    rnd_int.discunif(0, n_basket-1)*/
+/*    for (i=0; i < n_test_basket; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        basket_testcells[i] = basket_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_basket; i += 1) {*/
+/*        gid = basket_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_iampa()*/
+/*            cell.record_inmda()*/
+/*            cell.record_igaba()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_basket_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_basket; i += 1) {*/
+/*        gid = basket_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", basket_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", basket_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", basket_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", basket_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+
+n_sample_rsnp = n_sample_rsnp_per_mc*n_hc*n_mc
+double rsnp_sample[n_sample_rsnp]
+proc record_rsnp_sample() {local i, cnt, mc, gid localobj cell
+	rnd_int.discunif(0, n_rsnp_per_mc-1) // rnd number between in range(0, n_rsnp_per_mc)
+	cnt = 0
+	for (mc=0; mc < n_hc * n_mc; mc += 1){
+		for (i=0; i < n_sample_rsnp_per_mc; i+=1){
+			gid = rnd_int.repick()
+			rsnp_sample[cnt] = rsnp_offset + gid + mc * n_rsnp_per_mc
+			cnt += 1
+		}
+	}
+
+	for (i = 0; i < n_sample_rsnp; i += 1) {
+		gid = rsnp_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+		}
+	}
+}
+proc print_rsnp_sample(){local i, gid localobj cell
+	strdef fn
+	for (i = 0; i < n_sample_rsnp; i += 1) {
+		gid = rsnp_sample[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", rsnp_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+		}
+	}
+}
+
+/*double rsnp_testcells[n_test_rsnp]*/
+/*proc record_rsnp_testcells() {local i, gid localobj cell*/
+/*    rnd_int.discunif(0, n_rsnp-1)*/
+/*    for (i=0; i < n_test_rsnp; i += 1) {*/
+/*        gid = rnd_int.repick()*/
+/*        rsnp_testcells[i] = rsnp_offset + gid*/
+/*    }*/
+
+/*    for (i = 0; i < n_test_rsnp; i += 1) {*/
+/*        gid = rsnp_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            cell.record_v()*/
+/*            cell.record_iampa()*/
+/*            cell.record_inmda()*/
+/*            cell.record_igaba()*/
+/*        }*/
+/*    }*/
+/*}*/
+
+/*proc print_rsnp_testcells(){local i, gid localobj cell*/
+/*    strdef fn*/
+/*    for (i = 0; i < n_test_rsnp; i += 1) {*/
+/*        gid = rsnp_testcells[i]*/
+/*        if (pnm.gid_exists(gid)) {*/
+/*            cell = pnm.pc.gid2cell(gid)*/
+/*            sprint(fn, "%s%d_%d.v", rsnp_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_v(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", rsnp_iampa_fn_base, pattern_nr, gid)*/
+/*            cell.print_iampa(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", rsnp_inmda_fn_base, pattern_nr, gid)*/
+/*            cell.print_inmda(fn)*/
+/*            sprint(fn, "%s%d_%d.isyn", rsnp_igaba_fn_base, pattern_nr, gid)*/
+/*            cell.print_igaba(fn)*/
+/*        }*/
+/*    }*/
+/*}*/
+
+objref testcells
+proc record_testcells() {local i, hc, mc, gid localobj cell
+	testcells = new Vector(7)
+	// PYR testcells
+	testcells.x[0] = 338
+	testcells.x[1] = 354
+	testcells.x[2] = 25651
+	testcells.x[3] = 25649
+	testcells.x[4] = 25643
+	testcells.x[5] = 16061
+	testcells.x[6] = 16052
+	
+/*    testcells.x[5] = testcells.x[0] + n_pyr_per_mc*/
+/*    testcells.x[6] = testcells.x[1] + n_pyr_per_mc*/
+/*    testcells.x[7] = testcells.x[2] + n_pyr_per_mc*/
+/*    testcells.x[8] = testcells.x[0] + n_mc * n_pyr_per_mc*/
+/*    testcells.x[9] = testcells.x[1] + n_mc * n_pyr_per_mc*/
+/*    testcells.x[10] = testcells.x[2] + n_mc * n_pyr_per_mc*/
+
+	for (i = 0; i < testcells.size(); i += 1) {
+		gid = testcells.x[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.record_v()
+/*            cell.record_periph_v()*/
+/*            cell.record_isyn()*/
+/*            cell.record_gsyn()*/
+		}
+	}
+}
+
+proc print_testcells_voltages(){local i, gid localobj cell
+	strdef fn
+	for (i = 0; i < testcells.size(); i += 1) {
+		gid = testcells.x[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn, "%s%d_%d.v", test_volt_fn_base, pattern_nr, gid)
+			cell.print_v(fn)
+/*            sprint(fn, "%s_periph_%d_%d.v", test_volt_fn_base, pattern_nr, gid)*/
+/*            cell.print_periph_v(fn)*/
+		}
+	}
+}
+
+proc print_testcells_isyn(){local i, gid localobj cell
+	strdef fn1, fn2
+	for (i = 0; i < testcells.size(); i += 1) {
+		gid = testcells.x[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn1, "%s%d_exc.dat", test_isyn_fn_base, gid)
+			sprint(fn2, "%s%d_inh.dat", test_isyn_fn_base, gid)
+			cell.print_isyn(fn1, fn2)
+		}
+	}
+}
+
+proc print_testcells_gsyn(){local i, gid localobj cell
+	strdef fn1, fn2
+	for (i = 0; i < testcells.size(); i += 1) {
+		gid = testcells.x[i]
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			sprint(fn1, "%s%d_exc.dat", test_gsyn_fn_base, gid)
+			sprint(fn2, "%s%d_inh.dat", test_gsyn_fn_base, gid)
+			cell.print_gsyn(fn1, fn2)
+		}
+	}
+}
+
+proc add_connections_to_soma() {local i, nrow, ncol localobj stvec, read_data, mat, cell
+	/* This function adds a synapse to the soma and appends a NetCon to the netconlist of all cells, 
+	 * The netcon object will then receive spike times as events.
+	 * As noise and stimulus can be inserted with different weights, 
+	 * it is important to take care of the order of the netcon objects
+	 **/
+	print "add_connection_to_soma: orn, pyr, basket"
+	
+	// ORN
+    for (gid = orn_offset; gid < n_orn + orn_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_exc_connection_to_soma(w_exc_noise_orn)
+			cell.add_inh_connection_to_soma(w_inh_noise_orn)
+		}
+	}
+
+	// mit
+    for (gid = mit_offset; gid < n_mit + mit_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_connection_to_soma(w_noise_mit)
+			cell.add_connection_to_soma(w_stim_mit)
+		}
+	}
+
+	// PYR
+    for (gid = pyr_offset; gid < n_pyr + pyr_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_connection_to_soma(w_noise_pyr)
+			cell.add_connection_to_soma(w_stim_pyr)
+		}
+	}
+
+	// BASKET
+    for (gid = basket_offset; gid < n_basket + basket_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_connection_to_soma(w_noise_basket)
+			cell.add_connection_to_soma(w_stim_basket)
+		}
+	}
+
+	// RSNP
+    for (gid = rsnp_offset; gid < n_rsnp + rsnp_offset; gid += 1) {
+		if (pnm.gid_exists(gid)) {
+			cell = pnm.pc.gid2cell(gid)
+			cell.add_connection_to_soma(w_noise_rsnp)
+			cell.add_connection_to_soma(w_stim_rsnp)
+		}
+	}
+
+}
+
+/// ================================================================================================================
+//
+//		A D D    N O I S E    T O   C E L L S
+//
+/// ================================================================================================================
+proc add_noise_to_cells() { local i, w_exc, w_inh, f_exc, f_inh, cell_cnt, gid_offset, isi_exc, isi_inh
+	// $1: w_exc_noise
+	// $2: w_inh_noise
+	// $3: f_exc_noise
+	// $4: f_inh_noise
+	// $5: n_cells of the type
+	// $6: cell_type specific gid offset
+	w_exc = $1
+	w_inh = $2
+	f_exc = $3
+	f_inh = $4
+	cell_cnt = $5
+	gid_offset = $6
+	isi_exc = (1. / f_exc) * 1000. // [ms]
+	isi_inh = (1. / f_inh) * 1000. // [ms]
+
+	if (gid_offset == orn_offset){ // they only receive ampa and gaba noise for the moment
+		for (i=gid_offset; i < gid_offset + cell_cnt; i += 1) {
+			if (pnm.gid_exists(i)) {
+				add_random_stream_to_synapse(i, i * 7657 + netstim_seed + pattern_nr * 314159, 0, isi_exc, w_exc) // ampa noise
+				add_random_stream_to_synapse(i, i * 7657 + 2 * n_cells + netstim_seed + pattern_nr * 314159, 1, isi_inh, w_inh) // gaba noise
+			}
+		}
+	} else { 
+		for (i=gid_offset; i < gid_offset + cell_cnt; i += 1) {
+			if (pnm.gid_exists(i)) {
+				add_random_stream_to_synapse(i, i * 7657 + netstim_seed + pattern_nr * 314159, 0, isi_exc, w_exc) // ampa noise
+				add_random_stream_to_synapse(i, i * 7657 + n_cells + netstim_seed + pattern_nr * 314159, 1, isi_exc, w_exc) //nmda noise
+				add_random_stream_to_synapse(i, i * 7657 + 2 * n_cells + netstim_seed + pattern_nr * 314159, 2, isi_inh, w_inh) // gaba noise
+			}
+		}
+	}
+}
+
+
+objref noise_netstim_list, noise_rnd_stream_list, noise_netconlist 
+noise_netstim_list = new List()
+noise_rnd_stream_list = new List()
+noise_netconlist = new List()
+objref rnd_netstim, rnd_stream
+
+// vectors for debugging purpose: recording the events created by different netstim =s
+objref list_of_vec
+objref gids_to_netstims_map // keep track of which netstim recorder is attached to which cell gid
+list_of_vec = new List()
+gids_to_netstims_map = new Vector(3 * n_cells / n_proc)
+objref nil, nc, recorder
+
+netstim_cnt = 0 
+proc add_random_stream_to_synapse() {local gid, rnd_seed, synlist_id, isi, weight, delay localobj cell
+	// $1 : cell_gid to add noise to
+	// $2 : seed for the random number generator given to the NetStim
+	// $3 : synlist id via which the noise is transported
+	// $4 : interspike interval of the noise (in average)
+	// $5 : synaptic weight
+	gid = $1
+	rnd_seed = $2
+	synlist_id = $3
+	isi = $4
+	weight = $5
+	delay = 0
+
+	if (pnm.gid_exists(gid)) {
+		cell = pnm.pc.gid2cell(gid)
+		cell.soma rnd_netstim = new NetStim(0.5)
+		rnd_stream = new RandomStream(rnd_seed) // see ranstream.hoc
+		noise_rnd_stream_list.append(rnd_stream)
+		rnd_stream.start() // sets the actual RNG
+		rnd_stream.r.negexp(1)
+		rnd_netstim.interval = isi
+		rnd_netstim.number = 1e6
+		rnd_netstim.noise = 1.0
+		rnd_netstim.start = 0
+		rnd_netstim.noiseFromRandom(rnd_stream.r) // give an instance of RandomStream's random number generator as noise source
+		noise_netstim_list.append(rnd_netstim)
+		nc = new NetCon(rnd_netstim, cell.synlist.o(synlist_id), 0, delay, weight) // (src, tgt, thresh, delay, w)
+/*        recorder = new Vector()*/
+/*        nc.record(recorder)*/
+/*        list_of_vec.append(recorder)*/
+/*        gids_to_netstims_map.x[netstim_cnt] = gid*/
+/*        netstim_cnt += 1*/
+		noise_netconlist.append(nc)
+	}
+}
+
+proc print_recorders(){local i, gid
+	strdef fn
+	for (i = 0; i < list_of_vec.count(); i += 1){
+		gid = gids_to_netstims_map.x[i]
+		sprint(fn, "%s/NetStimEvents_gid%d_pcid%d_%d.dat", other_folder, gid, pnm.pc.id(), i)
+/*        printf("%d size: %d\n", i, list_of_vec.o(i).size())*/
+		print_vec(fn, list_of_vec.o(i))
+	}
+}
+
+
+
+proc read_mit_parameters(){  local i, nrow, ncol localobj read_data, mat
+	// unnecessary
+	// 1) for each ORN one target mitrall cell id will be stored (or a vector)
+	//
+	strdef fn
+	fn = $s1
+	read_data = new File()
+    read_data.ropen(fn)
+    mat = new Matrix()		// connectivity matrix
+    mat.scanf(read_data)	// read data from file
+    nrow = mat.nrow()
+    ncol = mat.ncol()
+	// Parameters are stored in this order:
+	// #gid        gor     oor     c_Kd
+	offset = n_orn
+	for (i = 0; i < nrow; i += 1) { //
+/*        id = mat.x[i][0] - offset*/
+		v_mit_oor[i] = mat.x[i][1]
+		v_mit_cKd[i] = mat.x[i][2]
+		v_mit_gor[i] = mat.x[i][3]
+	}
+}
+
+
+
+func min(){
+	if ($2 > $1){
+		return $1
+	} else {
+		return $2
+	}
+}
+
+func max(){
+	if ($2 > $1){
+		return $2
+	} else {
+		return $1
+	}
+}
+
+

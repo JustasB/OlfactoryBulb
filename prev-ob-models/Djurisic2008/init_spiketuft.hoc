@@ -1,0 +1,41 @@
+// $Id: init_spiketuft.hoc,v 1.5 2007/03/17 01:39:29 ted Exp $
+
+POPOVIC = 1  // use cell params from Popovic et al., 2005
+
+/*
+Based on init_probetuft.hoc
+
+Attaches an SEClamp to the tuft origin to drive the tuft with an
+experimentally recorded spike waveform--specifically, the 
+primary dendrite recording made under "soma strong" stimulation
+as described in 
+Shen, G.Y., Chen, W. R., Midtgaard, J., Shepherd, G.M., and Hines, M.L. (1999) 
+Computational Analysis of Action Potential Initiation in Mitral Cell Soma and 
+Dendrites Based on Dual Patch Recordings. Journal of Neurophysiology 82:3006.
+and available from ModelDB (accession number 3342, URL
+http://senselab.med.yale.edu/senselab/modeldb/ShowModel.asp?model=3342 ).
+
+vpri_somastrong.dat
+
+Displays peak amplitude of the spike throughout the tuft.
+*/
+
+load_file("nrngui.hoc")
+load_file("colors.hoc")
+
+if (POPOVIC) {
+  load_file("cell_popovic.ses")
+} else {
+  load_file("cell_70_3_9p5_rest0.ses")
+}
+
+load_file("fixgrid_spiketuft.hoc")  // turn off Continuous Create
+  // then double Ra and cm, regrid the model using d_lambda rule, and finally restore Ra and cm
+
+load_file("rig_spiketuft.ses")  // RunControl and v graph
+load_file("instrument_spiketuft.hoc")  // inserts monx and computes distances over tuft subset
+load_file("spikeclamp_spiketuft.hoc")  // puts an SEClamp at origin of tuft
+  // that will be used to drive this point with a recorded spike waveform
+load_file("analyze_spiketuft.hoc")  // analyze results
+load_file("plots_spiketuft.hoc")  // display results
+load_file("control_spiketuft.hoc")  // execute simulation, control analysis, display, and storage of results

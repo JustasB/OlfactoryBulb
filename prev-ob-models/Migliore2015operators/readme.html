@@ -1,0 +1,49 @@
+<html><body>
+<pre>Model and simulation files for the paper "Synaptic clusters function as odor
+operators in the olfactory bulb", by Michele Migliore,
+Francesco Cavarretta, Addolorata Marasco, Eleonora Tulumello, Michael
+L. Hines, and Gordon M. Shepherd, PNAS in press (2015)
+
+A full HD version movie of Fig.2 can be downloaded from:
+
+<a href="http://senselab.med.yale.edu/modeldb/data/168591/movie-s1-HR.avi">http://senselab.med.yale.edu/modeldb/data/168591/movie-s1-HR.avi</a>
+To run a simulation or visualize the results, the first step
+is to create the gid dictionary by executing
+
+nrniv -python mkdict.py
+
+It generates the file g37.dic, that must be placed
+in the simulation working directory.
+
+-- simulation--
+The simulation requires NEURON 7.3 or above with python.
+
+After compilation of the mod files the simulation can be run with a
+script and a command line that depends on the parallel computer
+system.  For an IBM BlueGene/Q, such as the FERMI system at CINECA
+(Bologna, Italy), the command line is
+
+runjob --ranks-per-node 16 --exe powerpc64/special --args -mpi --args 
+-python --args customsim.py
+
+Using 1024 processes the simulation takes less than 30 minutes.
+  
+The final weight and spike time files need to be compacted with
+
+./catfiles.sh g37e1i002
+
+It generates two output files, g37e1i002.weight.dat and g37e1i002.spk
+that are used by the visualization tool.
+    
+-- visualization --
+
+The visualization requires the Enthought.com Mayavi installed.  To
+visualize a version of Fig.1E of the paper including granule cells:
+
+mayavi2 mayasyn.py -dict g37.dic -weights g37e1i002.weight.dat -gweight -hist g37e1i002.spk
+
+Questions and comments should be sent to francesco.cavarretta@yale.edu
+
+</pre>
+
+</body></html>

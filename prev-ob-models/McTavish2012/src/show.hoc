@@ -1,0 +1,886 @@
+{load_file("viewspikes.hoc")}
+{load_file("viewspikes1.hoc")}
+
+begintemplate ShowConnect
+public smode_, mgrsmap, syns, grasterm_
+external ring, net_spatial_len, secdenlen, num_mitral, num_granule, mitral_x, granule_x, sparse_connection_matrix_
+external reload_onecell, reload_wholenet, pc, weight_movie
+external allsyn, somesyn, cells, flush_list, cvode, addplot, tstop
+external pattern_tvec_, pattern_idvec_, mgconnect
+external clear, create_stim, mknet, gidvec, classname
+external moi, goi
+public g, draw, fi_cond_vec
+objref g, syns, msel, gsel, mgrsel, msynsel, gsynsel, synsel1, deck
+objref b, v_rvp_, keepsyn, keepnc, hinton_shape, tplots
+objref exc_hinton_shape, inh_hinton_shape
+objref syn_movie_fih, syn_movie_list, syn_movie_nclist, this
+objref grasterm_, grasterg_, scm, mgrsmap
+objref fih_spikes, fih_bar, fih_cond
+strdef sel_str_
+create keepsyn_sec
+proc init() {local i
+	spike_viewer_ = 0
+	show_soma_spikes_ = 1
+	show_fi_cond_ = 0
+	rasterm_ = 0
+	rasterg_ = 0
+	tplots = new List()
+	hinton_movie = 0
+	exc_hinton_movie = 0
+	inh_hinton_movie = 0
+	keepsyn_sec { delete_section() }
+	smode_ = -1
+	wholenet_ = 1
+	sel_str_ = "no selection"
+	sel_gid_ = -1
+	cells = $o1
+	//ls = cells.object(0).secden[1].L
+	ls = secdenlen
+	//num_mitral = $2
+	//num_granule = $3
+	scm = sparse_connection_matrix_
+	nsyn = 0
+	for i=0, scm.nrow-1 {
+		nsyn += scm.sprowlen(i)
+	}
+	syns = $o4
+	msel = new Vector(num_mitral)
+	gsel = new Vector(num_granule)
+	msynsel = new Vector(num_mitral) // all synapses assocated with mitral
+	gsynsel = new Vector(num_granule)
+	mgrsel = new Vector(nsyn)
+	synsel1 = new Matrix(num_mitral, num_granule, 2)
+	build()
+	draw()
+}
+
+proc build() {local mx1, mx2, gx1, gx2
+	b = new HBox()
+	b.intercept(1)
+	b.full_request(1)
+	b.adjuster(520)
+	g = new Graph(0)
+	g.view(0,0,1,1,0,0,520,120)
+	//cells.object(0).soma mx1 = x3d(0)
+	//cells.object(num_mitral-1).soma mx2 = x3d(0)
+	//cells.object(num_mitral).soma gx1 = x3d(0)
+	//cells.object(num_mitral+num_granule-1).soma gx2 = x3d(0)
+	mx1 = mitral_x.x[0]
+	mx2 = mitral_x.x[num_mitral-1]
+	gx1 = granule_x.x[0]
+	gx2 = granule_x.x[num_granule-1]
+	if ( gx1 < mx1) mx1 = gx1
+	if ( gx2 > mx2) mx2 = gx2
+	g.size(mx1, mx2, -1, num_mitral)
+//	g.size(-ls + mx1, ls + mx2, -1, num_mitral)
+	
+	g.xaxis(3)
+
+	deck = new Deck()
+	deck.intercept(1)
+	xpanel("")
+	g.menu_tool("Select cells", "select", "smode(1)")
+	g.menu_tool("Select all synapses of cells", "select", "smode(2)")
+	g.menu_tool("Select a few synapses", "select", "smode(3)")
+	xmenu("Select")
+	xbutton("Mitrals", "mansel(0)")
+	xbutton("Granules", "mansel(1)")
+	xmenu()
+	xcheckbox("Exc+Inh Hinton synapse movie", &hinton_movie)
+	xcheckbox("Exc Hinton synapse movie", &exc_hinton_movie)
+	xcheckbox("Inh Hinton synapse movie", &inh_hinton_movie)
+	xcheckbox("Mitral soma raster", &rasterm_, "mraster()")
+	xcheckbox("Granule soma raster", &rasterg_, "graster()")
+	xcheckbox("Show soma spikes", &show_soma_spikes_, "show_fi_cond_ = (show_fi_cond_ && show_soma_spikes_)")
+	xcheckbox(" and fih conductance", &show_fi_cond_, "show_fi_cond_ = (show_fi_cond_ && show_soma_spikes_)")
+	xmenu("Spike Viewers")
+	xbutton("All Mitrals", "view_spikes(0)")
+	xbutton("Mitral at all granule positions", "view_spikes(1)")
+	xmenu()
+//	xcheckbox("Spike Viewer", &spike_viewer_, "view_spikes()")
+//	xvarlabel(sel_str_)
+	xbutton("Simulate", "sim()")
+	xpanel()
+	xpanel("")
+	xbutton("Selection Tool", "whole_net()")
+	xmenu("Spike Viewers")
+	xbutton("All Mitrals", "view_spikes(0)")
+	xbutton("Mitral at all granule positions", "view_spikes(1)")
+	xmenu()
+	xbutton("Time plots to file", "p2f(\"tplot.dat\")")
+//	xbutton("Time plots to file", "p2f(\"temp.tplot\")")
+//	xcheckbox("Spike Viewer", &spike_viewer_, "view_spikes()")
+	xpanel()
+	deck.intercept(0)
+	deck.flip_to(0)
+	deck.map()
+	b.intercept(0)
+	b.map("Select Subset", 400, 30, 700, 300)
+	g.exec_menu("Select cells")
+}
+proc mraster() {local i  localobj tv, yv, mi, mt
+//	objref grasterm_
+	if (rasterm_) {
+		grasterm_ = new Graph()
+		grasterm_.size(0, tstop, 0, num_mitral)
+		grasterm_.xaxis(3)
+		grasterm_.xaxis(0, tstop,    0, 5,        0,0,1)
+		grasterm_.yaxis(0, num_mitral, 0, 5, 0,0,1)
+		mi = new Vector()
+		mi.indvwhere(pattern_idvec_, "[)", 0, num_mitral)
+		mt = new Vector()
+		mt.index(pattern_tvec_.c, mi)
+		mi.index(pattern_idvec_, mi)
+		for i=0, mi.size-1 {
+			grasterm_.mark(mt.x[i], mi.x[i], "|", 10, (i%8)+1, 1)
+		}
+	execute("barinit()")
+	fih_bar = new FInitializeHandler(0, "cvode.event(0, \"bar()\")")
+	}
+}
+proc graster() {local i, x  localobj tv, yv, gi, gt
+	objref grasterg_
+	if (rasterg_) {
+		grasterg_ = new Graph()
+		grasterg_.size(0, tstop, num_mitral-1, num_mitral+num_granule-1)
+		grasterg_.xaxis(3)
+		grasterg_.xaxis(0, tstop,    -.5, 5,        0,0,1)
+		grasterg_.yaxis(num_mitral-1, num_mitral+num_granule-1, 0, 5,0,0,1)
+		gi = new Vector()
+		gi.indvwhere(pattern_idvec_, "[)", num_mitral, num_mitral+num_granule)
+		gt = new Vector()
+		gt.index(pattern_tvec_.c, gi)
+		gi.index(pattern_idvec_, gi)
+		gi.sub(num_mitral)
+		for i=0, gi.size-1 {
+			grasterg_.mark(gt.x[i], gi.x[i], "|", 10, 1, 1)
+		}
+	}
+}
+
+proc p2f() {local i, j, sz  localobj sf, f, g1, glist, xvec, yvec, lines
+	sf = new StringFunctions()
+	glist = new List("Graph")
+	lines = new List()
+	xvec = new Vector()  yvec = new Vector()
+	// Yuguo wants text output in matrix form for time plots
+	//  (only save lines that have the same size)
+	for i=0, glist.count-1 {
+		g1 = glist.o(i)
+		if (g1 != grasterg_ && g1 != grasterm_ && g1 != g) {
+  for (j=-1; (j = g1.getline(j, xvec, yvec)) != -1; ) {
+			if (sf.net_spatial_len(yvec.label()) > 1 && yvec.size > 1000) {
+				if (lines.count == 0) {
+					lines.append(xvec.c)
+					lines.o(0).label("t")
+					sz = xvec.size
+				}
+				if (sz == yvec.size) {
+					lines.append(yvec.cl)
+				}
+			}
+  }
+		}
+	}
+	if (lines.count == 0) {
+		return
+	}
+	f = new File()
+	f.wopen($s1)
+	f.printf("%d %d\n", lines.count, lines.o(0).size)
+	for i=0, lines.count-1 {
+		f.printf("\"%s\"\n",lines.o(i).label())
+	}
+	for i = 0, sz-1 {
+		f.printf("%g", lines.o(0).x[i])
+		for j=1, lines.count-1 {
+			f.printf(" %g", lines.o(j).x[i])
+		}
+		f.printf("\n")
+	}
+	f.close()
+}
+
+proc draw() {local i, j, k, x, x0, x1, mx, mn, gi, b, def_color, i1   localobj mgr, sr
+	def_color = 1
+	if (wholenet_ == 0) { def_color = 9 }
+	g.erase_all()
+	for i1=0, moi.size-1 { i=moi.x[i1]
+		x = mitral_x.x[i]
+		g.beginline(9, 1)
+	    if (ring) {
+		x0 = -ls + x
+		x1 = ls + x
+		if (x0 < 0) {
+			g.line(net_spatial_len + x0, i) g.line(net_spatial_len, i)
+			x0 = 0
+			g.flush() g.beginline(9, 1)
+		}
+		if (x1 > net_spatial_len) {
+			g.line(0, i) g.line(x1-net_spatial_len, i)
+			x1 = net_spatial_len
+			g.flush() g.beginline(9, 1)
+		}
+		g.line(x0, i)
+		g.line(x1, i)
+	    }else{
+		g.line(-ls + x, i)
+		g.line(ls + x, i)	
+	    }
+//		g.flush()
+		if (msel.x[i] == 1) {
+			g.mark(x, i, "T", 10, 2, 1)
+		}else{
+			g.mark(x, i, "t", 10, def_color, 2)
+		}
+	}
+	for i1=0, goi.size-1  {i = goi.x[i1]
+		x = granule_x.x[i]
+		if (gsel.x[i] == 1) {
+			g.mark(x, -1, "O", 8, 3, 1)
+		}else{
+			g.mark(x, -1, "o", 8, def_color, 1)
+		}
+		g.beginline(9, 1)
+		g.line(x, num_mitral-.5)
+		g.line(x, -1)
+//		g.flush()
+	}
+//	for k=0, syns.count-1 {
+//		mgr = syns.object(k)
+//		mi = mgr.mitral_gid
+//		gi = mgr.granule_gid - num_mitral
+	for i1 = 0, moi.size-1  {mi=moi.x[i1] for k=0, scm.sprowlen(mi)-1 {
+		scm.spgetrowval(mi, k, &gi)
+		x = granule_x.x[gi]
+		j = mi
+		b = 0
+		if (msynsel.x[mi] || gsynsel.x[gi]) {
+			b = 1
+			g.mark(x, j, "O", 6, 4, 1)
+		}else{
+			if (msel.x[mi]) {
+				b = 1
+				if (gsel.x[gi]) {
+					g.mark(x, j, "O", 5, 2, 1)
+					g.mark(x, j, "o", 6, 3, 2)
+				}else{
+					g.mark(x, j, "O", 6, 2, 1)
+				}
+			}else if (gsel.x[gi]) {
+				b = 1
+				g.mark(x, j, "O", 6, 3, 1)
+			}
+		}
+		if (b == 0) {
+			if (wholenet_ == 1) {
+				g.mark(x, j, "o", 4, 1, 1)
+			}else if (hinton_movie) {
+				g.mark(x, j, "O", 3, 1, 1)
+			}
+		}
+		if (synsel1.getval(mi, gi)) {
+			g.mark(x, j, "O", 6, 6, 1)
+		}
+	}}
+	if (show_fi_cond_ && wholenet_ == 0) {
+		fi_cond_init()
+	}
+	g.flush()
+}
+proc smode() {
+	if (smode_ != $1) {
+//		whole_net()
+	}
+	smode_ = $1
+	sel_gid_ = -1
+}
+proc view_spikes() {localobj sv
+	spike_viewer_ = 0
+	if ($1 == 0) {
+		sv = new SpikeViewer(pattern_tvec_, pattern_idvec_)
+	}else{
+		sv = new SpikeViewer1(pattern_tvec_, pattern_idvec_)
+	}
+}
+
+proc select() {local m, g, min, x, i, j  localobj mgr, s
+	if (wholenet_ != 1) { return }
+	if ($1 == 2) { //press
+		//print $1, $2, $3, $4
+		if ($3 < -.5) {
+			 m = -1
+		} else {
+			m = int($3+.5)
+		}
+		if (m >= num_mitral) { m = -1}
+		if (m >= 0) { // closest to moi
+			if (moi.indwhere("==", m) == -1) {
+				//s = new String()
+				//sprint(s.s, "Mitral %g not displayed", m)
+				//continue_dialog(s.s)
+				m = -1
+			}
+		}
+		min = 1e9
+		g = -1
+		// assume granules evenly distributed from 0 to net_spatial_len
+		g = int(num_granule*$2/net_spatial_len)
+		if (g < 0) g = 0
+		if (g >= num_granule) g = num_granule-1
+		if (g >= 0) { // closest to g
+			if (goi.indwhere("==", g) == -1) {
+				//s = new String()
+				//sprint(s.s, "Mitral %g not displayed", g)
+				//continue_dialog(s.s)
+				g = -1
+			}
+		}
+		//print smode_, m, g
+	    if (smode_ == 1) { // selecting a cell
+		if (m >= 0) {
+			msel.x[m] = (msel.x[m] == 0)
+			sel_gid_ = m
+			sprint(sel_str_, "mitral gid %d", sel_gid_)
+		}else if (g >= 0) {
+			gsel.x[g] = (gsel.x[g] == 0)
+			sel_gid_ = g + num_mitral
+			sprint(sel_str_, "granule gid %d", sel_gid_)
+		}else{
+			sel_gid_ = -1
+			sel_str_ = "no selection" 
+		}
+	    }else if (smode_ == 2) { // selecting all syn for a cell
+		if (m >= 0) {
+			msynsel.x[m] = (msynsel.x[m] == 0)
+			sel_gid_ = m
+			sprint(sel_str_, "mitral gid %d", sel_gid_)
+		}else if (g >= 0) {
+			gsynsel.x[g] = (gsynsel.x[g] == 0)
+			sel_gid_ = g + num_mitral
+			sprint(sel_str_, "granule gid %d", sel_gid_)
+		}else{
+			sel_gid_ = -1
+			sel_str_ = "no selection" 
+		}
+	    }else{ // select individual synapses
+		if (m > -1 && g > -1) {
+//printf("%d %d %d\n", m, g, scm.getval(m, g))
+			if (scm.getval(m, g)) {
+				synsel1.x[m][g] = synsel1.x[m][g]==0
+			}
+		}
+	    }
+		draw()
+	}
+}
+
+obfunc sellist() {localobj a
+	if (smode_ == 1) {
+		if ($1 == 0) { a = msel } else { a = gsel }
+	}else if (smode_ == 2) {
+		if ($1 == 0) { a = msynsel } else { a = gsynsel }
+	}
+	return a
+}
+proc str2sel() {local i  localobj s, a, sf
+	sf = new StringFunctions()
+	a = sellist($1)
+	a.fill(0)
+	while(sf.net_spatial_len($s2) > 0 && sscanf($s2,"%d", &i)) {
+		if (i < 0) { continue }
+		if ($1 == 0) {
+			if (i >= num_mitral) { continue }
+		}else{
+			if (i >= num_granule) { continue }
+		}
+		a.x[i] = 1
+		sf.tail($s2, " ", $s2)
+	}
+}
+obfunc sel2str() {local i localobj s, a
+	s = new String()
+	a = sellist($1)
+	if(object_id(a) == 0){
+		s.s = "Not Allowed"
+	}else{
+		for i=0, a.size-1 if (a.x[i]) {
+			sprint(s.s, "%s %d", s.s, i)
+		}
+	}
+	return s
+}
+proc mansel() {localobj label, s
+	label = new String()
+	if ($1 == 0) {
+		label.s = "Space separated list of mitral id's"
+	}else{
+		label.s = "Space separated list of granule id's"
+	}
+	s = sel2str($1)
+	if (string_dialog(label.s, s.s)) {
+		str2sel($1, s.s)
+		draw()
+	}
+}
+
+proc sim() {local i, j, jx, x, mk
+	if (wholenet_ != 1) { return }
+//	if (smode_ != 1) { return }
+	deck.flip_to(1)
+	wholenet_ = 0
+//	prune()
+	create_subnet()
+	draw()
+	for i=0, synsel1.nrow-1 {
+		for jx = 0, synsel1.sprowlen(i)-1 {
+			x = synsel1.spgetrowval(i, jx, &j)
+			syn_graph(mgfind(i, j))
+		}
+	}
+	for i=0, msel.size-1 if (msel.x[i]) {
+		v_movie(i)
+		t_movie(i)
+	}
+	for i=0, gsel.size-1 if (gsel.x[i]) {
+		t_movie(i + num_mitral)
+	}
+	mk = 0
+	for i=0, msynsel.size-1 if (msynsel.x[i]) {
+		mk = 1
+		if (object_id(syn_movie_list) == 0) {
+			syn_movie_list = new List()
+			syn_movie_nclist = new List()
+		}
+		syn_movie(i)
+	}
+	if (hinton_movie) {
+		mkhinton(1)
+		mk = 1
+	}
+	if (exc_hinton_movie) {
+		mkhinton(2)
+		mk = 1
+	}
+	if (inh_hinton_movie) {
+		mkhinton(3)
+		mk = 1
+	}
+	if (mk) {
+syn_movie_fih = new FInitializeHandler("cvode.event(0, \"show_weight()\")", this)
+	}
+	show_weight()
+	if (show_soma_spikes_) {
+		fih_spikes = new FInitializeHandler(0, "cvode.event(0, \"spikesinit()\")")
+	}
+	if (show_fi_cond_) {
+		fih_cond = new FInitializeHandler("cvode.event(20, \"fi_cond_update()\")", this)
+	}
+	execute("stdinit()")
+}
+
+objref fi_cond_vec[1]
+proc fi_cond_init() {local i
+	objref fi_cond_vec[num_mitral]
+	for i=0, num_mitral-1 {
+		fi_cond_vec[i] = new Vector(num_granule)
+	}
+	fi_cond_update1()
+	for i=0, num_mitral-1 {
+		fi_cond_vec[i].plot(g, granule_x, 1, 1)
+	}
+	g.flush()
+}
+proc fi_cond_update() {
+	fi_cond_update1()
+	g.flush()
+	cvode.event(t+20, "fi_cond_update()")
+}
+
+proc fi_cond_update1() {local i, m, g, scl  localobj mgrs, cvec, fi
+	scl = 200
+	for i=0, syns.count-1 {
+		mgrs = syns.o(i)
+		m = mgrs.mitral_gid
+		g = mgrs.granule_gid - num_mitral
+		cvec = fi_cond_vec[m]
+		fi = mgrs.fi
+		if (object_id(fi)) {
+			cvec.x[g] = fi.g*scl + m
+		}
+	}
+}
+
+proc whole_net() {local i
+	pc.gid_clear()
+	objref mgrsmap
+	objref fih_spikes
+	objref fih_cond
+	for i=0, tplots.count-1 {
+		tplots.o(i).unmap()
+	}
+	tplots.remove_all()
+	objref keepsyn, keepnc, syn_movie_nclist, syn_movie_fih, syn_movie_list
+	objref hinton_shape, exc_hinton_shape, inh_hinton_shape
+	create keepsyn_sec
+	keepsyn_sec { delete_section() }
+	sel_gid_ = -1
+	sel_str_ = "no selection"
+//	reload_wholenet()
+	clear()
+	wholenet_ = 1
+	deck.flip_to(0)
+	draw()
+}
+
+proc v_movie() {localobj g, s
+	s = new String()
+	g = new Graph(0)	
+	g.view(-secdenlen, -80, 2*secdenlen, 120, 400, 500+$1*300/num_mitral, 700, 200)
+	v_rvp_ = new RangeVarPlot("v")
+	pc.gid2cell($1).secden[1] v_rvp_.begin(1)	
+	pc.gid2cell($1).secden[0] v_rvp_.end(1)
+	v_rvp_.origin(12.5)
+	g.addobject(v_rvp_, 2, 1, 0.8, 0.9)
+	sprint(s.s, "mitral gid %d", $1)
+	g.label(.3,.9,s.s,2)
+	flush_list.append(g)
+	tplots.append(g)
+}
+
+proc t_movie() {localobj g, s
+	s = new String()
+	sprint(s.s, "gid %d: %s.soma.v(.5)", $1, pc.gid2cell($1))
+	g = new Graph()
+	addplot(g, 0)
+	g.size(0, tstop, -80, 40)
+	tplots.append(g)
+	g.label(.3, 1, "", 2)
+	pc.gid2cell($1).soma g.addvar(s.s, "v(0.5)", 1, 1) 
+}
+
+proc syn_graph() {localobj g, s, mgr
+	mgr = $o1
+	if (object_id(mgr) == 0) {
+		execerror("syn_graph arg is nil")
+	}
+	s = new String()
+	sprint(s.s, "syn (%d, %d)", mgr.mitral_gid, mgr.granule_gid)
+	g = new Graph()
+	addplot(g, 0)
+	g.size(0, tstop, 0, 1)
+	tplots.append(g)
+	g.label(.3, .9, s.s, 2)
+	sprint(s.s, "%s.weight[2]", mgr.gd2fi)
+	g.addvar("fi", s.s, 3, 1)
+	sprint(s.s, "%s.weight[2]", mgr.md2ampanmda)
+	g.addvar("an", s.s, 2, 1)
+}
+
+proc syn_movie() {local i localobj g, s, nc, nclist1, nclist2, syn
+	s = new String()
+	g = new Graph(0)
+	g.view(0, 0, net_spatial_len, 1, 400, 250+$1*400/num_mitral, 700, 200)
+	
+	sprint(s.s, "mitral gid %d", $1)
+	g.label(.3,.9,s.s,2)
+	syn_movie_list.append(g)
+	nclist1 = new List()
+	nclist2 = new List()
+	for i = 0, syns.count-1 {
+		syn = syns.o(i)
+		if (syn.mitral_gid == $1) {
+			nclist1.append(syn.gd2fi)
+			nclist2.append(syn.md2ampanmda)
+		}
+	}
+	syn_movie_nclist.append(nclist1)
+	syn_movie_nclist.append(nclist2)
+}
+
+proc show_weight() {local i, j, k, x, w  localobj g, nc, syn, nclist
+	if (object_id(syn_movie_list)) for i=0, syn_movie_list.count-1 {
+		g = syn_movie_list.o(i)
+		g.erase()
+		for j=0,1 {
+			nclist = syn_movie_nclist.o(2*i + j)
+			for k = 0, nclist.count - 1 {
+				nc = nclist.o(k)
+				syn = nc.syn
+				x = syn.x
+				w = nc.weight[2]
+				if (j == 1) {
+					g.mark(x, w, "S", 8, 2, 1)
+				}else{
+					g.mark(x, w, "s", 10, 3, 1)
+				}
+			}
+		}
+	}			
+	if (object_id(hinton_shape)) {
+		hinton_shape.flush()
+	}
+	if (object_id(exc_hinton_shape)) {
+		exc_hinton_shape.flush()
+	}
+	if (object_id(inh_hinton_shape)) {
+		inh_hinton_shape.flush()
+	}
+	cvode.event(t + 100, "show_weight()")
+}
+
+proc prune() {local i, mi, gi  localobj pc, keepa, keepf, mgr, nil, cell
+	pc = new ParallelContext()
+	pc.gid_clear()
+	// 0 - destroy, 1 - keep where it is, 2 - move to safe place
+	keepa = new Vector(syns.count)
+	keepf = new Vector(syns.count)
+	if (hinton_movie) { keepa.fill(2)  keepf.fill(2) }
+	if (exc_hinton_movie) { keepa.fill(2) }
+	if (inh_hinton_movie) { keepf.fill(2) }
+	for i=0, syns.count-1 {
+		mgr = syns.o(i)
+		mi = mgr.mitral_gid
+		gi = mgr.granule_gid - num_mitral
+		if (msynsel.x[mi]) {keepa.x[i] = 2  keepf.x[i] = 2 }
+		if (gsynsel.x[gi]) {keepa.x[i] = 2  keepf.x[i] = 2 }
+		if (synsel1.x[i]) {keepa.x[i] = 2  keepf.x[i] = 2 }
+	}
+	for i=0, syns.count-1 {
+		mgr = syns.o(i)
+		mi = mgr.mitral_gid
+		gi = mgr.granule_gid - num_mitral
+		if (msel.x[mi]) {keepf.x[i] = 1}
+		if (gsel.x[gi]) {keepa.x[i] = 1}
+	}
+	// move/destroy syns
+	for i=0, syns.count-1 {
+		mgr = syns.o(i)
+		mgr.gd = nil
+		mgr.md = nil
+		if (keepf.x[i] == 2) {
+			if (!section_exists("keepsyn_sec", this)) {
+				create keepsyn_sec
+			}
+			keepsyn_sec mgr.fi.loc(.5)
+			mgr.mitral = nil
+		}
+		if (keepa.x[i] == 2) {
+			if (!section_exists("keepsyn_sec", this)) {
+				create keepsyn_sec
+			}
+			keepsyn_sec mgr.ampanmda.loc(.5)
+			mgr.granule = nil
+			mgr.spine = nil
+		}
+		if (keepf.x[i] == 0) {
+			mgr.gd2fi = nil
+			mgr.fi = nil
+			mgr.mitral = nil
+			mgr.granule = nil
+		}
+		if (keepa.x[i] == 0) {
+			mgr.md2ampanmda = nil
+			mgr.ampanmda = nil
+			mgr.mitral = nil
+			mgr.granule = nil
+			mgr.spine = nil
+		}
+	}
+	// destroy cells
+	for (i = cells.count-1; i >= 0; i -= 1) {
+		cell = cells.o(i)
+		if (i < num_mitral) if(msel.x[i]) {
+			pc.set_gid2node(i, pc.id)
+			cell.soma pc.cell(i, new NetCon(&v(.5), nil))
+			continue
+		}
+		if (i > num_mitral) if (gsel.x[i - num_mitral]) {
+			pc.set_gid2node(i, pc.id)
+			cell.soma pc.cell(i, new NetCon(&v(.5), nil))
+			continue
+		}
+		cells.remove(i)
+		cell = nil
+	}
+	// recreate connection using the original NetCon
+	for i=0, syns.count-1 {
+		mgr = syns.o(i)
+		if (mgr.fi != nil) {
+			pc.gid_connect(mgr.gd_gid, mgr.fi, mgr.gd2fi)
+		}
+		if (mgr.ampanmda != nil) {
+			pc.gid_connect(mgr.md_gid, mgr.ampanmda, mgr.md2ampanmda)
+		}
+	}
+}
+
+proc create_subnet() {local i, m, j, x, g  localobj mgr, nil
+	// first the cells, then synapses not on cells
+	objref mgrsmap
+	gidvec.resize(0)
+	for i=0, msel.size-1 if (msel.x[i]) { gidvec.append(i) }
+	for i=0, gsel.size-1 if (gsel.x[i]) { gidvec.append(i + num_mitral) }
+	mknet()
+	create_stim()
+	// if hinton we need all remaining syn, otherwise the msynsel...
+	if (hinton_movie || exc_hinton_movie || inh_hinton_movie) {
+		mk_mgrsmap()
+		if (!section_exists("keepsyn_sec", this)) {
+			create keepsyn_sec
+		}
+		keepsyn_sec for m=0, num_mitral-1 for j=0, scm.sprowlen(m)-1 {
+			scm.spgetrowval(m, j, &g)
+			mgrs_extra(m, g)
+		}
+		objref mgrsmap
+	}
+	if (msynsel.indwhere("==", 1) >= 0) {
+		mk_mgrsmap()
+		if (!section_exists("keepsyn_sec", this)) {
+			create keepsyn_sec
+		}
+		keepsyn_sec for m=0, num_mitral-1 if (msynsel.x[m]) for j=0, scm.sprowlen(m)-1 {
+			scm.spgetrowval(m, j, &g)
+			mgrs_extra(m, g)
+		}
+		objref mgrsmap
+	}
+	if (gsynsel.indwhere("==", 1) >= 0) {
+		mk_mgrsmap()
+		if (!section_exists("keepsyn_sec", this)) {
+			create keepsyn_sec
+		}
+		keepsyn_sec for g=0, num_granule-1 if (gsynsel.x[g]) for m=0, num_mitral-1 {
+			mgrs_extra(m, g)
+		}
+		objref mgrsmap
+	}
+	j=0
+	for i=0, synsel1.nrow-1 if (synsel1.sprowlen(i) > 0) { j=1 break}
+	if (j) {
+		mk_mgrsmap()
+		if (!section_exists("keepsyn_sec", this)) {
+			create keepsyn_sec
+		}
+		keepsyn_sec for m=0, synsel1.nrow-1 for j=0, synsel1.sprowlen(m)-1 {
+			if (synsel1.spgetrowval(m, j, &g)) {
+				mgrs_extra(m, g)
+			}
+		}
+	}
+	objref mgrsmap
+	mk_mgrsmap()
+}
+
+// create any synapses onto the cas for m,g that do not already exist
+proc mgrs_extra() {localobj mgrs
+	mgrs = mgfind($1, $2)
+	if (object_id(mgrs)) {
+		mgrs.complete()
+		mgrs.fi.x = granule_x.x[$2]
+		mgrs.ampanmda.x = granule_x.x[$2]
+	}else{
+		mgconnect($1, $2, 1)
+	}
+}
+
+proc mk_mgrsmap() {local i  localobj po, keys, s
+	if (object_id(mgrsmap) != 0) { return }
+	po = new PythonObject()
+	mgrsmap = po.dict()
+	keys = new Vector(syns.count)
+	for i=0, syns.count-1 {
+		s = syns.o(i)
+		keys.x[i] = s.mitral_gid + (s.granule_gid-num_mitral)*num_mitral
+	}
+	mgrsmap = mgrsmap.fromkeys(keys)
+	for i=0, syns.count-1 {
+		mgrsmap.__setitem__(keys.x[i], syns.o(i))
+	}
+//nrnpython("a = None")
+//po.a = mgrsmap
+//nrnpython("print a")
+//print "hello"
+}
+
+obfunc mgfind() {
+	return mgrsmap.get($1+num_mitral*$2)
+}
+
+objref cmap
+
+proc mkhinton() {local i, mx1, mx2, xmin, xmax, dx, ymin, ymax, yscl \
+  localobj syn, sl, g
+	xmin = 0  xmax = net_spatial_len
+	dx = net_spatial_len/num_granule
+//print "dx=", dx
+	ymin = 0  ymax = num_mitral
+	yscl = (xmax - xmin)/(ymax - ymin) * 250/700 *.9
+//	if (dx > yscl/2) { dx = yscl/2 * .9 }
+//	hinton_build()
+//proc hinton_build() {local mx1, mx2, sl
+	sl = new SectionList()
+	g = new PlotShape(sl,0)
+	if ($1 == 1) hinton_shape = g else if ($1 == 2) exc_hinton_shape = g else inh_hinton_shape = g
+	g.view(xmin, ymin, xmax-xmin, (ymax-ymin)*yscl, 400, 250, 700, 250)
+	g.colormap(11)
+	i = -1
+g.colormap(i+=1, 111,  0,    111)
+g.colormap(i+=1, 143,  0,    127)
+g.colormap(i+=1, 175,  0,    95)
+g.colormap(i+=1, 207,  0,    63)
+g.colormap(i+=1, 223,  47,   47)
+g.colormap(i+=1, 255,  79,   15)
+g.colormap(i+=1, 255,  111,  0)
+g.colormap(i+=1, 255,  143,  0)
+g.colormap(i+=1, 255,  175,  0)
+//g.colormap(i+=1, 255,  207,  0)
+g.colormap(i+=1, 255,  239,  0)
+//g.colormap(i+=1, 255,  255,  0)
+g.colormap(i+=1, 255,  255,  200)
+
+	g.scale(0,1)
+	g.exec_menu("Shape Plot")
+	hinton_draw(dx, $1, g)
+}
+proc hinton_draw() {local i, x, m, b, dx  localobj ncl, nc, syn, sr, s
+	dx = $1
+	s = new String()
+	ncl = new List("NetCon")
+	for i=0, ncl.count-1 {
+		nc = ncl.object(i)
+		syn = nc.syn
+		classname(syn, s.s)
+		if (strcmp(s.s, "FastInhib") == 0) {
+			b = 1
+		}else if (strcmp(s.s, "AmpaNmda") == 0) {
+			b = 0
+		}else{
+			continue
+		}
+		x = syn.x
+		m = syn.mgid		
+		nc.weight[2] = 0
+		if ($2 == 1) {
+			$o3.hinton(&nc.weight[2], x, 3*m*dx+(dx)*b, dx)
+		}else{
+			if ($2 == 2 && b == 0) {
+				$o3.hinton(&nc.weight[2], x, m*dx, dx)
+			}
+			if ($2 == 3 && b == 1) {
+				$o3.hinton(&nc.weight[2], x, m*dx, dx)
+			}
+		}
+	}
+}
+
+endtemplate ShowConnect
+
+objref sc_
+proc showconnect() {
+	sc_ = new ShowConnect(cells, num_mitral, num_granule, mgrs_list)
+}
+showconnect()
+
+load_file("michele_movie.hoc")

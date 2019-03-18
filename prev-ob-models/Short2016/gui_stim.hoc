@@ -1,0 +1,27 @@
+// gui_stim.hoc
+// interacts with clipbaord and clipboard_save, clipboard_retrieve to save/retrieve breathing and light stimuli
+proc load_clipboard() { // $o1 is loaded into the neuron hoc clipboard
+  hoc_obj_[0] = $o1
+  objref hoc_obj_[0]
+}
+proc transfer_clipboard() { // $o1s receive the current y coordinate of the clipboard
+  $o1 = hoc_obj_[0]
+}
+
+xpanel("stimulation save/retrieve")
+xlabel("Moves existing vec into clip for file writing")
+xlabel("Vecs in below have names like X_events_for_mcY")
+xbutton("load breath_events_for_mc1 in to clipboard","load_clipboard(breath_events_for_mc1)")
+xbutton("load breath_events_for_mc2 in to clipboard","load_clipboard(breath_events_for_mc2)")
+xbutton("load light_events_for_mc1 in to clipboard","load_clipboard(light_events_for_mc1)")
+xbutton("load light_events_for_mc2 in to clipboard","load_clipboard(light_events_for_mc2)")
+xlabel(" ")
+xlabel("Moves clip into vec for file retrieving")
+xlabel("Use clipboard_retrieve to load the clipboard")
+xlabel("Then the below to transfer into a stimulation")
+xbutton("clipboard_retrieve","clipboard_retrieve()")
+xbutton("Transfer clip to breath_events_for_mc1","transfer_clipboard(breath_events_for_mc1)")
+xbutton("Transfer clip to breath_events_for_mc2","transfer_clipboard(breath_events_for_mc2)")
+xbutton("Transfer clip to light_events_for_mc1","transfer_clipboard(light_events_for_mc1)")
+xbutton("Transfer clip to light_events_for_mc1","transfer_clipboard(light_events_for_mc2)")
+xpanel()

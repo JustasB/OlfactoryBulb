@@ -1,0 +1,48 @@
+{load_file("default.hoc")}
+
+//network size parameters
+default_var("len", 5000)  //5000um, size of the linear domain, mitral positions range from 0 to len
+default_var("Lsec", 1500) // mitral dendrite secden length
+default_var("ngranule", 10000) // 10000 granual cell,distributed uniformly over the linear domain
+default_var("nmitral", 500) //  500 mitral cell,distributed uniformly over the linear domain
+default_var("ring", 1)  // 1 - wraparound of mitral cells lateral dendrites
+
+// connection parameters
+default_var("g2m_mean", 0.1)
+default_var("g2m_var" , 0.05)
+default_var("g2m_ranseed", 1)
+default_var("g2m_priden_seed_offset", 1000) // 0 means all at 0.5
+
+// Simulation vars
+default_var("net_idx", 0)  // ID of a trained network from a particular odor
+default_var("odor_idx", 0) // ID of odor to use for stimulation
+default_var("odor_mix", 0) // Odor mixture flag
+default_var("stop_time", 10000) // tstop
+
+// plasticity
+/*
+default_var("ltdinvl", 1)
+ltdinvl_AmpaNmda=ltdinvl
+ltpinvl_AmpaNmda=ltdinvl
+ltdinvl_FastInhib=ltdinvl
+ltpinvl_FastInhib=ltdinvl
+*/
+
+default_var("global_exc_gmax", 0.5)
+default_var("global_inh_gmax", .003)
+default_var("global_fi_tau1", 1)
+default_var("global_fi_tau2", 100)
+
+// odor parameters
+default_str("odorstr","o26")
+default_var("owfactor", 1e-3)
+default_var("global_wl", .08)
+default_var("global_wh", .12)
+default_var("global_stod", 2)
+default_var("global_endod", 10000)
+default_var("global_si", 1)
+
+// administrative
+default_var("checkpoint_interval", 2000) //interval for spike output
+default_var("n_spkout_files", 16) // number of spkxxx.dat file to write
+default_var("n_spkout_sort", 16) // number of ranks used to sort files

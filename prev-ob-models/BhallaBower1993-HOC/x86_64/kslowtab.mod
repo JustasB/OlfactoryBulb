@@ -1,0 +1,1 @@
+../kslowtab.mod

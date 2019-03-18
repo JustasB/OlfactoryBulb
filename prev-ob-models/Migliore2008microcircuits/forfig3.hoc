@@ -1,0 +1,145 @@
+load_file("nrngui.hoc")
+load_file("mitral.hoc")
+load_file("gc.hoc")
+cvode.active(1)
+
+Vrest = -65
+dt = 1
+celsius=35
+tstop=500
+
+objref nconp[3], net, netp[3], g, b, synp, nil, stim, apc
+objref mt[3], gc[3], train, outfile, coeff[3], table
+objref nc[27]
+
+strdef filename
+outfile = new File()
+
+table = new Vector()
+
+for i=0, 2 {
+mt[i] = new Mitral()
+gc[i] = new GC()
+coeff[i] = new Vector()
+}
+
+outfile.ropen("coeff-table.txt")
+for i=0, 2 {
+for j=0,8 {
+coeff[i].append(outfile.scanvar())
+}
+coeff[i].printf()
+}
+outfile.close()
+
+cx=3
+
+weight=.1
+amp=.03
+rel=0.2
+inh=13
+synstr=2.3
+nmdafactor=0.0035
+frac=1
+
+b = new VBox()
+b.intercept(1)
+g = new Graph()
+g.size(0,tstop,-70,0)
+g.xaxis(1)
+g.addvar("mt[0].soma.v(0.5)",1,1,0.7,1,2)
+g.addvar("mt[1].soma.v(0.5)",2,1,0.7,0.99,2)
+g.addvar("mt[2].soma.v(0.5)",3,1,0.7,0.98,2)
+g.exec_menu("10% Zoom out")
+xpanel("",1)
+xbutton("run", "run()")
+xvalue("odor","cx")
+xpanel()
+b.intercept(0)
+b.map()
+
+for i=0, 2 {
+access mt[i].soma
+	distance()
+	netp[i] = new NetStim(0)
+	netp[i].number=1
+	netp[i].interval=500
+	netp[i].noise=0
+	netp[i].start=2
+	nconp[i]= new NetCon(netp[i],mt[i].synodor,0.5,0,weight*1.e-3) 
+}
+
+////////////////// circuit definition  
+
+///// gc <-> mt
+
+gc[0].dend[0]	nc[0]= new NetCon(&v(1),mt[0].igp[1][0],-40,1,inh*1e-3) 
+mt[0].secden[1]	nc[1]= new NetCon(&v(0),gc[0].synmt[0],-40,1,synstr*nmdafactor) 
+mt[0].secden[1]	nc[2]= new NetCon(&v(0),gc[0].sampa[0],-40,1,synstr*1e-3) 
+
+gc[0].dend[2]	nc[3]= new NetCon(&v(1),mt[1].igp[0][1],-40,1,inh*1e-3) 
+mt[1].secden[0]	nc[4]= new NetCon(&v(0.4),gc[0].synmt[1],-40,1,synstr*nmdafactor) 
+mt[1].secden[0]	nc[5]= new NetCon(&v(0.4),gc[0].sampa[1],-40,1,synstr*1e-3) 
+
+gc[0].dend[4]	nc[6]= new NetCon(&v(1),mt[2].igp[0][2],-40,1,inh*1e-3) 
+mt[2].secden[0]	nc[7]= new NetCon(&v(0.8),gc[0].synmt[2],-40,1,synstr*nmdafactor) 
+mt[2].secden[0]	nc[8]= new NetCon(&v(0.8),gc[0].sampa[2],-40,1,synstr*1e-3) 
+
+gc[1].dend[0]	nc[9]= new NetCon(&v(1),mt[1].igp[1][0],-40,1,inh*1e-3) 
+mt[1].secden[1]	nc[10]= new NetCon(&v(0),gc[1].synmt[0],-40,1,synstr*nmdafactor) 
+mt[1].secden[1]	nc[11]= new NetCon(&v(0),gc[1].sampa[0],-40,1,synstr*1e-3) 
+
+gc[1].dend[2]	nc[12]= new NetCon(&v(1),mt[2].igp[0][1],-40,1,inh*1e-3) 
+mt[2].secden[0]	nc[13]= new NetCon(&v(0.4),gc[1].synmt[1],-40,1,synstr*nmdafactor) 
+mt[2].secden[0]	nc[14]= new NetCon(&v(0.4),gc[1].sampa[1],-40,1,synstr*1e-3) 
+
+gc[1].dend[4]	nc[15]= new NetCon(&v(1),mt[0].igp[1][1],-40,1,inh*1e-3) 
+mt[0].secden[1]	nc[16]= new NetCon(&v(0.4),gc[1].synmt[2],-40,1,synstr*nmdafactor) 
+mt[0].secden[1]	nc[17]= new NetCon(&v(0.4),gc[1].sampa[2],-40,1,synstr*1e-3) 
+
+gc[2].dend[0]	nc[18]= new NetCon(&v(1),mt[2].igp[1][0],-40,1,inh*1e-3) 
+mt[2].secden[1]	nc[19]= new NetCon(&v(0),gc[2].synmt[0],-40,1,synstr*nmdafactor) 
+mt[2].secden[1]	nc[20]= new NetCon(&v(0),gc[2].sampa[0],-40,1,synstr*1e-3) 
+
+gc[2].dend[2]	nc[21]= new NetCon(&v(1),mt[1].igp[1][1],-40,1,inh*1e-3) 
+mt[1].secden[1]	nc[22]= new NetCon(&v(0.4),gc[2].synmt[1],-40,1,synstr*nmdafactor) 
+mt[1].secden[1]	nc[23]= new NetCon(&v(0.4),gc[2].sampa[1],-40,1,synstr*1e-3) 
+
+gc[2].dend[4]	nc[24]= new NetCon(&v(1),mt[0].igp[1][2],-40,1,inh*1e-3) 
+mt[0].secden[1]	nc[25]= new NetCon(&v(0.8),gc[2].synmt[2],-40,1,synstr*nmdafactor) 
+mt[0].secden[1]	nc[26]= new NetCon(&v(0.8),gc[2].sampa[2],-40,1,synstr*1e-3) 
+
+////////////////// end circuit definition
+
+
+proc init() {
+	t=0
+	finitialize(Vrest)
+        fcurrent()
+        forall {
+		v=Vrest
+		if (ismembrane("nax")) {e_pas=v+(ina+ik)/g_pas
+		} else {
+		e_pas=v+ik/g_pas
+		}
+	}
+	cvode.re_init()
+	g.begin()
+	g.plot(t)
+}
+
+proc advance() {
+	fadvance()
+	g.plot(t)
+	g.flush()
+	doNotify()
+}
+
+proc run() {
+	for i=0, 2 {
+	nconp[i].weight=coeff[i].x[cx-3]*1.e-3
+	print i, nconp[i].weight
+}
+	stdinit()
+	continuerun(tstop)
+}

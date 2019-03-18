@@ -1,0 +1,46 @@
+Use a PythonObject. For symmetry with NEURON's Python interface, I often call it p.
+
+For example:
+
+oc>objref p
+oc>p = new PythonObject()
+oc>a = p.max(12, 24.1)
+first instance of a
+oc>print a
+24.1 
+
+In your case you'll probably be importing a module, so it'd be more like:
+
+nrnpython("import mymodule")
+objref vec
+vec = p.mymodule.read_nrn_vec("filename")
+
+________________________________________
+From: Tom Morse [tom.morse@yale.edu]
+Sent: Tuesday, April 28, 2015 2:26 PM
+To: McDougal, Robert
+Subject: calling a python function from hoc
+
+If I have a python function for example
+
+
+from neuron import h, gui
+
+def read_vec(filename):
+
+   vector_list=[]
+   for line in open(filename,'r'):
+     vector_list.append(eval(line))
+   return vector_list
+
+def read_nrn_vec(filename):
+   return h.Vector(read_vec(filename))
+
+
+That returns the numbers in a filename as list, is it possible to call
+that from hoc code:
+
+objref vec
+vec = pythons_read_nrn_vec("filename.dat")
+
+What would pythons_read_nrn_vec really be if it is possible?

@@ -1,0 +1,32 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[3]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+xpanel("RunControl", 0)
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Regen if necessary, Init & Run","do_everything()") // "run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 0
+xvalue("t","t", 2 )
+// 160100 is 400 number * 400 ms interval + 100 extra
+tstop = 160100 // 3200 is 80(number)*400(ms interval), orig was just 1200
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+screen_update_invl = 0.05
+xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
+realtime = 0
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(75,472)
+}
+objectvar scene_vector_[1]
+{doNotify()}
