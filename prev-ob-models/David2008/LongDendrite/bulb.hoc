@@ -1,5 +1,5 @@
 
-// ¬¬ Initialisation ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+// ï¿½ï¿½ Initialisation ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 
 objref cvode, random, rand2, intensva[nmitx][nmity], delva[nmitx][nmity]
 cvode = new CVode(0)   		 // start with CVode inactive
@@ -13,7 +13,7 @@ objref outfile
 outfile = new File()
 strdef filename
 
-// ¬¬  Procedures ¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬¬
+// ï¿½ï¿½  Procedures ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½ï¿½
 // Create cells --------------------------------------------------------
 
 proc create_cells() { local i,j,ii,jj,k,p
@@ -66,7 +66,7 @@ proc insert_iclamp_ipsc() { local i,j
 // Randomise initial conditions ----------------------------------------
 proc random_init() { local i,j,ii,jj,k
   random.normal(-65,25)
-  for i = 0,nmitx-1 {
+  for i = 0,nmitx-1 {cd ..
     for j = 0, nmity-1 {
       mit[i][j].soma.v(0.5) = 0  //random.repick()
       mit[i][j].dend[0].v(0.5) = mit[i][j].soma.v(0.5)
@@ -76,7 +76,7 @@ proc random_init() { local i,j,ii,jj,k
   }
 }
 
-// ¬¬ Create the model ¬¬¬
+// ï¿½ï¿½ Create the model ï¿½ï¿½ï¿½
 create_cells()
 
 

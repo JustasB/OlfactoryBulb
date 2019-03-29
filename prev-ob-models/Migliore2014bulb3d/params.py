@@ -1,4 +1,5 @@
 # -*- coding: cp1252 -*-
+from fig7 import *
 from custom_params import *
 
 try:

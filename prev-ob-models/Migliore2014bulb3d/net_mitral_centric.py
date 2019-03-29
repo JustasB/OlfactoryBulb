@@ -8,6 +8,9 @@ from common import *
 from util import elapsed
 from split import wholemitral, mpiece_exists
 
+#import params
+#from neuron import h
+
 t_begin = h.startsw()
 import determine_connections as dc
 h.load_file("granule.hoc")

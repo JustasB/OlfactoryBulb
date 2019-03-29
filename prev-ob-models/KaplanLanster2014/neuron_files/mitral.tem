@@ -7,10 +7,11 @@
 //    Brain Research Bulletin 51(5): 393-399.
 // Andrew Davison, The Babraham Institute, 2000 (non-parallel version)
 // 1st parallel version by Migliore et al
-// par_mitral.tem; this parallel version by Malin Sandström (KTH, Sweden) for NEUROCHEM
+// par_mitral.tem; this parallel version by Malin Sandstrï¿½m (KTH, Sweden) for NEUROCHEM
 // Note: do NOT change the order in which synapses are appended to the synapse list ("synlist")
 
 begintemplate Mit
+    //external thresh
 	public soma, glom, prim, dend, ampa_glom, nmda_glom, gabaa_glom, gabaa_dend, nmda_dend, ampa_prim, nmda_prim// compartments and synapses
 	public spiketimes, spikecount
 	public netconlist_ext // for external spikes (substituting ORNs)
@@ -25,8 +26,8 @@ begintemplate Mit
 	public record_iampa_glom, record_inmda_glom, record_igaba_glom
 	public print_iampa_glom, print_inmda_glom, print_igaba_glom
 
-	external thresh
-/*    thresh = 10*/
+
+    thresh = 10
 	create soma, glom, prim, dend, s2d, s2p, p2g
 	objref spikecount, spiketimes, synlist, sectionlist, ampa_glom, nmda_glom, gabaa_glom, gabaa_dend, nmda_dend, ampa_prim, nmda_prim
 	objref noise_netconlist, ampa_netconlist, nmda_netconlist

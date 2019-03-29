@@ -5,11 +5,12 @@
 
 begintemplate Mit
   public soma, glom, prim, dend, AMPA, GABAA, spiketimes, spikecount, gsp, gpg
-  create soma, glom, prim, dend[100], s2d, s2p, p2g
+  create soma, glom, prim, dend[100], s2p, p2g
   objref AMPA, GABAA[100], spikecount, spiketimes
 
   proc init() { local Len, Erest, RM, p, q, r, Atotal, AMPAtau, AMPArev, GABAAtau, GABAArev
-    create soma, glom, prim, dend[$1], s2d, s2p, p2g
+    create soma, glom, prim, dend[$1], s2p, p2g
+
 
     spiketimes = new Vector()
     lastspikecount = 0

@@ -4,4 +4,4 @@ some cells didn't have somas - they were excluded
 
 slices are thin
 
-computed soma and thin slice apical and basal dend metrics
+publication: https://www.ncbi.nlm.nih.gov/pubmed/26372002

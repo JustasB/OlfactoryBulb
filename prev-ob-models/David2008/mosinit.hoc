@@ -1,6 +1,0 @@
-//mosdir LongDendrite
-load_file("nrngui.hoc")
-print "Loading LongDendrite auto-launch web demo"
-print "Follow directions in readme to run zip archive downloaded to your computer"
-chdir("LongDendrite")
-xopen("mosinit.hoc")

@@ -1,6 +1,6 @@
 from neuron import h
 h.load_file('mitral.hoc')
-import genmitral
+from getmitral import getmitral
 
 def mkmitral(gid):
   nrn = getmitral(gid)

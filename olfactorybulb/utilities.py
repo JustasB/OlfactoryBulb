@@ -1,6 +1,6 @@
 from database import *
 import numpy as np
-
+np.random.seed(31457)
 
 def pool_experimental_measurements(property_id):
     """

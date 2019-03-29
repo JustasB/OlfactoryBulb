@@ -76,6 +76,7 @@ class Property(BaseModel):
     mean = FloatField(null=True)
     n = IntegerField(null=True)
     name = TextField(null=True)
+    type = TextField(null=True)
     picked_value = FloatField(null=True)
     std = FloatField(null=True)
 
