@@ -1,0 +1,8 @@
+t 			= 0.010	// ms
+steps_per_ms	= 100		// for graphing
+tstop 		= 1000	// ms
+//tstop 		= 1000	// ms
+Erest			= -55		// mV
+ErevNa 		= 45		// mV
+ErevK 		= -70		// mV
+ErevCa 		= 70		// mV

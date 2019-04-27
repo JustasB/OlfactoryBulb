@@ -1,2 +1,0 @@
-load_file("nrngui.hoc")
-xopen("init.hoc")

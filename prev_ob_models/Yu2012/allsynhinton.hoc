@@ -1,0 +1,47 @@
+begintemplate AllSynHinton
+external fast_flush_list
+objref g, syns, sl, cells
+proc init() {local i  localobj x, y, syn
+	x = new Vector()
+	y = new Vector()
+	for i=0, $o1.count-1 {
+		syn = $o1.object(i).syn
+		x.append(syn.x)
+		y.append(syn.mgid)
+	}
+	xmin = x.min  xmax = x.max
+	dx = x.x[x.min_ind + 2] - xmin
+//print "dx=", dx
+	ymin = y.min  ymax = y.max
+	yscl = (xmax - xmin)/(ymax - ymin) * 250/700 *.9
+	if (dx > yscl/2) { dx = yscl/2 * .9 }
+	build()
+	draw($o1)
+	fast_flush_list.append(g)
+}
+
+proc unref() {
+	//print "refcount=", $1
+	if ($1 == 0) {
+		fast_flush_list.remove(fast_flush_list.index(g))
+	}
+}
+
+proc build() {local mx1, mx2
+	sl = new SectionList()
+	g = new PlotShape(sl,0)
+	g.view(xmin, ymin, xmax-xmin, (ymax-ymin)*yscl, 400, 250, 700, 250)
+	g.scale(-.1, 1.1)
+	g.exec_menu("Shape Plot")
+}
+proc draw() {local i, x, m  localobj nc, syn, sr
+	for i=0, $o1.count-1 {
+		nc = $o1.object(i)
+		syn = nc.syn
+		x = syn.x
+		m = syn.mgid		
+		g.hinton(&nc.weight[2], x, m*3*dx+(dx)*(i%2), dx-2)
+	}
+}
+endtemplate AllSynHinton
+

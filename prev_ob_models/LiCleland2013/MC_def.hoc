@@ -1,0 +1,291 @@
+// Mitral cell model template
+
+begintemplate Mitral
+public soma, prim, dend, tuft, all
+public AMPA, GABAA, spiketimes, dendspike, tuftspike, spikecount, spikecount2, spikecount3
+create soma, prim, dend, tuft
+//objref real
+objref AMPA, GABAA, spikecount, spikecount2, spikecount3
+objref spiketimes, dendspike, tuftspike
+
+
+proc celldef() {
+	topol()
+	subsets()
+	geom()
+	biophys($1)  
+//	geom_nseg()
+}
+
+proc topol() { 
+	connect dend(0), soma(1)
+	connect prim(1), soma(0)
+    connect tuft(1), prim(0)	
+}
+
+
+// create subsets 
+objref all
+proc subsets() {
+        all = new SectionList()		
+		soma all.append				
+		prim all.append
+		dend all.append
+		tuft all.append
+}
+
+// The following parameters are adapted from Shen et al. JNP, 1999
+proc geom() {    
+	soma {  
+		L    = 25
+		diam = 20 
+		nseg = 1
+	}
+	
+	prim {  
+		L    = 370
+		diam = 3.5 	
+		nseg = 5   
+	}	
+	
+	dend {  
+		L    = 500
+		diam = 3.4 
+		nseg = 7   
+	}	
+	
+	tuft {
+		L    = 20  
+		diam = 0.5 
+		nseg = 1	    
+	}
+
+    forall {
+		//nseg = 1
+		//nseg = int((L/(0.1*lambda_f(100))+0.9)/2)*2 + 1
+    }	
+}
+
+func lambda_f() {
+  return  1e5*sqrt(diam/(4*PI*$1*Ra*cm))
+}
+
+
+proc biophys() { local El, RM, AMPAtau, AMPArev, GABAAtau GABAArev
+
+RM	=  30e3  	 // ohm.cm2   Shen et al. JNP, 1999
+El  = -60		 
+ENa =  45        
+Ek  = -80      
+
+AMPAtau	 =  10	 
+AMPArev	 =   0	 
+GABAAtau =  18	 
+GABAArev = -70
+
+shell_depth = 1   
+spike_threshold = -10
+
+//==========================================================
+
+gNa_soma  = 50e-3   
+gNa_dend  = 30e-3   
+gNa_prim  = 20e-3   
+gNa_tuft  = 20e-3   
+    sh_Na = -3  
+	
+gKdr_soma = 30e-3   
+gKdr_dend = 20e-3  
+gKdr_prim = 10e-3   
+gKdr_tuft = 10e-3   
+	
+gA_soma   = 10e-3  
+gA_dend   = 0e-3
+gA_prim   = 0e-3
+gA_tuft   = 0e-3
+	Sha_A = 9.9       
+	Shi_A = 5.7      
+
+gNaP_soma = 0.2e-3   
+gNaP_dend = 0.02e-3    
+gNaP_prim = 0.10e-3    
+gNaP_tuft = 0.10e-3    
+
+gKs_soma  = 42e-3   
+gKs_dend  =  8e-3   
+gKs_prim  = 18e-3  
+gKs_tuft  = 18e-3	
+	
+gCa_soma  = 0.4e-3   
+gCa_dend  = 0.05e-3  
+gCa_prim  = 0.2e-3   
+gCa_tuft  = 0.2e-3
+
+gKCa_soma = 5e-3   
+	
+spiketimes = new Vector()
+dendspike  = new Vector()
+tuftspike  = new Vector()
+
+forsec all {
+  Ra = 70     // ohm*cm; Shen et al. JNP, 1999  
+  cm = 1.2    // uF/cm^2; Shen et al. JNP, 1999
+}  
+
+
+soma {
+    insert pas
+      e_pas  = El		
+      g_pas  = 1/RM	
+	  
+    insert nafast
+      gnabar_nafast  = gNa_soma  
+	  sh_nafast = sh_Na
+    insert kfasttab
+    gkbar_kfasttab = gKdr_soma  
+ 
+    insert kamt
+      gbar_kamt = gA_soma      
+	  sha_kamt  = Sha_A 
+	  shi_kamt  = Shi_A	
+    insert IKs
+      gbar_IKs  = gKs_soma
+    insert INaP
+      gbar_INaP = gNaP_soma 
+    insert ICa
+      gcabar_ICa = gCa_soma  
+    insert Ikca
+      gkbar_Ikca =  gKCa_soma 
+    insert cad     
+      depth_cad  = shell_depth
+   
+    spikecount = new APCount(0.5)
+    spikecount.thresh = spike_threshold
+    spikecount.record(spiketimes)
+}
+
+dend {
+    insert pas
+      e_pas 	= El
+      g_pas		= 1/RM
+    insert nafast
+      gnabar_nafast	 = gNa_dend   
+	  sh_nafast = sh_Na
+    insert kfasttab
+      gkbar_kfasttab = gKdr_dend  
+   
+    insert kamt
+      gbar_kamt   = gA_dend    
+	  sha_kamt  = Sha_A 
+	  shi_kamt  = Shi_A	
+	  
+    insert IKs
+      gbar_IKs    = gKs_dend
+    insert INaP
+      gbar_INaP   = gNaP_dend  
+   
+    insert ICa
+      gcabar_ICa  = gCa_dend	 
+    insert cad   
+	  depth_cad = shell_depth  	  
+   
+    GABAA = new ExpSyn(0.5)
+    GABAA.tau 	= GABAAtau
+    GABAA.e 	= GABAArev
+	
+    spikecount2 = new APCount(1.0)
+    spikecount2.thresh = spike_threshold
+    spikecount2.record(dendspike)
+}
+
+prim {
+    insert pas
+      e_pas 	= El
+      g_pas		= 1/RM
+    insert nafast
+       gnabar_nafast = gNa_prim   
+	   sh_nafast = sh_Na 
+    insert kfasttab
+    gkbar_kfasttab	= gKdr_prim  
+	
+    insert kamt
+      gbar_kamt = gA_prim    
+	  sha_kamt  = Sha_A 
+	  shi_kamt  = Shi_A	
+	  
+    insert IKs
+      gbar_IKs    = gKs_prim
+    insert INaP
+      gbar_INaP   = gNaP_prim  
+   
+    insert ICa
+      gcabar_ICa  = gCa_prim
+    insert cad   
+	  depth_cad = shell_depth     
+
+}
+	 
+
+tuft  {
+    insert pas
+      e_pas 	= El
+      g_pas		= 1/RM
+  
+    insert Inic
+	enic_Inic = 3.2
+	gbar_Inic = $1  
+  
+	insert nafast
+       gnabar_nafast = gNa_tuft   
+	   sh_nafast = sh_Na 
+    insert kfasttab
+    gkbar_kfasttab	= gKdr_tuft  
+	
+    insert kamt
+      gbar_kamt = gA_tuft         
+	  sha_kamt  = Sha_A 
+	  shi_kamt  = Shi_A	
+	  
+    insert IKs
+      gbar_IKs    = gKs_tuft
+    insert INaP
+      gbar_INaP   = gNaP_tuft  
+   
+    insert ICa
+      gcabar_ICa  = gCa_tuft
+	  
+    insert cad   
+	  depth_cad = shell_depth    
+	  
+	AMPA     = new ExpSyn(0.5)
+    AMPA.tau = AMPAtau
+    AMPA.e 	 = AMPArev  
+	
+    spikecount3 = new APCount(0.5)
+    spikecount3.thresh = spike_threshold
+    spikecount3.record(tuftspike)	
+}
+
+
+forall if (ismembrane("na_ion")) {
+	ena = ENa	
+  }
+
+forall if (ismembrane("k_ion")) {
+	ek  = Ek	
+  }
+
+  
+  
+}
+
+
+proc init() {
+ celldef($1)
+}
+
+
+endtemplate Mitral
+
+
+

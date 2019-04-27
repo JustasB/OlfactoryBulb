@@ -1,0 +1,62 @@
+// High and low current stimulus into soma and primary electrodes
+// soma and primary electrode voltage recorded for each of these
+// four protocols
+// original data filenames are
+// 970310.034.5,9 (soma high and low current injection)
+// 970310.033.2,7 (primary high and low current injection)
+// and are exactly the same as the shen1999 data in the files
+// data/3459.dat and data/3327.dat
+
+load_file("nrngui.hoc")
+load_file("init.hoc")
+load_file("electrode.hoc")
+
+objref se, pe, te // so it can be restarted, we declare them here
+soma se=new Electrode(0.5)
+priden {pe=new Electrode(0.7)}
+
+
+se.electrode.Ra = 0.001
+se.electrode.cm = 0
+pe.electrode.Ra = 15
+pe.electrode.cm = 2.95
+
+objref pestim, sestim
+pe.electrode pestim = new IClamp(.5)
+se.electrode sestim = new IClamp(.5)
+pestim.del = 1
+pestim.dur = 10
+sestim.del = 1
+sestim.dur = 10
+
+load_file(1, "istimfit.ses")
+doNotify()
+
+for i=0, 1 {
+        InhiSyn[i].gmaxampa = 0
+        InhiSyn[i].gmaxnmda = 0
+	GluSyn[i].gmaxampa = 0
+	GluSyn[i].gmaxnmda= 0
+}
+
+// anatomy and channel density for this data
+
+forsec tuft diam = 2
+priden.L = 330
+connect pe.electrode(0), priden(0.75)
+hillock.L = 10
+initialseg.L = 20
+initialseg.diam = 1.2
+
+initialseg.gbar_na = 10000
+forsec somden gbar_na = 250
+
+
+tstop = 20
+
+object_push(MulRunFitter[0].p)
+gview()
+doNotify()
+runall()
+object_pop()
+

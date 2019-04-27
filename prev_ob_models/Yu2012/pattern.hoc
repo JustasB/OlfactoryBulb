@@ -1,0 +1,19 @@
+objref pattern_, pattern_tvec_, pattern_idvec_
+pattern_ = new PatternStim()
+
+proc pattern() {local i  localobj f
+	f = new File()
+	if (f.ropen("binras.dat") == 0) {
+		printf("cannot open binras.dat, therefore no spike pattern\n")
+		return
+	}
+	pattern_tvec_ = new Vector()
+	pattern_idvec_ = new Vector()
+	pattern_tvec_.vread(f)
+	pattern_idvec_.vread(f)			
+	f.close()
+	pattern_.play(pattern_tvec_, pattern_idvec_)
+}
+pattern()
+
+

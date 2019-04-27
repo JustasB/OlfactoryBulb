@@ -1,0 +1,104 @@
+begintemplate Granule
+
+public soma, dend, priden, priden2
+public prilist
+public position, x, y, z
+
+//create soma, priden2[3], dend[6], priden
+create soma, priden2[1], dend[2], priden
+
+objref prilist
+
+proc init() {
+	npri = 1
+	create priden2[npri]
+	prilist = new SectionList()
+	priden prilist.append()
+	for i=0, npri-1 priden2[i] { prilist.append() }
+topol()
+geometry()
+segments()
+memb()
+	x = y = z = 0 // only change via position
+}
+
+
+proc topol() {local i
+	connect priden(0), soma(1)
+	for i=0, npri-1 {connect priden2[i](0), priden(.8)}
+	connect dend[0](0), dend[1](1)
+	connect dend[1](0), priden2[0](0.5)
+//	connect dend[2](0), dend[3](1)
+//	connect dend[3](0), priden2[0](0.5)
+//	connect dend[4](0), dend[5](1)
+//	connect dend[5](0), priden2[0](0.5)
+}
+
+proc segments() {local i
+	soma.nseg= 1
+	forsec "priden" nseg = 10
+	forsec "dend" nseg = 1
+}
+
+proc geometry() {local i
+	basic_shape()
+	soma { L = 8  diam = 8}
+	dend[0] { L=1  diam=1}
+//	dend[2] { L=1  diam=1}
+//	dend[4] { L=1  diam=1}
+	dend[1] { L=2  diam=.2}
+//	dend[3] { L=2  diam=.2}
+//	dend[5] { L=2  diam=.2}
+	priden {L=150 diam=.5}
+	for i=0, npri-1 {priden2[i] {L=100 diam=.4}}
+	define_shape()
+}
+	
+proc basic_shape() {local i
+  soma {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(0, 1, 0, 1)}
+  priden {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(0, 1, 0, 1)}
+  for i=0,npri-1 {
+	priden2[i] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(i/npri, 1, 0, 1)}
+  }
+  dend[0] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, 1, 0, 1)}
+  dend[1] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, 1, 0, 1)}
+//  dend[2] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, 1, 0, 1)}
+//  dend[3] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, .5, 0, 1)}
+//  dend[4] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, 1, 0, 1)}
+//  dend[5] {pt3dclear() pt3dadd(0, 0, 0, 1) pt3dadd(1, -.5, 0, 1)}
+}
+
+proc memb() {
+	forall {
+		insert pas 
+		insert kamt gbar_kamt=0.008 ek=-90
+		insert nax gbar_nax=0.02 sh_nax=15 ena=60
+		Ra = 80
+		cm = 1
+		g_pas = 1/30000
+		e_pas = -65
+		ek = -90
+	}
+
+	soma {
+		gbar_nax=0.04
+       		insert kdrmt gbar_kdrmt=0.006
+		gbar_kamt = 0.004
+		cm = 4
+		g_pas = cm/30000
+	}
+
+	forsec prilist {
+		cm = 4
+		g_pas = cm/30000
+	}
+}
+
+proc position() { local i
+  soma for i = 0, n3d()-1 {
+    pt3dchange(i, $1-x+x3d(i), $2-y+y3d(i), $3-z+z3d(i), diam3d(i))
+  }
+  x = $1  y = $2  z = $3
+}
+
+endtemplate Granule

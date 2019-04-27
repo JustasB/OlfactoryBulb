@@ -1,5 +1,0 @@
-I was getting a Symbol not found: __PyCodecInfo_GetIncrementalDecoder error when I tried running
-python pre_init.py
-on the mac.  However if I ran instead
-python -c "execfile('pre_init.py')"
-there was no error!

@@ -1,0 +1,134 @@
+load_file("nrngui.hoc")
+load_file("mitral-modeldb.hoc")
+load_file("gap.hoc")
+load_file("correl.hoc")
+cvode_active(1)
+
+Vrest = -65
+dt = 0.1
+celsius=35
+tstop=300
+
+ntuft=1
+ngap=1
+
+objref gap[ngap]
+objref g, b, nil, stim[ntuft], stim2[ntuft]
+objref mt[2], outfile, correl 
+objref mitral1, mitral2, tmitral1, tmitral2
+
+mitral1 = new Vector()
+tmitral1 = new Vector()
+mitral2 = new Vector()
+tmitral2 = new Vector()
+
+for i=0,  1 {
+	mt[i] = new Mitral()
+}
+
+mt[0].soma {
+cvode.record(&v(.5), mitral1, tmitral1)
+}
+
+mt[1].soma {
+cvode.record(&v(.5), mitral2, tmitral2)
+}
+
+amp=0
+delay=20
+
+ggap=0.0
+rel=0.95
+
+gap[0] = new Gap()
+mt[0].tuftden gap[0].src(rel)
+mt[1].tuftden gap[0].target(rel)
+gap[0].g(ggap)
+
+b = new VBox()
+b.intercept(1)
+g = new Graph()
+g.size(0,tstop,-70,30)
+g.xaxis(1)
+g.addvar("mt[0].soma.v(0.5)",1,1,2*tstop,0,2)
+g.addvar("mt[1].soma.v(0.5)",2,1,2*tstop,0,2)
+g.addexpr("(mt[1].tuftden.v(rel)-mt[0].tuftden.v(rel))*ggap",3,2,2*tstop,0,2)
+g.exec_menu("10% Zoom out")
+g.color(1)
+g.label(0.3,0.05,"M1-soma")
+g.color(2)
+g.label(0.5,0.05,"M2-soma")
+g.color(3)
+g.label(0.7,0.05,"I-gap")
+xpanel("",1)
+xbutton("control - no GJ (fig.6A)", "runc()")
+xbutton("with GJ (fig.6B)", "rung()")
+xbutton("with GJ & Na+ block (fig.6C)", "rungb()")
+xpanel()
+b.intercept(0)
+b.map()
+
+i=0
+
+	mt[0].tuftden {
+	stim[i]=new IClamp(0.25)
+	stim[i].del=0
+	stim[i].dur=tstop
+	stim[i].amp=0.02
+}
+
+	mt[1].tuftden { 
+	stim2[i]=new IClamp(0.25)
+	stim2[i].del=10
+	stim2[i].dur=tstop
+	stim2[i].amp=0.02
+}
+
+proc init() {
+	t=0
+	flag=0
+	finitialize(Vrest)
+        fcurrent()
+        forall { 
+		v=Vrest
+		if (ismembrane("nax")) {e_pas=v+(ina+ik)/g_pas} else {e_pas=v}
+	}
+	cvode.re_init()
+	g.begin()
+}
+
+proc advance() {
+	fadvance()
+	g.plot(t)
+	g.flush()
+	doNotify()
+}
+
+proc run() {
+	stdinit()
+	continuerun(tstop)
+	g.flush()
+	doNotify()
+	correl = new CrossCorrelation(mitral1, tmitral1, mitral2, tmitral2)
+}
+
+proc runc() {
+	ggap=0.0
+	mt[1].tuftden { gbar_nax =0.04 }
+	gap[0].g(ggap)
+	run()
+}
+
+proc rung() {
+	ggap=0.37
+	gap[0].g(ggap)
+	mt[1].tuftden { gbar_nax =0.04 }
+	run()
+}
+
+proc rungb() {
+	ggap=0.37
+	gap[0].g(ggap)
+	mt[1].tuftden { gbar_nax =0 }
+	run()
+}

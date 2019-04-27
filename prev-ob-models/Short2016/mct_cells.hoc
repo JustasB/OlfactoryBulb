@@ -1,4 +1,0 @@
-load_file("granule.hoc")
-load_file("mitral.hoc")
-load_file("PG_def.hoc")
-load_file("et.hoc")

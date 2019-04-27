@@ -1,0 +1,73 @@
+load_file("nltemplate.hoc")
+objref prim_nl, sec1_nl, sec2_nl, axon_nl, tuft_nl
+prim_nl = new NLsection(1)
+axon_nl = new NLsection(2)
+sec2_nl = new NLsection(3)
+sec1_nl = new NLsection(4)
+tuft_nl = new NLsection(5)
+create soma_sc
+create olfnrn, dummy
+access olfnrn
+dummy {
+    pt3dclear()
+    pt3dadd(20,200,20,10)
+    pt3dadd(20,200,30,10)
+}
+olfnrn {
+    pt3dclear()
+    pt3dadd(10,200,10,10)
+    pt3dadd(10,200,20,10)
+}
+soma_sc {
+    nseg=10
+    connect sec1_nl.sect[0](0),1
+    connect sec2_nl.sect[0](0),0.5
+    connect axon_nl.sect[0](0),0
+    pt3dclear()
+    pt3dadd(axon_nl.xroot,axon_nl.yroot,axon_nl.zroot,axon_nl.droot)
+    pt3dadd((sec1_nl.xroot+axon_nl.xroot)/2,(sec1_nl.yroot+axon_nl.yroot)/2,(sec1_nl.zroot+axon_nl.zroot)/2,16)
+    pt3dadd(sec1_nl.xroot,sec1_nl.yroot,sec1_nl.zroot,sec1_nl.droot)
+}
+sec1_nl.sect[0] {
+    connect prim_nl.sect[0](0),1
+}
+prim_nl.sect[19] {
+    connect tuft_nl.sect[0](0),1
+}
+
+objref olfactory_neuron,primary_dendrite,secondary_dendrite,tuft,mitral_cell,soma,initial_segment,axon_node,axon_myelin
+olfactory_neuron = new SectionList()
+olfnrn olfactory_neuron.append()
+dummy olfactory_neuron.append()
+soma = new SectionList() //soma+hillock
+soma_sc soma.append()
+axon_nl.sect[0] soma.append()
+sec1_nl.sect[0] soma.append()
+initial_segment = new SectionList() //initial segment
+axon_nl.sect[1] initial_segment.append()
+primary_dendrite = new SectionList() //primary dendrite
+for i=0,prim_nl.nsect-1 { 
+    prim_nl.sect[i] primary_dendrite.append() 
+}
+axon_node = new SectionList() //axon_nl nodes
+axon_myelin = new SectionList() //axon_nl myelinelin segments
+for i=0,4 { 
+    axon_nl.sect[2*i+2] axon_myelin.append()
+    axon_nl.sect[2*i+3] axon_node.append()
+}
+secondary_dendrite = new SectionList()
+sec2_nl.sect[0] secondary_dendrite.append()
+sec2_nl.sect[1] secondary_dendrite.append()
+
+tuft = new SectionList()
+for i=0,tuft_nl.nsect-1 { 
+    tuft_nl.sect[i] tuft.append() 
+}
+mitral_cell = new SectionList()
+forsec axon_myelin mitral_cell.append()
+forsec axon_node mitral_cell.append()
+forsec initial_segment mitral_cell.append()
+forsec soma mitral_cell.append()
+forsec primary_dendrite mitral_cell.append()
+forsec secondary_dendrite mitral_cell.append()
+forsec tuft mitral_cell.append()

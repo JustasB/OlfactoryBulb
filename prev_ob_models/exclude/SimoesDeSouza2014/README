@@ -1,0 +1,28 @@
+This is a simulation of the electrical responses of three classes of
+granule cells of the olfactory bulb to synaptic inputs
+
+Start GENESIS simulator. 
+On the command line type:
+Frontiers_granI.g =>to start the type I granule cell.
+Frontiers_granII.g =>to start the type II granule cell.
+Frontiers_granIII.g =>to start the type III granule cell.
+
+For Frontiers_gran(#).g you will see four panels: 
+Panel 1: Control panel
+Panel 2: NMDA and AMPA receptor conductances in the stimulated spine 
+Panel 3: Membrane potential in the soma and dendritic trunk 
+Panel 4: full representation of the cell
+
+On the panel 1, click on the STIM button to start a simulation that
+stimulates the AMPA and NMDA receptors in the spines of the tip of the
+apical dendrites. You can also just inject a current in the soma by
+changing the Injection value (for instance 1e-10) and clicking on the
+RUN button. dt stands for the simulation time step, and Tmax stands
+for the maximum simulation time.
+
+
+On the panel 4, type the "<" and ">" keys to zoom out and in, and use
+the arrows to move the cell around. Use the key "p" to see the cell in
+perspective. Pseudocolor code represents the membrane potential of the
+compartments. "Hot" colors mean depolarization and "Cold" colors mean
+hyperpolarization.

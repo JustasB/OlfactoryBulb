@@ -1,0 +1,11 @@
+se.electrode.Ra = 1e-6
+se.electrode.cm = 1e-6
+pe.electrode.Ra = 1e-6
+pe.electrode.cm = 1e-6
+forall e_pas = -57.9
+
+
+//cvode.atol(1e-6)
+
+
+

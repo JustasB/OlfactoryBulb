@@ -1,0 +1,122 @@
+
+//===============================================================================
+//      PG Cell (One soma; one dend; one spine shaft and one spine body)
+//===============================================================================
+
+load_file("nrngui.hoc")
+xopen("$(NEURONHOME)/lib/hoc/noload.hoc") // standard run tools
+load_file("PG_def.hoc")         
+
+tstop   = 1500
+celsius = 35   
+
+gnic_spine = 0.0e-3 // mS/cm2
+
+objref pg
+pg = new PGcell(gnic_spine)   
+
+load_file("PG_save.hoc") 
+//nrncontrolmenu()
+
+// Current injection
+T1    =  0   // 500
+Dur   =  0   // 600
+ 
+
+ Ic1 = 0 //-0.12
+   
+ u0  = 0.0         
+ u1  = 0.0   
+ Wb_PG  = 0.0e-3 
+
+  
+
+ objref Stim1
+ pg.soma Stim1 = new IClamp(0.5)
+ Stim1.del = T1
+ Stim1.dur = Dur
+ Stim1.amp = Ic1
+
+// objref Stim2
+//  pg.gemmbody  Stim2 = new OdorInput(0.0)
+// 	Stim2.torn = 1000
+// 	Stim2.r    = 100
+//     Stim2.del  = 0
+//     Stim2.dur  = tstop
+//     Stim2.f0   = u0 	
+// 	Stim2.f1   = u1
+ 
+ 
+// Random background inputs!!!
+
+// Tb_ISI  = 10      // spike interval in background input
+// N_SPIKE = 1000    // number of spike in background input
+
+// objref PGbinput 
+// objref PGb
+//        PGb = new NetStim(.5)
+//        PGb.number   = N_SPIKE
+//        PGb.start    = 0
+//        PGb.interval = Tb_ISI
+//        PGb.noise    = 1
+// 	
+// 	   PGbinput = new NetCon(PGb, pg.AMPAr)
+//        PGbinput.threshold = 0
+//        PGbinput.delay     = 0
+//        PGbinput.weight    = Wb_PG  	 
+ 
+  
+objref g1//,g2,g3,g4,g5, g6
+
+proc fig1()  {
+
+g1 = new Graph(0)
+addplot(g1, 0)
+g1.size(0,tstop,-80,50)
+g1.view(0,-80,tstop,130, 0,150,500,160)
+g1.addvar("Soma.V", "pg.gemmbody.v(0.5)", 3, 1, 0.8, 0.9, 2)  //1: black; 2: red; 3: blue
+
+/*
+g4 = new Graph(0)
+addplot(g4, 0)
+g4.size(0,tstop,0,1)
+g4.view(0,0,tstop,1, 0,900,500,150)
+g4.addvar("Icat.m", "pg.dend.m_Icat", 5, 2, 0.8, 0.9, 2) 
+g4.addvar("Icat.h", "pg.dend.h_Icat", 1, 2, 0.8, 0.9, 2)  
+
+g6 = new Graph(0)
+addplot(g6, 0)
+g6.size(0,tstop,-80,50)
+g6.view(0,-80,tstop,130, 0,500,500,160)
+g6.addvar("Spine.V", "pg.gemmbody.v(0.5)", 2, 1, 0.8, 0.9, 2)  //
+
+g5 = new Graph(0)
+addplot(g5, 0)
+g5.size(0,tstop,0,2)
+g5.view(0,0,tstop,2, 0,450,500,130)
+g5.addvar("Dend.Ca", "pg.dend.cai", 2, 2, 0.8, 0.9, 2)
+
+
+g2 = new Graph(0)
+addplot(g2, 0)
+g2.size(0,tstop, 0,180)
+g2.view(0,0,tstop,180, 0,700,500,130)
+g2.addvar("Dend.ECa", "pg.dend.eca", 2, 2, 0.8, 0.9, 2)  //
+*/
+
+/*
+g3 = new Graph(0)
+addplot(g3, 0)
+g3.size(0,tstop,-0.0005,0.0005)
+g3.view(0,-0.005,tstop,0.01, 450,200,400,150)
+g3.addvar("ICaT", "pg.dend.ica_Icat", 1, 1, 0.9, 0.9, 2)  
+*/
+
+}
+
+fig1()
+//run()
+//save_data()
+
+
+

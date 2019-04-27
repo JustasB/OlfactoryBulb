@@ -1,0 +1,413 @@
+// build_net_theta.hoc
+// builds simple model
+// OSN input goes to two mitral cells
+// which are connected to a granule cell
+
+load_file("mct_cells.hoc") // loads the McTavish cell templates Mitral and Granule
+
+objref m1, m2, gc1, gc2, pg1, pg2
+m1 = new Mitral()
+m2 = new Mitral()
+gc1 = new Granule()
+gc2 = new Granule() 
+pg1 = new PGcell(0) // the number 0 passed to PGcell() is the nicot. current
+pg2 = new PGcell(0) // the number 0 passed to PGcell() is the nicot. current
+
+
+// OSNXs will be representing breathing OSN activity while LightXs are repr. of light
+// stim. OSN activity (events)
+objref OSN1, OSN2, Light1, Light2
+
+// Located arbitrarily because where they have an
+// effect is determined by the NetCon.
+
+m1.tuftden OSN1 = new ThetaStim(0.5)
+m1.tuftden OSN2 = new ThetaStim(0.5)
+
+m1.tuftden Light1 = new ThetaStim(0.5)
+m1.tuftden Light2 = new ThetaStim(0.5)
+
+// backgroundX is representative of background activity that causes mitral cell spiking
+// at any phase of the breath cycle
+objref background1, background2
+
+m1.tuftden background1 = new NetStim(0.5)//Unsure if we need this after 
+//you implement the gaussian firing rates to the light and breath stimuli
+m1.tuftden background2 = new NetStim(0.5)
+
+// introduce synapses so they can be targets in NetCons:
+// name convention:
+// cell name of post synaptic partner _ cell name of pre synaptic partner _ synapse type
+
+objref m1_osn_glut, m2_osn_glut // excitation of mitral tufts by osn cells
+objref m1_gc1_inhib, m2_gc1_inhib // inhibition of mitral dends by gc
+objref m1_gc2_inhib, m2_gc2_inhib // inhibition of mitral dends by gc2
+
+objref gc1_m1_glut, gc1_m2_glut // excitation of gc by mitral cells
+
+objref pg1_glut, pg2_glut // excitation of peri-glom cells by osn, mitral cells, light, background
+objref gc2_m1_glut, gc2_m2_glut
+objref m1_inhib, m2_inhib // inhibition in the mitral cell tufts by both the local (same number
+// as mitral cell)
+objref m1priden_inhib, m2priden_inhib
+// and the remote pg cell (different number than mitral cell)
+
+tuft_excite_pos = 0.5
+m1.tuftden m1_osn_glut = new AmpaNmda(tuft_excite_pos)
+m2.tuftden m2_osn_glut = new AmpaNmda(tuft_excite_pos)
+
+// the two below MC GC positions are reused for m1, m2, gc1, gc2
+mc_gc_close_recip_pos = 0.05 
+mc_gc_far_recip_pos=.75
+m1.secden m1_gc1_inhib = new FastInhib(mc_gc_close_recip_pos)
+m1.secden m1_gc2_inhib = new FastInhib(mc_gc_far_recip_pos)
+
+m2.secden m2_gc1_inhib = new FastInhib(mc_gc_far_recip_pos)
+m2.secden m2_gc2_inhib = new FastInhib(mc_gc_close_recip_pos)
+
+gc_recip_pos1 = 0.55
+gc_recip_pos2 = 0.65
+gc1.priden2 gc1_m1_glut = new AmpaNmda(gc_recip_pos1)
+gc1.priden2 gc1_m2_glut = new AmpaNmda(gc_recip_pos2)
+
+gc2.priden2 gc2_m1_glut = new AmpaNmda(gc_recip_pos2)
+gc2.priden2 gc2_m2_glut = new AmpaNmda(gc_recip_pos1)
+
+// these mitral cell tuft inhibitory synapses are contacted by both the local and remote pg cells
+// the local pg cell is from a reciprocal synapse and the remote is from an "axon"
+
+tuft_inhib_pos = 0.5 // for now make overlap with the tuft excitatory position
+m1.tuftden m1_inhib = new FastInhib(tuft_inhib_pos)
+m2.tuftden m2_inhib = new FastInhib(tuft_inhib_pos)
+
+priden_inhib_pos = 0.9
+m1.priden m1priden_inhib = new FastInhib(priden_inhib_pos)
+m2.priden m2priden_inhib = new FastInhib(priden_inhib_pos)
+
+// pg cell excitatory synapse part of reciprocal synapses and site of OSN input
+pg1.gemmbody pg1_glut = new AmpaNmda(0.5) // put in middle of pg spine
+pg2.gemmbody pg2_glut = new AmpaNmda(0.5) // put in middle of pg spine
+
+
+/////////////////////////////////////////////////////
+//
+//  connect the network
+//
+/////////////////////////////////////////////////////
+
+// Connect the ThetaStims (OSN's) to the mc's
+
+objref nc[26]
+objref nclist
+nclist = new List()
+
+// connect the OSNs to the mcs
+
+nc[0] = new NetCon(OSN1, m1_osn_glut, 0, 1, 1)
+// arguments are source, target, threshold, delay, weight
+nc[1] = new NetCon(OSN2, m2_osn_glut)
+
+// connect the Lights to the mcs
+
+nc[6] = new NetCon(Light1, m1_osn_glut, 0, 1, 1)  // arguments are source, target, threshold, delay, weight
+nc[7] = new NetCon(Light2, m2_osn_glut)
+
+// connect the reciprocal synapse between m1 and gc1
+
+m1.secden[0] {nc[2] = new NetCon(&v(mc_gc_close_recip_pos), gc1_m1_glut, -20, 1, 1)}
+gc1.priden2[0] nc[3] = new NetCon(&v(gc_recip_pos1), m1_gc1_inhib)
+
+// connect the reciprocal synapse between m2 and gc1
+
+m2.secden[0] nc[4] = new NetCon(&v(mc_gc_far_recip_pos), gc1_m2_glut)
+gc1.priden2[0] nc[5] = new NetCon(&v(gc_recip_pos2), m2_gc1_inhib)
+
+// connect the reciprocal synapse between m1 and gc2
+
+m1.secden[0] {nc[10] = new NetCon(&v(mc_gc_far_recip_pos), gc2_m1_glut, -20, 1, 1)}
+gc2.priden2[0] nc[11] = new NetCon(&v(gc_recip_pos2), m1_gc2_inhib)
+
+// connect the reciprocal synapse between m2 and gc2
+
+m2.secden[0] nc[12] = new NetCon(&v(mc_gc_close_recip_pos), gc2_m2_glut)
+gc1.priden2[0] nc[13] = new NetCon(&v(gc_recip_pos1), m2_gc2_inhib)
+
+// connect the background stimulus
+
+nc[8] = new NetCon(background1, m1_osn_glut, 0, 1, 1)  // arguments are source, target, threshold, delay, weight
+nc[9] = new NetCon(background2, m2_osn_glut)
+
+// connect the periglomerular cells
+
+// all the connections to periglom 1:
+// excited by background, OSN1, Light1, mitral cell 1
+// output inhibits mitral cell 1 with dendro-dendritic reciprocal synapse
+// and inhibits mitral cell 2 with axonal synapse
+
+nc[14] = new NetCon(background1, pg1_glut)
+nc[15] = new NetCon(OSN1, pg1_glut)
+nc[16] = new NetCon(Light1, pg1_glut)
+
+m1.tuftden nc[17] = new NetCon(&v(0.5), pg1_glut)
+pg1.gemmbody nc[18] = new NetCon(&v(0.5), m1_inhib)
+pg2.soma nc[19] = new NetCon(&v(0.5), m1priden_inhib) 
+
+// all the connections to periglom 2:
+// excited by background, OSN2, Light2, mitral cell 2
+// output inhibits mitral cell 2 with dendro-dendritic reciprocal synapse
+// and inhibits mitral cell 1 with axonal synapse
+
+nc[20] = new NetCon(background2, pg2_glut)
+nc[21] = new NetCon(OSN2, pg2_glut)
+nc[22] = new NetCon(Light2, pg2_glut)
+
+m2.tuftden nc[23] = new NetCon(&v(0.5), pg2_glut)
+pg2.gemmbody nc[24] = new NetCon(&v(0.5), m2_inhib)
+pg1.soma nc[25] = new NetCon(&v(0.5), m2priden_inhib) 
+
+for i=0,25 {
+  nclist.append(nc[i])
+}
+
+/////////////////////////////////////////////////////
+//
+// Adjust plasticity of FastInhib and AmpaNmda
+//
+/////////////////////////////////////////////////////
+
+// it was decided the easiest thing to do was turn off
+// plasticity in the AmpaNmda and FastInhib mod files
+/*
+// test section
+objref test_gc
+m1.tuftden test_gc = new ThetaStim(0.5) // stimulate granule cell synapse directly
+objref test_nc
+test_nc = new NetCon(test_gc, gc1_m1_glut)
+
+objref test_gc2
+m1.tuftden test_gc2 = new ThetaStim(0.5) // stimulate granule cell synapse directly
+objref test_nc2
+test_nc2 = new NetCon(test_gc2, gc1_m1_glut)
+
+nclist.append(test_nc)
+nclist.append(test_nc2)
+
+// end test section
+*/
+/////////////////////////////////////////////////////
+//
+// Graphical control of ThetaStims
+//
+/////////////////////////////////////////////////////
+objref hbox
+hbox = new HBox()
+hbox.intercept(1)
+
+xpanel("ThetaStim[0] and [2]")
+xlabel("OSN breathing input to mitral cell 1:")
+xvalue("ThetaStim[0].outer_interval")
+xvalue("ThetaStim[0].outer_start")
+xvalue("ThetaStim[0].outer_number")
+xvalue("ThetaStim[0].outer_noise")
+xvalue("ThetaStim[0].interval")
+xvalue("ThetaStim[0].start")
+xvalue("ThetaStim[0].number")
+xvalue("ThetaStim[0].noise")
+// assign some default values
+ThetaStim[0].outer_interval=400
+ThetaStim[0].outer_start=25
+ThetaStim[0].outer_number=400
+ThetaStim[0].outer_noise=0
+ThetaStim[0].interval=14  // 14 ms about 70 Hz, 25 ms is 40 Hz
+ThetaStim[0].start=25
+ThetaStim[0].number=12
+ThetaStim[0].noise=0.2
+
+xlabel("Light input to mitral cell 1:")
+xvalue("ThetaStim[2].outer_interval")
+xvalue("ThetaStim[2].outer_start")
+xvalue("ThetaStim[2].outer_number")
+xvalue("ThetaStim[2].outer_noise")
+xvalue("ThetaStim[2].interval")
+xvalue("ThetaStim[2].start")
+xvalue("ThetaStim[2].number")
+xvalue("ThetaStim[2].noise")
+xlabel(" ") // vertical space to show bottom of last panel
+// assign some default values
+ThetaStim[2].outer_interval=399
+ThetaStim[2].outer_start=25
+ThetaStim[2].outer_number=401
+ThetaStim[2].outer_noise=0
+ThetaStim[2].interval=25
+ThetaStim[2].start=25
+ThetaStim[2].number=5
+ThetaStim[2].noise=0.05
+
+xpanel()
+xpanel("ThetaStim[1] and [3]")
+xlabel("OSN breathing input to mitral cell 2:")
+xvalue("ThetaStim[1].outer_interval")
+xvalue("ThetaStim[1].outer_start")
+xvalue("ThetaStim[1].outer_number")
+xvalue("ThetaStim[1].outer_noise")
+xvalue("ThetaStim[1].interval")
+xvalue("ThetaStim[1].start")
+xvalue("ThetaStim[1].number")
+xvalue("ThetaStim[1].noise")
+ThetaStim[1].outer_interval=400
+ThetaStim[1].outer_start=25
+ThetaStim[1].outer_number=400
+ThetaStim[1].outer_noise=0
+ThetaStim[1].interval=14 // 14 ms about 70 Hz, 25 ms is 40 Hz
+ThetaStim[1].start=25
+ThetaStim[1].number=12
+ThetaStim[1].noise=0.2
+
+xlabel("Light input to mitral cell 2:")
+xvalue("ThetaStim[3].outer_interval")
+xvalue("ThetaStim[3].outer_start")
+xvalue("ThetaStim[3].outer_number")
+xvalue("ThetaStim[3].outer_noise")
+xvalue("ThetaStim[3].interval")
+xvalue("ThetaStim[3].start")
+xvalue("ThetaStim[3].number")
+xvalue("ThetaStim[3].noise")
+xlabel(" ") // vertical space to show bottom of last panel
+// assign some default values
+ThetaStim[3].outer_interval=0
+ThetaStim[3].outer_start=0
+ThetaStim[3].outer_number=0
+ThetaStim[3].outer_noise=0
+ThetaStim[3].interval=0
+ThetaStim[3].start=0
+ThetaStim[3].number=0
+ThetaStim[3].noise=0
+
+xpanel()
+/*xlabel("test gc belo ")
+xvalue("ThetaStim[2].interval")
+xvalue("ThetaStim[2].start")
+xvalue("ThetaStim[2].number")
+xvalue("ThetaStim[2].noise")
+xlabel("test gc2 belo ")
+xvalue("ThetaStim[3].interval")
+xvalue("ThetaStim[3].start")
+xvalue("ThetaStim[3].number")
+xvalue("ThetaStim[3].noise")
+*/
+global_weight=1
+
+//xvalue("prompt", "variable" [, boolean_deflt, "action" [, boolean_canrun, boolean_usepointer]])
+//xvalue("global_weight","global_weight",2,"readjust_weights()",1, 0)
+xpanel("Synapse weights")
+xlabel("Synapse weights")
+xvalue("global_weight")
+xbutton("readjust_weights()")
+xlabel("OSN1  (ThetaStim[1])to m1:")
+xvalue("nc[0].weight")
+xlabel("OSN2 (ThetaStim[1]) to m2:")
+xvalue("nc[1].weight")
+xlabel("m1 to gc:")
+xvalue("nc[2].weight")
+xlabel("gc1 back to m1:")
+xvalue("nc[3].weight")
+xlabel("m2 to gc")
+xvalue("nc[4].weight")
+xlabel("gc1 back to m2")
+xvalue("nc[5].weight")
+xlabel("m1 to gc2")
+xvalue("nc[9].weight")
+xlabel("m2 to gc2")
+xvalue("nc[10].weight")
+xlabel("click below to graph stimulations")
+xbutton("light(green) breath1(orange) breath2(purple)","{regraph_stims()}")
+xlabel("click below to save selected data or save tank")
+xbutton("save event and voltage data","write_selected_vecs()")
+xbutton("save simulation to tank","save_tank()")
+xpanel()
+
+// background stimulation panel
+xpanel("background1 and 2")
+xlabel("background input to mitral cell 1:")
+xvalue("background1.interval")
+xvalue("background1.start")
+xvalue("background1.number")
+xvalue("background1.noise")
+// assign some default values
+background1.interval=100 // mean synaptic period in ms 
+background1.start=25
+background1.number=1e9 // (forever)
+background1.noise=1   // completely noisy
+
+xlabel("background input to mitral cell 2:")
+xvalue("background2.interval")
+xvalue("background2.start")
+xvalue("background2.number")
+xvalue("background2.noise")
+// assign some default values
+background2.interval=100
+background2.start=25
+background2.number=1e9 // (forever)
+background2.noise=1   // completely noisy
+
+// spacer so scroll bars are OK in other panels
+for i=1,10 {
+xlabel(" ")
+}
+xpanel()
+
+hbox.intercept(0)
+hbox.map()
+
+/////////////////////////////////////////////////////
+//
+// Setup vector and event recording for graphing/analysis
+//
+/////////////////////////////////////////////////////
+objref t_vec, m1_v_vec, m2_v_vec
+
+t_vec = new Vector()
+m1_v_vec = new Vector()
+m2_v_vec = new Vector()
+
+t_vec.record(&t)
+m1_v_vec.record(&m1.soma.v(0.5))
+m2_v_vec.record(&m2.soma.v(0.5))
+
+objref light1_events, light2_events
+objref OSN1_events, OSN2_events, m1_events, m2_events, gc1_events1, gc1_events2
+
+OSN1_events = new Vector()
+OSN2_events = new Vector()
+m1_events = new Vector()
+m2_events = new Vector()
+gc1_events1 = new Vector()
+gc1_events2 = new Vector()
+light1_events = new Vector()
+light2_events = new Vector()
+
+nc[0].record(OSN1_events)
+nc[1].record(OSN2_events)
+nc[2].record(m1_events)
+nc[3].record(gc1_events1) // source position gc_recip_pos1 on granule priden2[0]
+nc[4].record(m2_events)
+nc[5].record(gc1_events2) // source position gc_recip_pos2 on granule priden2[0]
+nc[6].record(light1_events)
+nc[7].record(light2_events) //for these connects the events are recorded into vectors here
+
+
+//  activate all the synapses
+proc readjust_weights() {
+  for i=0,nclist.count-1 {
+    nc[i].weight=global_weight
+  }
+}
+
+readjust_weights()
+// test_nc.weight=global_weight
+// test_nc2.weight=global_weight
+
+load_file("cells_volt_graphs.ses")
+load_file("run_cntrl.ses")
+load_file("graph_fncs.hoc")
+load_file("tdt2mat_data.hoc")

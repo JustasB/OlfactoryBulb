@@ -1,0 +1,13 @@
+
+nmitx       = 10		// 1st dimension of mitral cell array
+nmity       = 1 		// 2nd dimension of mitral cell array
+ndend       = 100
+
+seed        = 4			// seed for random number generator
+
+thresh      = -10       // mV	// threshold for detecting spikes
+
+tstop	    = 750	// ms	// total simulation time
+
+cvode.active(1)
+dt 	    = 0.01	//ms

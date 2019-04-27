@@ -1,0 +1,82 @@
+//======================================================================
+//     Provide random background spike inputs to the network
+//======================================================================
+
+Tb_Start = 0    // Start time of background inputs
+
+Tb_ISI  = 10   // Average spike interval in background input; F = 100 Hz
+N_SPIKE = 1000 // Maximal number of spikes in one background input
+
+Thresh = 0
+
+// Synaptic weights of background inputs
+Wb_MC  = 1.0e-3  // 
+Wb_PG  = 0.5e-3  // 
+Wb_GC  = 0.3e-3  //
+
+objref MCbinput[nMit], PGbinput[nPG], GCbinput[nGran]  
+objref MCb[nMit], PGb[nPG], GCb[nGran]
+objref SP[nMit], WSP[nPG]
+
+
+//=============================================================  
+//             Spike-trigered background inputs
+//=============================================================  
+// For MCs
+    for i = 0, nMit-1 {
+	   SP[i] =  new Vector()
+	
+       MCb[i] = new NetStim(.5)
+       MCb[i].number   = N_SPIKE
+       MCb[i].start    = Tb_Start
+       MCb[i].interval = Tb_ISI
+       MCb[i].noise    = 1
+	   MCb[i].seed(netseed)
+	   
+	   MCbinput[i] = new NetCon(MCb[i], mit[i].AMPA)
+       MCbinput[i].threshold = Thresh
+       MCbinput[i].delay     = 0
+       MCbinput[i].weight    = Wb_MC  	
+	   MCbinput[i].record(SP[i])
+	       
+  }	 
+    
+
+  // For PGs
+   for i = 0, nPG-1 {
+       WSP[i] =  new Vector()        
+	   
+       PGb[i] = new NetStim(.5)
+       PGb[i].number   = N_SPIKE
+       PGb[i].start    = Tb_Start
+       PGb[i].interval = Tb_ISI
+       PGb[i].noise    = 1
+	   PGb[i].seed(netseed)
+	
+	   PGbinput[i] = new NetCon(PGb[i], pg[i].AMPAr)
+       PGbinput[i].threshold = Thresh
+       PGbinput[i].delay     = 0
+       PGbinput[i].weight    = Wb_PG  	
+	   PGbinput[i].record(WSP[i])
+	   	   
+    }	
+	
+
+  // For GCs
+if (NTCE==0) {  
+   for i = 0, nGran-1 {
+       GCb[i] = new NetStim(.5)
+       GCb[i].number   = N_SPIKE
+       GCb[i].start    = Tb_Start
+       GCb[i].interval = Tb_ISI
+       GCb[i].noise    = 1
+	   GCb[i].seed(netseed)
+	
+	   GCbinput[i] = new NetCon(GCb[i], gran[i].AMPAr)
+       GCbinput[i].threshold = Thresh
+       GCbinput[i].delay     = 0
+       GCbinput[i].weight    = Wb_GC    	
+    }	
+}
+
+

@@ -1,9 +1,0 @@
-{load_file("start.hoc")}
-ShowConnect[0].hinton_movie = 1
-ShowConnect[0].sim()
-cvode_active(1)
-
-use_weight_file_ = 1
-use_weight_file()
-stdinit()
-

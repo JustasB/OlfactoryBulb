@@ -1,0 +1,40 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[8]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+save_window_ = new Graph(0)
+save_window_.size(0,15,-80,40)
+scene_vector_[6] = save_window_
+{save_window_.view(0, -80, 15, 120, 390, 24, 426.24, 273.28)}
+graphList[0].append(save_window_)
+save_window_.save_name("graphList[0].")
+save_window_.addexpr("soma.v( 0.5 )", 2, 1, 0.680631, 0.966745, 2)
+save_window_.addexpr("priden.v( 0.75 )", 1, 1, 0.685135, 0.956206, 2)
+save_window_.addexpr("tuftden.v( 0.5 )", 3, 5, 0.685135, 0.945667, 2)
+}
+
+//Begin Grapher
+{
+load_file("grapher.hoc")}
+{
+ocbox_=new Grapher(1)
+
+ocbox_.info("ampacond","ampacond", "", 2, 12, -0.3, 0.1, 20, 2, 12)
+{
+save_window_=ocbox_.g
+save_window_.size(2,12,-0.3,0.1)
+scene_vector_[7] = save_window_
+ocbox_.g = save_window_
+save_window_.save_name("ocbox_.g")
+save_window_.xexpr("ampacond", 0)
+save_window_.addexpr("spdiff(ampacond)", 1, 1, 0.355911, 0.967012, 2)
+}
+ocbox_ = ocbox_.vbox
+ocbox_.map("Grapher", 392, 369, 308.16, 453.12)
+}
+objref ocbox_
+//End Grapher
+
+objectvar scene_vector_[1]
+{doNotify()}

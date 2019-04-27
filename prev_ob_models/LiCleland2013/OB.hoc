@@ -1,0 +1,66 @@
+
+// OB network model to simulate ACH modulation
+// Guoshi Li, Cornell Univeristy 2013
+
+// Simulation results are presented in the associated paper:
+// Li and Cleland (2013) A two-layer biophysical model of cholinergic neuromodulation in olfactory bulb. 
+// Journal of Neuroscience 33:3037–3058.
+
+xopen("$(NEURONHOME)/lib/hoc/noload.hoc") // standard run tools
+xopen("tabchannels.hoc")
+nrncontrolmenu()
+
+v_init  = -70     // Initialize the voltage
+xpanel("Auto launch menu")
+  xbutton("Default run 3000ms ", "default_run()")
+  xbutton("Short demo 3 ms","demo_run()")
+xpanel()
+
+celsius = 35
+
+dt  = 0.001       // The simulation step is set to 0.001 ms for results presented
+				  // in the Journal of Neuroscience Paper (Li and Cleland 2013) 
+				  // Simulation time is about 3.5 hours for one run in a single PC
+                  // Small time step is used to ensure accuracy of results
+				  // Larger step could be used for testing purpose
+				  
+secondorder  = 2  // Simulate using the Crank-Nicholson method
+
+
+steps_per_ms = 5  // Points plotted per ms; for graphical display
+DT  = 0.2         // Data recording interval: DT = 0.2 ms
+
+load_file("Parameter.hoc")    // Contain parameters of the model
+load_file("MC_def.hoc")       // Mitral cell template 
+load_file("PG_def.hoc")       // PG cell template
+load_file("GC_def.hoc")       // GC cell template      
+load_file("Connect.hoc")      // Specify network connection
+load_file("Background.hoc")   // Deliver random background inputs to the network
+load_file("Input.hoc")        // Introduce afferent inputs to the model 
+load_file("SaveData.hoc")     // Save simulation data for off-line analysis
+
+
+proc advance() {
+fadvance()
+}
+
+proc run() {
+  running_ = 1
+  stdinit()
+  continuerun(tstop)
+}
+
+proc default_run() {
+  tstop   = 3000    // Total simulation time: 3 sec
+  run()
+  save_data()
+}
+
+
+proc demo_run() {
+  tstop   = 3    // Total simulation time: 0.003 sec
+  run()
+  save_data()
+}
+
+

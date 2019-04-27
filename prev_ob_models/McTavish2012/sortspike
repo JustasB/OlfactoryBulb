@@ -1,0 +1,3 @@
+#!/bin/sh
+sort -k 1n,1n -k 2n,2n $1 > $2
+

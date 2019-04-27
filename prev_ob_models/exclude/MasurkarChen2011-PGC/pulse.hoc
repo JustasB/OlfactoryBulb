@@ -1,0 +1,59 @@
+// pulse.hoc
+// add pulse generator Ipulse2 from
+// http://www.neuron.yale.edu/neuron/static/docs/repstim/pulsedistrib.zip
+
+objref ip
+soma ip=new Ipulse2(0.5)
+ip.del=100
+ip.dur=10  // duration of pulse
+ip.per=240 // period of pulse
+ip.num=4
+ip.amp=0 // set to .3 when creating figure 7c
+
+proc set_period() {
+  ip.per=$1
+  tstop=4*ip.per+2*ip.del
+}
+
+xpanel("run pulse generator")
+  xlabel("Click below to generate traces for")
+  xbutton("Figure 7c Marsurkar, Chen 2011 (Ca2+)","fig7c()")
+xpanel()
+
+objref vbox, g1, g2
+objref v_vec, t_vec
+proc fig7c() {
+  vbox=new VBox()
+  vbox.intercept(1)
+    g1=new Graph()
+    set_period(240)
+    v_vec=new Vector()
+    t_vec=new Vector()
+    v_vec.record(&soma.v(0.5))
+    t_vec.record(&t)
+
+    store_iclamp=IClamp[0].amp
+    IClamp[0].amp=0
+    ip.amp=.3
+
+    init()
+    run()
+    v_vec.line(g1, t_vec)
+    g1.exec_menu("View = plot")
+    g2=new Graph()
+    set_period(130)
+    v_vec=new Vector()
+    t_vec=new Vector()
+    v_vec.record(&soma.v(0.5))
+    t_vec.record(&t)
+    init()
+    run()
+
+    IClamp[0].amp=store_iclamp
+    ip.amp=0 // turn off pulses in case want to run IClamp
+
+    v_vec.line(g2, t_vec)
+    g2.exec_menu("View = plot")
+  vbox.intercept(0)
+vbox.map()
+}

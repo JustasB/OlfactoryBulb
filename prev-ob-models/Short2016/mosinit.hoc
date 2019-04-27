@@ -1,2 +1,0 @@
-load_file("nrngui.hoc")
-load_file("run_on_serial.hoc")

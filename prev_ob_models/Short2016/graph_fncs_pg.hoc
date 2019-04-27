@@ -1,0 +1,97 @@
+
+objref tmpx, tmpy
+tmpx = new Vector()
+tmpy = new Vector()
+
+//graph the vectors of interest//
+proc graph_light(){
+  num_of_points = light1_events.size()
+  points_per_burst = ThetaStim[2].number // for light stimulation of mitral 1
+  // print "note that light1_events contains:"
+  {light1_events.printf()}
+  for (i=0; i<num_of_points; i = i+ points_per_burst) {
+    tmpx = new Vector()
+    tmpx.append(light1_events.x[i],light1_events.x[i+points_per_burst-1])
+    tmpy = new Vector()
+    tmpy.append(-90,-90)
+    tmpy.line(v_graph, tmpx, 4, 1)
+    // print "attempted to graph a light stimulus bar"
+    // print "y coords:"
+    {tmpy.printf()}
+    // print "x coords:"
+    {tmpx.printf()}
+    // print "i = ", i, ", i+points_per_burst-1 = ", i+points_per_burst-1
+  }
+}
+  
+proc graph_breath1(){
+  num_of_points = OSN1_events.size()
+  points_per_burst = ThetaStim[0].number // for light stimulation of mitral 1
+  // print "note that OSN1_events contains:"
+  {OSN1_events.printf()}
+  for (i=0; i<num_of_points; i = i+ points_per_burst) {
+    tmpx = new Vector()
+    tmpx.append(OSN1_events.x[i],OSN1_events.x[i+points_per_burst-1])
+    tmpy = new Vector()
+    tmpy.append(-85,-85)
+    tmpy.line(v_graph, tmpx, 5, 1)
+    // print "attempted to graph a light stimulus bar"
+    // print "y coords:"
+    {tmpy.printf()}
+    // print "x coords:"
+    {tmpx.printf()}
+    // print "i = ", i, ", i+points_per_burst-1 = ", i+points_per_burst-1
+  }
+}
+  
+
+proc graph_breath2(){
+  num_of_points = OSN2_events.size()
+  points_per_burst = ThetaStim[1].number // for light stimulation of mitral 1
+  // print "note that OSN1_events contains:"
+  {OSN1_events.printf()}
+  for (i=0; i<num_of_points; i = i+ points_per_burst) {
+    tmpx = new Vector()
+    tmpx.append(OSN1_events.x[i],OSN1_events.x[i+points_per_burst-1])
+    tmpy = new Vector()
+    tmpy.append(-87.5,-87.5)
+    tmpy.line(v_graph, tmpx, 7, 1)
+    // print "attempted to graph a light stimulus bar"
+    // print "y coords:"
+    {tmpy.printf()}
+    // print "x coords:"
+    {tmpx.printf()}
+    // print "i = ", i, ", i+points_per_burst-1 = ", i+points_per_burst-1
+  }
+}
+  
+proc regraph_stims() {
+  graph_light()
+  graph_breath1()
+  graph_breath2()
+}
+
+strdef tmpstr
+objref tmpfile
+tmpfile = new File()
+proc write_vec() { // $s1 is filename, $o2 is vector to write
+  tmpstr = $s1
+  tmpfile.wopen(tmpstr)
+  for i=0, $o2.size()-1 {
+    tmpfile.printf("%g\n",$o2.x[i])
+  }
+  tmpfile.close()
+}
+
+strdef filename
+proc write_selected_vecs() {
+  write_vec("OSN1_events.dat", OSN1_events)
+  write_vec("OSN2_events.dat", OSN2_events)
+  write_vec("light_events.dat", light1_events)
+  write_vec("pg_events1.dat", pg_events1)
+
+  write_vec("t.dat",t_vec)
+  write_vec("m1_soma_v.dat", m1_v_vec)
+//  write_vec("m2_soma_v.dat", m2_v_vec)
+
+}

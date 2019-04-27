@@ -1,0 +1,166 @@
+load_file("nrngui.hoc")
+objectvar save_window_, rvp_
+objectvar scene_vector_[6]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+
+//Begin PointProcessManager
+{
+load_file("pointman.hoc")
+}
+{
+secden[1] ocbox_ = new PointProcessManager(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("AlphaSynapse") i = mt.selected()
+ms[i] = new MechanismStandard("AlphaSynapse")
+ms[i].set("onset", 1, 0)
+ms[i].set("tau", 15, 0)
+ms[i].set("gmax", 0, 0)
+ms[i].set("e", -75, 0)
+mt.select("InhiSyn") i = mt.selected()
+ms[i] = new MechanismStandard("InhiSyn")
+ms[i].set("onset", 1, 0)
+ms[i].set("tp", 5, 0)
+ms[i].set("gmaxampa", 0.2, 0)
+ms[i].set("tau1", 80, 0)
+ms[i].set("tau2", 3, 0)
+ms[i].set("gmaxnmda", 0.135, 0)
+ms[i].set("erev", -70, 0)
+mt.select("InhiSyn") i = mt.selected() maction(i)
+hoc_ac_ = 0.1
+sec.sec move() d1.flip_to(0)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessManager", 827, 480, 277.44, 400.32)
+}
+objref ocbox_
+//End PointProcessManager
+
+{WindowMenu[0].ses_gid(1, 0, 0, "Synapses")}
+
+//Begin PointProcessManager
+{
+load_file("pointman.hoc")
+}
+{
+tuftden[1] ocbox_ = new PointProcessManager(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("GluSyn") i = mt.selected()
+ms[i] = new MechanismStandard("GluSyn")
+ms[i].set("onset", 40, 0)
+ms[i].set("tp", 1.5, 0)
+ms[i].set("gmaxampa", 0.007, 0)
+ms[i].set("tau1", 80, 0)
+ms[i].set("tau2", 5, 0)
+ms[i].set("gmaxnmda", 0.04, 0)
+ms[i].set("erev", 0, 0)
+mt.select("GluSyn") i = mt.selected() maction(i)
+hoc_ac_ = 0.166667
+sec.sec move() d1.flip_to(0)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessManager", 524, 478, 277.44, 400.32)
+}
+objref ocbox_
+//End PointProcessManager
+
+{WindowMenu[0].ses_gid(0, 0, 0, "Synapses")}
+
+//Begin PointProcessManager
+{
+load_file("pointman.hoc")
+}
+{
+tuftden[0] ocbox_ = new PointProcessManager(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("GluSyn") i = mt.selected()
+ms[i] = new MechanismStandard("GluSyn")
+ms[i].set("onset", 40, 0)
+ms[i].set("tp", 1.5, 0)
+ms[i].set("gmaxampa", 0.007, 0)
+ms[i].set("tau1", 80, 0)
+ms[i].set("tau2", 5, 0)
+ms[i].set("gmaxnmda", 0.04, 0)
+ms[i].set("erev", 0, 0)
+mt.select("GluSyn") i = mt.selected() maction(i)
+hoc_ac_ = 0.166667
+sec.sec move() d1.flip_to(0)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessManager", 516, 28, 277.44, 400.32)
+}
+objref ocbox_
+//End PointProcessManager
+
+{WindowMenu[0].ses_gid(0, 0, 0, "Synapses")}
+
+//Begin PointProcessManager
+{
+load_file("pointman.hoc")
+}
+{
+secden[0] ocbox_ = new PointProcessManager(0)
+}
+{object_push(ocbox_)}
+{
+mt.select("InhiSyn") i = mt.selected()
+ms[i] = new MechanismStandard("InhiSyn")
+ms[i].set("onset", 1, 0)
+ms[i].set("tp", 5, 0)
+ms[i].set("gmaxampa", 0.2, 0)
+ms[i].set("tau1", 80, 0)
+ms[i].set("tau2", 3, 0)
+ms[i].set("gmaxnmda", 0.135, 0)
+ms[i].set("erev", -70, 0)
+mt.select("InhiSyn") i = mt.selected() maction(i)
+hoc_ac_ = 0.1
+sec.sec move() d1.flip_to(0)
+}
+{object_pop() doNotify()}
+{
+ocbox_ = ocbox_.v1
+ocbox_.map("PointProcessManager", 823, 29, 277.44, 400.32)
+}
+objref ocbox_
+//End PointProcessManager
+
+{WindowMenu[0].ses_gid(0, 0, 0, "Synapses")}
+{
+xpanel("RunControl", 0)
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 40
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 0.1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 0
+xvalue("t","t", 2 )
+tstop = 80
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xcheckbox("Quiet",&stdrun_quiet,"")
+realtime = 0
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(78,102)
+}
+objectvar scene_vector_[1]
+{doNotify()}

@@ -1,0 +1,147 @@
+// write weight file, read weight file, initialize weights
+// weight file format is
+//nweight
+//t
+//srcgid targid s w   : nweight of these
+//any number of above two
+
+////////create a weight file
+weight_start_ = 1e9
+weight_interval_ = 1e9
+objref fih_weight_, weight_file_
+proc weight_snapshots() {local i, nw   localobj f
+	weight_file_ = new File($s1)
+	f = weight_file_
+	weight_start_ = $2
+	weight_interval_ = $3
+	fih_weight_ = new FInitializeHandler(2, "w1_()")
+	nw = 0
+	for i=0, mgrs_list.count-1 {
+		if (object_id(mgrs_list.object(i).md2ampanmda)) { nw += 1 }
+		if (object_id(mgrs_list.object(i).gd2fi)) { nw += 1 }
+	}
+	nw = pc.allreduce(nw,1)
+	if (pc.id == 0) {
+		f.wopen()
+		f.printf("%d\n", nw)
+		f.close()
+	}
+}
+
+proc w1_() { cvode.event(weight_start_, "w2_()") }
+
+proc w2_() {local i  localobj f
+	f = weight_file_
+	for pnm.serialize() {
+		f.aopen()
+		if (pc.id == 0) {
+			f.printf("%g\n", t)
+		}
+		for i=0, mgrs_list.count-1 {
+			if (write_weights_normalized) {
+				f.printf("%s\n", mgrs_list.object(i).ws_str_normalized().s)
+			} else {
+				f.printf("%s\n", mgrs_list.object(i).ws_str().s)
+			}
+		}
+		f.close()
+	}
+	cvode.event(t + weight_interval_, "w2_()")
+}
+//////////// end of create a weight file
+
+/////////// initialize weight from first group of a weight file
+objref fih_weight_init_, weight_init_file_
+proc weight_initialize() {
+	weight_init_file_ = new File($s1)
+	// after NET_RECEIVE INITIAL
+	fih_weight_init_ = new FInitializeHandler(1, "w3_()")
+}
+
+proc w3_() {local i, nw, srcgid, targid, s, w, sgid \
+    localobj f, map, newmap, mgrs, p, nc, syn, ncl
+	f = weight_init_file_
+	f.ropen()
+	nw = f.scanvar()
+	f.scanvar() // discard t
+	p = new PythonObject()
+	nrnpython("newmap = lambda key, value : {key:value}")
+	map = p.newmap(-1,0)
+	for i=0, nw - 1 {
+		srcgid = f.scanvar
+		targid = f.scanvar
+		s = f.scanvar // Sigmoid location
+		w = f.scanvar // weight
+		sgid = syn_gid(srcgid, targid)
+//		if (pc.gid_exists(sgid)) {// correct even if multisplit
+			// no way at present to efficiently derive the
+			// MGRS from the srcgid, targid but we know it
+			// exists. So save data in a Python map and
+			// retrieve next loop
+			map.update(p.newmap(sgid, s))
+//printf("map %d %d %d %d\n", srcgid, targid, ncell, s)
+//		}
+	}
+	f.close()
+	// sweep mgrs_list
+	for i=0, mgrs_list.count-1 {
+		mgrs = mgrs_list.object(i)
+		if (object_id(mgrs.gd2fi)) {
+			s = map.__getitem__(mgrs.md_gid)
+//printf("%d %d %g\n", mgrs.granule_gid, mgrs.mitral_gid, s)
+			mgrs.set_sm(s)
+		}
+		if (object_id(mgrs.md2ampanmda)) {
+			s = map.__getitem__(mgrs.gd_gid)
+//printf("%d %d %g\n", mgrs.mitral_gid, mgrs.granule_gid, s)
+			mgrs.set_sg(s)
+		}
+	}
+}
+
+proc weight_initialize_normalized() {
+weight_init_file_ = new File($s1)
+    // after NET_RECEIVE INITIAL
+    fih_weight_init_ = new FInitializeHandler(1, "w3_normalized()")
+}
+
+proc w3_normalized() {local i, nw, srcgid, targid, s, w, sgid \
+    localobj f, map, newmap, mgrs, p, nc, syn, ncl
+    f = weight_init_file_
+    f.ropen()
+    nw = f.scanvar()
+    f.scanvar() // discard t
+    p = new PythonObject()
+    nrnpython("newmap = lambda key, value : {key:value}")
+    map = p.newmap(-1,0)
+    for i=0, nw - 1 {
+        srcgid = f.scanvar
+        targid = f.scanvar
+        s = f.scanvar
+        w = f.scanvar
+        sgid = syn_gid(srcgid, targid)
+        //		if (pc.gid_exists(sgid)) {// correct even if multisplit
+        // no way at present to efficiently derive the
+        // MGRS from the srcgid, targid but we know it
+        // exists. So save data in a Python map and
+        // retrieve next loop
+        map.update(p.newmap(sgid, w))
+        //printf("map %d %d %d %d\n", srcgid, targid, ncell, s)
+        //		}
+    }
+    f.close()
+    // sweep mgrs_list
+    for i=0, mgrs_list.count-1 {
+        mgrs = mgrs_list.object(i)
+        if (object_id(mgrs.gd2fi)) {
+            w = map.__getitem__(mgrs.md_gid)
+            //printf("%d %d %g\n", mgrs.granule_gid, mgrs.mitral_gid, w)
+            mgrs.set_wm(w)
+        }
+        if (object_id(mgrs.md2ampanmda)) {
+            w = map.__getitem__(mgrs.gd_gid)
+            //printf("%d %d %g\n", mgrs.mitral_gid, mgrs.granule_gid, w)
+            mgrs.set_wg(w)
+        }
+    }
+}

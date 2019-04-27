@@ -1,0 +1,146 @@
+// $Id: plots_active.hoc,v 1.1 2007/04/19 17:02:19 ted Exp ted $
+
+// split off from analyze_spiketuft.hoc
+// plots peak v in tuft vs. distance from soma, distributions
+
+objref gsp, nil  // graph of spike amplitude, relative to resting potential
+
+proc plotsp() { local x
+  if (gsp==nil) {  // no need to do this if graph already exists
+    gsp = new Graph(0)
+    gsp.size(420,570,0,90)
+    gsp.view(420, 0, 150, 90, 294, 372, 300.48, 200.32)
+    gsp.label(0.3, 0.7, "spike amplitude throughout tuft")
+  }
+  gsp.exec_menu("Erase")  // erase before every new data set
+  gsp.mark(tuftorigin, vorigin.max() - v_init, "O", 6)
+  forsec tuft for (x,0) gsp.mark(dist_monx(x), vmax_monx(x) - v_init, "O", 6)
+}
+
+objref gspnorm
+BLACK=1
+RED=2
+pcolor=RED
+
+proc plotspnorm() { local x, maxvorigin
+  if (gspnorm==nil) {  // no need to do this if graph already exists
+    gspnorm = new Graph(0)
+    gspnorm.size(420,570,0,1.05)
+//    gvmaxnorm.view(420, 0, 150, 1, 622, 372, 300.48, 200.32)  // to right of plot of vmax throughout tuft
+    gspnorm.view(420, 0, 150, 1.05, 294, 636, 300.48, 200.32)  // to right of plot of vmax throughout tuft
+    gspnorm.label(0.2, 0.7, "normalized spike amplitude")
+  }
+  pcolor = BLACK
+  gspnorm.exec_menu("Erase")  // erase only at start of new batch of runs
+  maxvorigin = vorigin.max() - v_init
+  gspnorm.mark(tuftorigin, (vorigin.max()-v_init)/maxvorigin, "o", 5, pcolor, 1)  // open circle
+  forsec tuft for (x,0) gspnorm.mark(dist_monx(x), (vmax_monx(x)-v_init)/maxvorigin, "o", 5, pcolor, 1)
+}
+
+
+///////////////////
+
+// show cusum and percentiles
+// argument 1 is run number, 2 is LOWPCTTHRESH
+
+objref gg
+objref cx, cy
+
+// for fixed xaxis scaling, appropriate for spikes
+XAXMIN = 0  // just in case there's whopping attenuation
+XAXMAX = 100
+
+
+// based on proc plotrun() in plotpercentiles.hoc
+// proc plotpercentiles() { local median, wpctlo, wpcthi, minx, maxx
+proc plotpercentiles() { local minx, maxx
+  // normareacusum holds the cusum of the areas
+  // and svpvec holds the sorted peak values
+
+  // time to plot normareacusum vs. sorted vpvec
+  // this is jarring but at least it's fast no matter how many data have been analyzed
+  gg = new Graph(0)
+
+  normareacusum.plot(gg, svpvec)
+
+  // fixed x axis scale makes it easier to see whole number range
+  minx = XAXMIN
+  maxx = XAXMAX
+  gg.size(minx,maxx,0,1)
+
+  gg.view(minx, 0, maxx-minx, 1, 622, 108, 300.48, 200.32)
+
+  // on same graph mark the percentiles and the corresponding peak voltages
+  // these cursor lines will be redrawn each time anrun() is called
+  cx = new Vector(2)
+  cy = new Vector(2)
+  // horizontal lines first, top to bottom
+  // 0 is too far to the left for these lines
+//  cx.x[0] = minx  cx.x[1] = temprvec.x[PCTHI]
+  cx.x[0] = minx  cx.x[1] = wpcthi
+  cy.x[0] = (100-LOWPCTTHRESH)/100  cy.x[1] = cy.x[0]
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+//  cx.x[0] = minx  cx.x[1] = temprvec.x[MEDIAN]
+  cx.x[0] = minx  cx.x[1] = wmedian
+  cy.x[0] = 0.5  cy.x[1] = cy.x[0]
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+//  cx.x[0] = minx  cx.x[1] = temprvec.x[PCTLO]
+  cx.x[0] = minx  cx.x[1] = wpctlo
+  cy.x[0] = LOWPCTTHRESH/100  cy.x[1] = cy.x[0]
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+  // vertical lines next, left to right
+//  cx.x[0] = temprvec.x[PCTLO]  cx.x[1] = temprvec.x[PCTLO]
+  cx.x[0] = wpctlo  cx.x[1] = wpctlo
+  cy.x[0] = 0  cy.x[1] = LOWPCTTHRESH/100  
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+//  cx.x[0] = temprvec.x[MEDIAN]  cx.x[1] = temprvec.x[MEDIAN]
+  cx.x[0] = wmedian  cx.x[1] = wmedian
+  cy.x[0] = 0  cy.x[1] = 0.5
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+//  cx.x[0] = temprvec.x[PCTHI]  cx.x[1] = temprvec.x[PCTHI]
+  cx.x[0] = wpcthi  cx.x[1] = wpcthi
+  cy.x[0] = 0  cy.x[1] = (100 - LOWPCTTHRESH)/100
+  cy.line(gg, cx, BLUE, 5)  // pattern 5 is thin dotted line
+
+  // make another graph that shows distribution of areas vs. peak amplitude
+  plotdistrib(minx, maxx)  // uses snormareavec and svpvec
+}
+
+
+// make another graph that shows distribution of areas vs. peak amplitude
+
+objref gd, smoothed_distrib, distrib_xvec
+// DISTRIB_INTERVAL = 0.1
+DISTRIB_INTERVAL = 1
+// DISTRIB_INTERVAL = 0.5
+// let variance be square of distrib interval
+GAUSS_VAR = DISTRIB_INTERVAL^2
+
+proc plotdistrib() { local ii, scalefactor  localobj xdat, ydat
+  // this is jarring but at least it's fast no matter how many data have been analyzed
+  gd = new Graph(0)
+
+  xdat = new Vector(2)
+  ydat = new Vector(2)
+  for ii = 0,svpvec.size()-1 {
+    // draw a line from (svpvec.x[ii], 0) to (svpvec.x[ii], snormareavec.x[ii])
+    xdat.x[0] = svpvec.x[ii] xdat.x[1] = svpvec.x[ii]
+    ydat.x[0] = 0 ydat.x[1] = 10*snormareavec.x[ii]
+    ydat.line(gd, xdat, BLUE, 1)  // solid line, not hairline
+  }
+  gd.size($1,$2,0,1)
+//  gvmaxnorm.view(420, 0, 150, 1, 622, 372, 300.48, 200.32)  // to right of plot of vmax throughout tuft
+//  gd.view($1, 0, $2-$1, 1, 599, 292, 300.48, 200.32)
+  gd.view($1, 0, $2-$1, 1, 622, 372, 300.48, 200.32)
+  smoothed_distrib = svpvec.sumgauss($1, $2, DISTRIB_INTERVAL, GAUSS_VAR, snormareavec)
+  distrib_xvec = smoothed_distrib.c
+smoothed_distrib.mul(10)
+  distrib_xvec.indgen($1, DISTRIB_INTERVAL)
+  smoothed_distrib.plot(gd, distrib_xvec)
+  gd.label(0.2, 0.85, "10*areas and smoothed distribution")
+}

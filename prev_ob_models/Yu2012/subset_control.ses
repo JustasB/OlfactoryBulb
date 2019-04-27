@@ -1,0 +1,42 @@
+{load_file("nrngui.hoc")}
+objectvar save_window_, rvp_
+objectvar scene_vector_[2]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+{
+xpanel("RunControl", 0)
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 2000
+xvalue("t","t", 2 )
+tstop = 2000
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+screen_update_invl = 0.05
+xvalue("Scrn update invl","screen_update_invl", 1,"", 0, 1 )
+realtime = 28.68
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+xpanel(26,134)
+}
+{
+xpanel("Simulate gid", 0)
+Vector[3].x[0] = 0
+xlabel("gid == -1 means entire net")
+xlabel(cell_gid_label_)
+xpvalue("gid",&one_gid_, 1,"reload(one_gid_)", 0, 1 )
+xcheckbox("Only synapses associated with gid", &synapses_only_, "synapse_checkbox()")
+xpanel(25,537)
+}
+objectvar scene_vector_[1]
+{doNotify()}

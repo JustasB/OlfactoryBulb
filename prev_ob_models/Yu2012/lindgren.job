@@ -1,0 +1,23 @@
+#!/bin/bash
+#run with qsub lindgren.job
+
+# The name of the script
+#PBS -N lindgren.job
+
+# 1 hour wall-clock time will be given to this job
+#PBS -l walltime=03:00:00
+
+# Number of cores to be allocated should be multiple of 24
+#PBS -l mppwidth=240
+
+#PBS -e /dev/null
+#PBS -o /dev/null
+
+# Change to the work directory
+cd $PBS_O_WORKDIR
+
+# Run the executable
+# and write the output into a file
+aprun -n 240 ./x86_64/special -mpi \
+ -c stop_time=10000 \
+ parinit.hoc  > $PBS_JOBID.out 2>&1

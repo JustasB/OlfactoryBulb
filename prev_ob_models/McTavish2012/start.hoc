@@ -1,0 +1,59 @@
+{load_file("nrngui.hoc")}
+{load_file("param.hoc")}
+{load_file("netparmpi.hoc")}
+
+//mitrals_of_interest, granules_of_interest
+objref moi, goi
+moi= new Vector()
+goi = new Vector()
+moi.append(0, 1, 2, 3, 4)
+goi.append(10, 30, 50, 70, 90)
+
+objref pnm, pc
+pnm = new ParallelNetManager(0)
+pc = new ParallelContext()
+{load_file("split.hoc")}
+{load_file("net.hoc")}
+//mknet() // do not create til needed
+sparse_connections()
+{load_file("stimodors.hoc")}
+//create_stim() // do not create til needed
+objref gidvec
+gidvec = new Vector()
+{load_file("clear.hoc")}
+iterator cell_gids() { local i
+	for i=0, gidvec.size-1 {
+		$&1 = gidvec.x[i]
+		$&2 = i
+		iterator_statement
+	}
+}
+
+{load_file("weight_movie.hoc")}
+//{load_file("pattern.hoc")}
+{load_file("show.hoc")}
+{load_file("weightsave.hoc")}
+{load_file("start.ses")}
+
+use_weight_file_ = 1
+xpanel("Weight initialization")
+xcheckbox("Use Weight File", &use_weight_file_, "use_weight_file()")
+xpanel(50,700)
+
+objref filepath
+proc use_weight_file() {
+	if (use_weight_file_) {
+if (strcmp(wt_input_file, "") != 0) {
+    filepath=new String(prj_path)
+    sprint(filepath.s, "%s/%s", filepath.s, weight_dir)
+    sprint(filepath.s, "/%s/%s", filepath.s, wt_input_file)
+    if (read_weights_normalized) {
+    	weight_initialize_normalized(filepath.s)
+    } else {
+        weight_initialize(filepath.s)
+    }
+}
+    }else{
+		objref fih_weight_init_
+	}
+}

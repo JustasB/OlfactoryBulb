@@ -1,0 +1,70 @@
+// Procedures to make global variables if they do not already exist.
+
+{load_file("stdlib.hoc")}
+
+// $s1 is the name of the global variable
+// $2 is the value
+proc default_var() {localobj s
+	s = new String()
+	if (name_declared($s1) < 2) {
+		hoc_ac_ = $2
+		sprint(s.s, "%s = hoc_ac_", $s1)
+		execute(s.s)
+	}	
+	sprint(s.s, "hoc_ac_ = %s", $s1)
+	execute(s.s)
+	printf("%s = %g\n", $s1, hoc_ac_)
+}
+
+// Similar to default_var(), but assigns global strdefs.
+// $s1 is the name of the global strdef variable
+// $2 is the value of the strdef
+proc default_var_str() {localobj s
+	s = new String()
+	if (name_declared($s1) < 2) {
+		sprint(s.s, "strdef %s", $s1)
+		execute(s.s)
+		sprint(s.s, "%s = \"%s\"", $s1, $s2)
+		execute(s.s)
+	}
+	sprint(s.s, "print \"%s = \", %s", $s1, $s1)
+	execute(s.s)
+}
+
+// Similar to default_var(), but assigns global vectors.
+// $s1 is the name of the global vector variable
+// $2 are the floating point values of the vector formatted as a
+//   comma delimited string, like "1, 3.14, 9.876".
+proc default_var_vec() {localobj s, pyobj
+	s = new String()
+	if (name_declared($s1) < 2) {
+		// We write the following Python code:
+		// str = $s2
+		// str = str.lstrip('[')
+		// str = str.rstrip(']')
+		// stripped = str.split(',')
+		// vals = []
+		// for elem in stripped:
+    		//     trimmed = elem.strip()
+    		//     vals.append(float(trimmed))
+		// vec_vals = Vector(vals)
+		/// Then put these into the global variable.
+		sprint(s.s, "str = \"%s\"", $s2)
+		nrnpython(s.s)
+		nrnpython("str = str.lstrip(\'[\')")
+		nrnpython("str = str.rstrip(\']\')")
+		nrnpython("stripped = str.split(\',\')")
+		nrnpython("vals = []")
+		nrnpython("for elem in stripped:\n    trimmed = elem.strip()\n    vals.append(float(trimmed))")
+		pyobj = new PythonObject()
+		sprint(s.s, "objref %s", $s1)
+		execute(s.s)
+		sprint(s.s, "%s = new Vector(%d)", $s1, pyobj.vals.__len__())
+		execute(s.s)
+		hoc_obj_[0] = pyobj.vals // copy to a global since we are in the scope of a proc
+		sprint(s.s, "%s = %s.from_python(hoc_obj_[0])", $s1, $s1)
+		execute(s.s)
+	}
+	sprint(s.s, "print \"%s = \", %s.printf()", $s1, $s1)
+	execute(s.s)
+}

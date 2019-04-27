@@ -1,0 +1,27 @@
+ParmFitness: Dual electrode stimulus fits
+	FitnessGenerator: High primary
+		RunConstant:	pestim.amp 0.8 0.8
+				sestim.amp 0 0
+		RegionFitness:	se.electrode.v( 0.5 )
+		RegionFitness:	pe.electrode.v( 0.5 )
+
+	FitnessGenerator: Low primary
+		RunConstant:	pestim.amp 0.5 0.8
+				sestim.amp 0 0
+		RegionFitness:	se.electrode.v( 0.5 )
+		RegionFitness:	pe.electrode.v( 0.5 )
+
+	FitnessGenerator: High soma
+		RunConstant:	pestim.amp 0 0.8
+				sestim.amp 0.8 0
+		RegionFitness:	se.electrode.v( 0.5 )
+		RegionFitness:	pe.electrode.v( 0.5 )
+
+	FitnessGenerator: Low soma
+		RunConstant:	pestim.amp 0 0.8
+				sestim.amp 0.4 0
+		RegionFitness:	se.electrode.v( 0.5 )
+		RegionFitness:	pe.electrode.v( 0.5 )
+
+	Parameters:
+End ParmFitness

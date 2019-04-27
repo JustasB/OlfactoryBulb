@@ -1,0 +1,4 @@
+xopen("init.hoc")
+i=0
+for case(&i, 0,1,3,4) { g_attach(i) run() }
+

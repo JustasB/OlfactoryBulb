@@ -1,0 +1,72 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+
+<channelml xmlns="http://morphml.org/channelml/schema" 
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+    xmlns:meta="http://morphml.org/metadata/schema" 
+    xsi:schemaLocation="http://morphml.org/channelml/schema  http://www.neuroml.org/NeuroMLValidator/NeuroMLFiles/Schemata/v1.8.1/Level2/ChannelML_v1.8.1.xsd"
+    units="SI Units">
+
+    <meta:notes>I-h channel for periglomerular cells from Cadetti and Belluzzi (2001)</meta:notes>
+     
+    <channel_type name="Ih_cb">
+               
+        <status value="in_progress">
+            <meta:contributor>
+                <meta:name>Aditya Gilra</meta:name>
+            </meta:contributor>
+        </status>
+    
+        <meta:notes> hyperpolarization-activated (H-type) cation current</meta:notes>
+        
+        <meta:authorList>
+            <meta:modelAuthor>
+                <meta:name>Cadetti L</meta:name>
+            </meta:modelAuthor>
+            <meta:modelAuthor>
+                <meta:name>Belluzzi O</meta:name>
+            </meta:modelAuthor>
+            <meta:modelTranslator>
+                <meta:name>Aditya Gilra</meta:name>
+                <meta:institution>NCBS, India</meta:institution>    
+                <meta:email>adityag@ncbs.res.in</meta:email>
+            </meta:modelTranslator>
+        </meta:authorList>
+        
+        
+        <meta:publication>
+           <meta:fullTitle>Cadetti L, Belluzzi O (2001) Hyperpolarisation-activated current in glomerular cells of the rat olfactory bulb. Neuroreport 12:3117-20</meta:fullTitle>
+           <meta:pubmedRef>http://www.ncbi.nlm.nih.gov/entrez/query.fcgi?cmd=Retrieve&amp;db=PubMed&amp;list_uids=11568648&amp;dopt=Abstract</meta:pubmedRef>
+        </meta:publication>
+
+
+        <meta:neuronDBref>
+            <meta:modelName>Ih channel</meta:modelName>
+            <meta:uri>http://senselab.med.yale.edu/modeldb/ShowModel.asp?model=3665</meta:uri>
+        </meta:neuronDBref>
+        
+        <current_voltage_relation cond_law="ohmic" ion="h" default_gmax="0.5" default_erev="-0.030">
+            
+            <q10_settings q10_factor="4.5" experimental_temp="30.0"/>
+            <!--<offset value="0.010"/>-->
+            
+            <gate name="l" instances="1">
+                <closed_state id="l0"/>
+                <open_state id="l"/>
+                     
+                <transition name="alpha" from="l0" to="l" expr_form="exponential" rate="1.0" scale="0.011764705882" midpoint="-0.065" />
+                <transition name="beta" from="l" to="l0" expr_form="exponential" rate="1.0" scale="0.023529411765" midpoint="-0.065" />
+                    
+                <!-- Order is important: first time_course, then steady_state-->
+                <time_course name="tau" from="l0" to="l" expr_form="generic" expr="beta/(0.85*(1+alpha))" />
+                <steady_state name="inf" from="l0" to="l" expr_form="sigmoid" rate="1.0" scale="0.010" midpoint="-0.080"/>
+            </gate>
+        
+        </current_voltage_relation> 
+        
+        
+        <impl_prefs>
+            <table_settings max_v="0.1" min_v="-0.1" table_divisions="200"/>
+        </impl_prefs>
+        
+    </channel_type>
+</channelml>

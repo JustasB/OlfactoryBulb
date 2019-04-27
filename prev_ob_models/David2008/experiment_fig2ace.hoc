@@ -1,0 +1,81 @@
+// *** Set-up recording
+objref igabaa, tvec, iclamp
+
+insert_iclamps_glom()
+insert_iclamp_ipsc(tstop)
+
+xopen("fig2ace.ses")
+
+xpanel("Control")
+xbutton("Run fig 2", "run_fig2()")
+xvalue("Axial Resistance","mit[0][0].dend[0].Ra", 1,"change_raxial()", 0, 1)
+xvalue("GABA Time constant","input_ipsc[0][0].tau", 1,"change_taugaba()", 0, 1)
+xvalue("GABA conductance","input_ipsc[0][0].amp", 1,"change_ggaba()", 0, 1)
+xpanel(930,200)
+
+proc change_raxial() {
+	for i=0,nmitx-1 {
+		for j=0,ndend-1 {
+			mit[i][0].dend[j].Ra = mit[0][0].dend[0].Ra
+		}
+	}
+}
+
+proc change_taugaba() {
+	for i = 0, nmitx-1 {
+		input_ipsc[i][0].tau = input_ipsc[0][0].tau
+	}
+}
+
+proc change_ggaba() {
+	for i = 0, nmitx-1 {
+		input_ipsc[i][0].amp = input_ipsc[0][0].amp
+	}
+}
+
+proc run_fig2() {	
+	for j=1,3 {
+		if (j==1) {
+			sprint(filename,"%s.dat","fig2a")
+			outfile.wopen(filename)
+			for i=0,nmitx-1 {
+				input_glom[i][0].amp  = 0.5
+				input_ipsc[i][0].del  = tstop
+				input_ipsc[i][0].amp  = -0.05
+				input_ipsc[i][0].Erev = -70
+			}
+		}
+		if (j==2) {
+			sprint(filename,"%s.dat","fig2b")
+			outfile.wopen(filename)
+			for i=0,nmitx-1 {
+				input_glom[i][0].amp = 0.8
+				input_ipsc[i][0].del = tstop
+				input_ipsc[i][0].amp = -0.05
+				input_ipsc[i][0].Erev = -70
+			}
+		}
+		if (j==3) {
+			sprint(filename,"%s.dat","fig2c")
+			outfile.wopen(filename)
+			for i=0,nmitx-1 {
+				input_glom[i][0].amp = 1.8 
+				input_ipsc[i][0].del = tstop
+				input_ipsc[i][0].amp = -0.05
+				input_ipsc[i][0].Erev = -70
+			}
+		}
+		for w = 0, 59 {
+			run()
+			for i=0,nmitx-1 {
+				mit[i][0].spiketimes.printf(outfile,"%10.3f")
+				outfile.printf("\n")
+				input_ipsc[i][0].del = mit[i][0].spiketimes.x[9] + w
+				input_ipsc[i][0].amp = -0.05
+				print mit[i][0].spiketimes.x[10]-mit[0][0].spiketimes.x[9]
+			}
+			print "w=", w
+		}
+		outfile.close()
+	}	
+}

@@ -1,0 +1,150 @@
+These instructions are quite outdated. For the paper, I have automated procedures for many of these.
+ See the files in the folder that have _repeats in their names,
+ those automate the tedious multiple runs with different seeds.
+- Aditya Gilra, aditya_gilra@yahoo.com
+
+--------------------------------------------------------------------
+
+unitary granule-|mitral IPSPs:
+To get unitary IPSPs due to 20 randomly located granule-|mitral synapses, each activated 300ms apart.
+in cells/ folder:
+python2.6 CellTest_synapses.py mitral granule_mitral Iclamp 20 300e-3 staggered
+(each sim with 100:1 singles and 2:1 joint granules takes ~30 seconds)
+
+--------------------------------------------------------------------
+
+unitary PG-|mitral IPSPs:
+To set these to be comparable to granule-|mitral unitary IPSPs:
+check similar to above:
+in cells/ folder:
+python2.6 CellTest_synapses.py mitral PG_mitral Iclamp 20 300e-3 staggered
+(each sim with 100:1 singles and 2:1 joint granules takes ~30 seconds)
+
+--------------------------------------------------------------------
+
+mitral->granule EPSP summation:
+100Hz EPSPs for 400ms required to make granule fire:
+in cell/ folder:
+python2.6 CellTest_synapses.py granule mitral_granule Iclamp 100 10e-3 staggered
+(each sim with 100:1 singles and 2:1 joint granules takes ~30 seconds)
+
+--------------------------------------------------------------------
+
+composite self vs lateral IPSPs:
+
+Set DIRECTED=False in networkConstants.py, since we replicate random two mitrals which may not be connected.
+generate the neuroml file as above.
+set the seed in simset_inhibition.py
+on the cluster, in simulations directory, execute:
+mpiexec -machinefile ~/hostfile -n 3 ~/Python-2.6.4/bin/python2.6 inhibition_recvslat.py
+(each sim with 100:1 singles and 2:1 joint granules takes ~2 minutes)
+
+to get the recurrent IPSP after 5 spikes in 125ms (40Hz):
+(comment/uncomment the relevant lines)
+1) set offInject = 650e-12 in simset_inhibition.py
+2) set ipulse_duration = 125e-3 in setup_stim() of inhibition_recvslat.py
+then execute above command on cluster.
+
+to get the recurrent and lateral IPSP after 9 spikes in 400ms (~23Hz):
+(comment/uncomment the relevant lines)
+1) set offInject = 375e-12 in simset_inhibition.py
+2) set ipulse_duration = 400e-3 in setup_stim() of inhibition_recvslat.py
+then execute above command on cluster.
+
+--------------------------------------------------------------------
+
+For odor morphs/pulses:
+DIRECTED = True, frac_directed = 0.0 in networkConstants.py.
+MG_CONC = 1.0 mM in synapseConstants.py.
+set net seed in stimuliConstants.py and generate_neuroml.
+set seed in simset_odor.py
+and run from node000 of cluster in simulations/ folder.
+
+---------------------------------------------------------------------
+
+For testing activity dependent inhibition IN VITRO:
+
+MG_CONC must be 1.0mM in synapseConstants.py.
+--> Create the baseline firing files for the granule cells by executing in generators/ folder:
+    (creates constant baseline for invitro, invivo. also creates respiration tuned baseline in vivo)
+    python generate_firefiles_gran_baseline.py invitro
+--> Ensure that settings in simset_activinhibition.py are default.
+    --> Set mitdistancestr = "_mitdist75.0"
+    --> IN_VIVO = False
+--> If simulating for random connectivity:
+    --> Set DIRECTED=False in networkConstants.py.
+    --> Set granule_mitral_GABA_Gbar = 5e-9 # Siemens
+        self_mitral_GABA_Gbar = 50e-12 # Siemens
+        in synapseConstants.py
+    else if simulating for directed connectivity:
+    --> Set DIRECTED=True in networkConstants.py.
+    --> Set granule_mitral_GABA_Gbar = 2e-9 # Siemens
+        self_mitral_GABA_Gbar = 50e-12 # Siemens
+        in synapseConstants.py
+
+Repeat below steps for network seeds 100.0 to 1000.0 in steps of 100.0
+{
+    --> Set the network seed in stimuliConstants.py,
+        MIT_DISTANCE for the TWOGLOMS if part as set above,
+        and in generators folder, execute:
+    python generate_neuroml.py 2GLOMS INVITRO
+    --> Set the network seed in simset_activinhibition.py
+    --> On a cluster, in the simulations directory, execute:
+    nohup mpiexec -machinefile ~/hostfile -n 61 ~/Python-2.6.4/bin/python2.6 activdep_inhibition.py < /dev/null &
+    (each sim with 20:1 singles and 2:1 joint granules takes ~5 minutes)
+    --> Figure should come up at end of the simulation and a results file will be saved in results/ADI folder.
+    --> Change REVERSED_ADI=True in simset_activinhibition.py
+    --> Run above simulation again to generate reversed ADI results for all the seeds.
+    rm nohup.out
+}
+
+--------------------------------------------------------------------
+
+For testing activity dependent inhibition IN VIVO:
+
+--> Create the baseline firing files for the granule cells by executing in generators/ folder:
+    (creates constant baseline for invitro, invivo. also creates respiration tuned baseline in vivo)
+    python generate_firefiles_gran_baseline.py noresp
+--> Settings in simset_activinhibition.py should be default; except that IN_VIVO=True
+Rest of the steps are same as above, except while generating the network in the loop, execute:
+python generate_neuroml.py 2GLOMS
+
+--------------------------------------------------------------------
+
+For testing asymmetry in lateral inhibition / activity dependent inhibition:
+
+set MG_CONC = 0.2 # mM instead of 1mM to replicate Giridhar et al's experimental conditions.
+Set DIRECTED=False in networkConstants.py, since we replicate random two mitrals which may not be connected.
+Repeat below steps for network seeds 100.0 to 1000.0 in steps of 100.0
+{
+    --> Set the network seed in stimuliConstants.py and in generators folder, execute:
+    python generate_neuroml.py 2GLOMS INVITRO
+    --> Set the network seed in simset_activinhibition.py
+    --> Set ASYM_TEST = True (inject same current in mits A and B) and REVERSED_ADI = False
+    --> On a cluster, in the simulations directory, execute:
+    nohup mpiexec -machinefile ~/hostfile -n 61 ~/Python-2.6.4/bin/python2.6 activdep_inhibition.py < /dev/null &
+    (each sim with 100:1 singles and 2:1 joint granules takes ~2 minutes)
+    --> Figure should come up at end of the simulation and a results file will be saved in results/ADI folder.
+    --> Change REVERSED_ADI=True in simset_activinhibition.py
+    --> Run above simulation again to generate reversed ADI results for all the seeds.
+    rm nohup.out
+}
+
+--------------------------------------------------------------------
+
+For activity dependent inhibition with constant spiking input in tuft:
+
+## generate neuroml
+Set directed=True / False with frac_directed in ../networks/networkConstantsMinimal.py
+Set stim_net_seed=100.0 and mit_distance=50.0 in stimuliConstantsMinimal.py
+from generators/ folder run:
+python2.6 generate_neuroml 2GLOMS <INVITRO>
+## generate firefiles with constant input
+already present
+## run the tuft-input simulations
+Set netseedstr, mitdistance, mitdistancestr and IN_VIVO in simset_activinhibition_minimal.py
+Also set singles, joints, PGs etc on/off in simset_activinhibition.py
+in simulations folder from node000:
+nohup mpiexec -machinefile ~/hostfile -n 41 ~/Python-2.6.4/bin/python2.6 inhibition_tuftinput.py < /dev/null &
+
+---------------------------------------------------------------------

@@ -1,0 +1,49 @@
+load_file("nrngui.hoc")
+load_file("mulfit.hoc")
+load_file("init.hoc")
+
+objref nil, tobj, se, pe, pestim, sestim // for restart after istimfit.hoc
+strdef tstr
+
+xpanel("Figures for Chen et. al, 2002")
+xradiobutton("3a", "restart(\"fig3a\")")
+xradiobutton("3b", "restart(\"fig3b\")")
+xradiobutton("5a", "restart(\"fig5a\")")
+xradiobutton("5b", "restart(\"fig5b\")")
+xradiobutton("6", "restart(\"fig6\")")
+xradiobutton("Shen99 fit", "restart(\"istimfit\")")
+xpanel(5,100)
+
+pwmcnt = PWManager[0].count // the initial gui should not be dismissed
+
+proc restart() {local i
+	objref se, pe, pestim, sestim
+	objref graphItem, save_window_
+	for i=0, n_graph_lists-1 {
+		graphList[i].remove_all()
+	}
+	flush_list.remove_all()
+	fast_flush_list.remove_all()
+	doNotify()
+	for (i= PWManager[0].count-1; i >= pwmcnt; i -= 1) {
+		PWManager[0].close(i)
+		doNotify()
+	}
+	// under gview of MultipleRunFitter, the RegionFitness not garbage collected
+	// we can't fix that here but we can destroy the Graphs so that fig5a
+	// will work when it tries to "Keep Lines" for Graph[0]
+	tobj = new List("RegionFitness")
+	for i=0, tobj.count-1 { // really should be unreffing RegionFitness
+		tobj.object(i).g = nil
+	}
+	tobj = nil
+	
+	stoprun = 0
+	cvode_active(0)
+	dt = .025
+	steps_per_ms = 40
+	tstop = 80
+	load_file(1, "param.hoc")
+	sprint(tstr, "%s.hoc", $s1)
+	load_file(1, tstr)
+}

@@ -1,0 +1,437 @@
+// calcisilag.hoc
+// Olfactory bulb network model: calculate inter-spike interval
+//                             : and lag time statistics
+// Andrew Davison, The Babraham Institute, 2000.
+
+/* The following procedures are defined for writing results to file
+ * fileroot is the filename root. A suffix will be added to
+ * this, e.g. fileroot.synch for print_si().
+ * i,j are the mitral cell indices
+ *
+ * print_smooth_hist(variance,fileroot)
+ * print_gran_smooth_hist(variance,fileroot)
+ * print_spiketimes(i,j,fileroot)
+ * print_raster(fileroot)
+ * print_gran_raster(fileroot)
+ * print_isis(i,j,fileroot)
+ * print_isi_stats(fileroot)
+ * print_lags(i,j,fileroot) 	
+ * print_si(fileroot)
+ */
+
+// Variables used in this file
+objref work, work2, outputarray, isi, lags, hist
+work 	= new Vector()
+work2 	= new Vector()
+outputarray = new Matrix(nmitx,nmity)
+isi 	= new Vector()
+lags 	= new Vector()
+
+// Procedures for processing spike times -------------------------------
+
+proc calc_isis() { local i,j,k,n // 3 args - indices of mitral cell, transient time
+  if ($1 > nmitx || $2 > nmity) {
+    print "Sorry - index out of range. Please try again."
+    return
+  }
+  i = int($1)
+  j = int($2)
+  isi.resize(0)
+  n = mit[i][j].spiketimes.size()
+  if (n > 1) {
+    for k = 1,n-1 {
+      if (mit[i][j].spiketimes.x[k-1] > $3) {
+        isi.append(mit[i][j].spiketimes.x[k]-mit[i][j].spiketimes.x[k-1])
+      }
+    }
+  }
+}
+
+proc calc_gran_isis() { local i,j,k,n // 3 args - indices of granule cell, transient time
+  if ($1 > ngranx || $2 > ngrany) {
+    print "Sorry - index out of range. Please try again."
+    return
+  }
+  i = int($1)
+  j = int($2)
+  isi.resize(0)
+  n = gran[i][j].spiketimes.size()
+  if (n > 1) {
+    for k = 1,n-1 {
+      if (gran[i][j].spiketimes.x[k-1] > $3) {
+        isi.append(gran[i][j].spiketimes.x[k]-gran[i][j].spiketimes.x[k-1])
+      }
+    }
+  }
+}
+
+func minisi() { local i,j,min	// find shortest mean ISI
+  min = 1e6
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      calc_isis(i,j,ttrans)
+      if (isi.size() > 0) {
+        if (isi.mean() < min) { min = isi.mean() }
+      }
+    }
+  }
+  return min
+}
+      
+  
+proc rate_array() { local i,j
+  for i = 0,nmitx-1 {
+    for j = 0, nmity-1 {
+      calc_isis(i,j,ttrans)
+      if (isi.size() > 0) {
+        outputarray.x[i][j] = 1000/isi.mean()
+      } else {
+        outputarray.x[i][j] = 0
+      }
+    }
+  }  
+  print "Max: ",arraymax(outputarray)
+  outputarray.muls(1/arraymax(outputarray))
+} 
+
+proc calc_lags() { local i1,j1,i2,j2,k,minidx,min // 5 args - indices of mitral cells, transient time
+    if ($1 > nmitx || $2 > nmity || $3 > nmitx || $4 > nmity) {
+    print "Sorry - index out of range. Please try again."
+    return
+  }
+  i1 = int($1)
+  j1 = int($2)
+  i2 = int($3)
+  j2 = int($4)
+  lags.resize(0)
+  // for each spiketime in cell 1, find closest spike in cell 2
+  // Note: first and last spikes ignored since can't calculate previous ISI
+  if (mit[i2][j2].spiketimes.size > 0) {
+    for k = 1,mit[i1][j1].spiketimes.size()-2 {
+      if (mit[i1][j1].spiketimes.x[k] > $5) {
+        work = mit[i2][j2].spiketimes.c.add(-mit[i1][j1].spiketimes.x[k])
+        minidx = work.c.abs.min_ind()
+        min = work.x[minidx]
+        isiprev = mit[i1][j1].spiketimes.x[k-1]-mit[i1][j1].spiketimes.x[k]
+        isinext = mit[i1][j1].spiketimes.x[k+1]-mit[i1][j1].spiketimes.x[k]
+        if (min > isiprev/2 && min < isinext/2) {
+          lags.append(min)
+        }
+      }
+    }
+  }
+}
+
+proc calc_phase_lags() { local i1,j1,i2,j2,k,minidx,min // 5 args - indices of mitral cells, transient time
+    if ($1 > nmitx || $2 > nmity || $3 > nmitx || $4 > nmity) {
+    print "Sorry - index out of range. Please try again."
+    return
+  }
+  i1 = int($1)
+  j1 = int($2)
+  i2 = int($3)
+  j2 = int($4)
+  lags.resize(0)
+  // for each spiketime in cell 1, find closest spike in cell 2
+  // Note: first and last spikes ignored since can't calculate previous ISI
+  if (mit[i2][j2].spiketimes.size > 0) {
+    for k = 1,mit[i1][j1].spiketimes.size()-2 {
+      if (mit[i1][j1].spiketimes.x[k] > $5) {
+        work = mit[i2][j2].spiketimes.c.add(-mit[i1][j1].spiketimes.x[k])
+        minidx = work.c.abs.min_ind()
+        min = work.x[minidx]
+        isiprev = mit[i1][j1].spiketimes.x[k-1]-mit[i1][j1].spiketimes.x[k]
+        isinext = mit[i1][j1].spiketimes.x[k+1]-mit[i1][j1].spiketimes.x[k]
+        if (min > isiprev/2 && min < isinext/2) {
+          if (min < 0) {
+            lags.append(min/isiprev)
+          } else {
+            lags.append(min/isinext)
+          }
+        }
+      }
+    }
+  }
+}
+
+proc calc_gran_lags() { local i1,j1,i2,j2,k,minidx,min // 5 args - indices of granule cells, transient time
+    if ($1 > ngranx || $2 > ngrany || $3 > ngranx || $4 > ngrany) {
+    print "Sorry - index out of range. Please try again."
+    return
+  }
+  i1 = int($1)
+  j1 = int($2)
+  i2 = int($3)
+  j2 = int($4)
+  lags.resize(0)
+  // for each spiketime in cell 1, find closest spike in cell 2
+  // Note: first and last spikes ignored since can't calculate previous ISI
+  if (gran[i2][j2].spiketimes.size > 0) {
+    for k = 1,gran[i1][j1].spiketimes.size()-2 {
+      if (gran[i1][j1].spiketimes.x[k] > $5) {
+        work = gran[i2][j2].spiketimes.c.add(-gran[i1][j1].spiketimes.x[k])
+        minidx = work.c.abs.min_ind()
+        min = work.x[minidx]
+        isiprev = gran[i1][j1].spiketimes.x[k]-gran[i1][j1].spiketimes.x[k-1]
+        isinext = gran[i1][j1].spiketimes.x[k]-gran[i1][j1].spiketimes.x[k+1]
+        if (min < isiprev/2 && min > isinext/2) {
+          lags.append(min)
+        }
+      }
+    }
+  }
+}
+
+proc time_hist() { // 1 arg - time step
+  work.resize(0)
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      work.append(mit[i][j].spiketimes)
+    }
+  }
+  hist = work.histogram(0,tstop,$1)
+  hist.printf("%d\n")
+}
+
+func synch_index() { local i1,j1,i2,j2,n
+  synchindex = 0
+  n = 0
+  for i1 = 0, nmitx-1 {
+    for j1 = 0, nmity-1 {
+      if (mit[i1][j1].spiketimes.size() > 0) {
+        for i2 = 0, nmitx-1 {
+          for j2 = 0, nmity-1 {
+            if (i1 != i2 || j1 != j2) {
+              calc_phase_lags(i1,j1,i2,j2,ttrans)
+              n += lags.size()
+              synchindex += lags.reduce("abs",0)
+            }
+          }
+        }
+      }
+    }
+  }
+  if (n > 0) {
+    return synchindex/n
+  } else {
+    return 1e6
+  }
+}
+
+
+func phaselock_index() { local n,i1,j1,i2,j2
+  synchindex = 0
+  n = 0
+  for i1 = 0, nmitx-1 {
+    for j1 = 0, nmity-1 {
+      if (mit[i1][j1].spiketimes.size() > 0) {
+        for i2 = 0, nmitx-1 {
+          for j2 = 0, nmity-1 {
+            if (i1 != i2 || j1 != j2) {
+              calc_phase_lags(i1,j1,i2,j2,ttrans)
+              if (lags.size() > 1) {
+                synchindex += lags.var()
+                n += 1
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+  if (n > 0) {
+    synchindex = sqrt(synchindex/n)
+    return synchindex
+  } else {
+    return 1e6
+  }
+}
+
+// Procedures for writing out data --------------------------------
+
+proc calc_smooth_hist() { // 1 arg - variance
+  work.resize(0)
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      work.append(mit[i][j].spiketimes)
+    }
+  }
+  hist = work.sumgauss(0,tstop,1,$1)
+}
+
+proc print_smooth_hist() { // 2 args - variance, filename root
+  calc_smooth_hist($1)
+  sprint(filename,"%s.smhist",$s2)
+  outfile.wopen(filename)
+  outfile.printf("# Mitral cell smoothed histogram\n")
+  hist.printf(outfile,"%8.3f\n")
+  outfile.close()
+/*
+  work.resize(0)
+  hist.remove(0,ttrans)
+  work.spctrm(hist)
+  sprint(filename,"%s.pow",$s2)
+  outfile.wopen(filename)
+  outfile.printf("# Power spectrum of Mitral cell smoothed histogram\n")
+  work.printf(outfile,"%9.5f\n")
+  outfile.close()
+  */
+}
+
+proc calc_gran_smooth_hist() { // 1 arg - variance
+  work.resize(0)
+  for i = 0, ngranx-1 {
+    for j = 0, ngrany-1 {
+      work.append(gran[i][j].spiketimes)
+    }
+  }
+  hist = work.sumgauss(0,tstop,1,$1)
+}
+
+proc print_gran_smooth_hist() { // 2 args - variance, filename root
+  calc_gran_smooth_hist($1)
+  sprint(filename,"%s.gran.smhist",$s2)
+  outfile.wopen(filename)
+  outfile.printf("# Granule cell smoothed histogram\n")
+  hist.printf(outfile,"%8.3f\n")
+  outfile.close()
+  //work.resize(0)
+  //hist.remove(0,ttrans)
+  //work.spctrm(hist)
+  //sprint(filename,"%s.gran.pow",$s2)
+  //outfile.wopen(filename)
+  //outfile.printf("# Power spectrum of Granule cell smoothed histogram\n")
+  //work.printf(outfile,"%9.5f\n")
+  //outfile.close()
+}
+
+proc print_gran_hist() { // 2 args - binsize, filename root
+  work.resize(0)
+  for i = 0, ngranx-1 {
+    for j = 0, ngrany-1 {
+      work.append(gran[i][j].spiketimes)
+    }
+  }
+  hist = work.histogram(0,tstop,$1)
+  sprint(filename,"%s.gran.hist",$s2)
+  outfile.wopen(filename)
+  outfile.printf("# Granule cell unsmoothed histogram\n")
+  hist.printf(outfile,"%8.3f\n")
+  outfile.close()
+}
+
+proc print_spiketimes() { // 3 args - indices of mitral cell plus filename root
+  if (numarg() == 3) {
+    sprint(filename,"%s_%d_%d.isi",$s3,$1,$2)
+    outfile.wopen(filename)
+    outfile.printf("# Spiketimes for mitral cell [%d][%d]",$1,$2)
+    mit[$1][$2].spiketimes.printf(outfile,"%10.3f")
+  }
+  if (numarg() == 1) {
+    sprint(filename,"%s.isi",$s1)
+    outfile.wopen(filename)
+    for i = 0, nmitx-1 {
+      for j = 0, nmity-1 {
+        outfile.printf("[%d][%d]",i,j)
+        mit[i][j].spiketimes.printf(outfile,"%10.3f")
+      }
+    }
+  }
+  outfile.close()
+}
+
+proc print_raster() { // 1 arg - filename root
+  sprint(filename,"%s.ras",$s1)
+  outfile.wopen(filename)
+  outfile.printf("# Mitral cell raster plot\n")
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      for k = 0, mit[i][j].spiketimes.size()-1 {
+        outfile.printf("%d %d %d %10.3f\n",i,j,i*nmity+j,mit[i][j].spiketimes.x[k])
+      }
+    }
+  }
+  outfile.close()
+}
+
+proc print_gran_raster() { // 1 arg - filename root
+  sprint(filename,"%s.gran.ras",$s1)
+  outfile.wopen(filename)
+  outfile.printf("# Granule cell raster plot\n")
+  for i = 0, ngranx-1 {
+    for j = 0, ngrany-1 {
+      for k = 0, gran[i][j].spiketimes.size()-1 {
+        outfile.printf("%d %d %d %10.3f\n",i,j,i*ngrany+j,gran[i][j].spiketimes.x[k])
+      }
+    }
+  }
+  outfile.close()
+}
+
+proc print_isis() { // 3 args - indices of mitral cell plus filename root
+  calc_isis($1,$2,ttrans)
+  sprint(filename,"%s_%d_%d.isi",$s3,$1,$2)
+  outfile.wopen(filename)
+  outfile.printf("# Interspike intervals for mitral cell [%d][%d]",$1,$2)
+  isi.printf(outfile,"%10.3f")
+  outfile.close()
+}
+
+proc print_isi_stats() { // 1 arg - filename root
+  sprint(filename,"%s.stats",$s1)
+  outfile.wopen(filename)
+  outfile.printf("#Interspike interval statistics for mitral cells\n")
+  outfile.printf("# i  j   n   mean   median   stdev  \n")
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      calc_isis(i,j,ttrans)
+      outfile.printf("%3d%3d%4d",i,j,isi.size())
+      if (isi.size() > 0) {
+        outfile.printf("%8.2f%8.2f",isi.mean(),isi.median())
+        if (isi.size() > 1) {
+          outfile.printf("%8.2f\n",isi.stdev())
+        } else {
+          printf("\n")
+        }
+      } else { outfile.printf("\n") }
+    }
+  }
+  outfile.printf("#Interspike interval statistics for granule cells\n")
+  outfile.printf("# i  j   n   mean   median   stdev  \n")
+  for i = 0, ngranx-1 {
+    for j = 0, ngrany-1 {
+      calc_gran_isis(i,j,ttrans)
+      outfile.printf("%3d%3d%4d",i,j,isi.size())
+      if (isi.size() > 0) {
+        outfile.printf("%8.2f%8.2f",isi.mean(),isi.median())
+        if (isi.size() > 1) {
+          outfile.printf("%8.2f\n",isi.stdev())
+        }
+      } else { outfile.printf("\n") }
+    }
+  }
+  outfile.close()
+}
+
+proc print_lags() { local i,j // 3 args - indices of mitral cell + filename root
+  sprint(filename,"%s_%d_%d.lags",$s3,$1,$2)
+  outfile.wopen(filename)
+  outfile.printf("# Lag times for mitral cell [%d][%d]\n",$1,$2)
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      calc_lags($1,$2,i,j,ttrans)
+      outfile.printf("[%d,%d]",i,j)
+      lags.printf(outfile,"%10.3f")
+    }
+  }
+  outfile.close()
+}
+
+proc print_si() { // 1 arg - fileroot
+  print "Calculating synchronization indices"
+  sprint(filename,"%s.synch",$s1)
+  outfile.wopen(filename)
+  outfile.printf("Synchronization index: %10.3f\n",synch_index())
+  outfile.printf("Phase-locking index:   %10.3f\n",phaselock_index())
+  outfile.close()
+}

@@ -1,0 +1,27 @@
+load_file("init.hoc")
+load_file(1, "fig5a.ses")
+Graph[0].exec_menu("Keep Lines")
+proc irun() {
+	for i=0,1 GluSyn[i].onset=$1
+	for i=0,1 {GluSyn[i].gmaxampa=$2 GluSyn[i].gmaxnmda=$2*.5}
+	for i=0,1 {InhiSyn[i].gmaxampa = 0 InhiSyn[i].gmaxnmda = $3}
+	run()
+}
+
+hoc_ac_ = .5
+tuftden[1] PointProcessManager[1].move()
+hoc_ac_ = .5
+tuftden[0] PointProcessManager[2].move()
+
+jjj=0
+for case(&jjj, 40, 30, 50, 60, 70, 20) {
+	irun(jjj, 0.01, .12)
+	if (stoprun) break
+}
+
+if (!stoprun) {
+	irun(10, .01, 0)
+}
+
+Graph[0].exec_menu("Keep Lines")
+

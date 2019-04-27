@@ -1,0 +1,65 @@
+
+//===================================================================================
+//              Provide afferent odor inputs to the network
+//===================================================================================
+
+objref MCinput[nMit], PGinput[nPG] 
+double pre_odor[nMit], odor[nMit] 
+double IM[nMit] 
+
+//Pre-odor and steady-state odor values are pre-generated and read in from data files under the "Input" folder
+
+outfile.ropen("Input/OdorA0.dat")  // Read pre-odor values from data file OdorA0.dat
+for i = 0, nMit-1 { 
+    pre_odor[i] = outfile.scanvar()
+}
+outfile.close()
+
+outfile.ropen("Input/OdorA1.dat")  // Read steady-state odor values from data file OdorA1.dat
+for i = 0, nMit-1 { 
+    odor[i] = outfile.scanvar()
+}
+outfile.close()
+
+outfile.wopen("data/OdorValue")
+//outfile.printf("Odor input is delivered to the following MC:\n")
+
+for i = 0, nMit-1 {  
+   
+    mit[i].tuft MCinput[i] = new OdorInput(0.0)
+	MCinput[i].torn = Todor
+	MCinput[i].r    = 100
+    MCinput[i].del  = 0
+    MCinput[i].dur  = tstop 
+ 	
+	u0 = pre_odor[i]
+	u1 = odor[i]
+	
+	MCinput[i].f1 = u1	
+	MCinput[i].f0 = u0
+	
+   // Store the pre-odor and steady-state odor values in a file "OdorValue"	
+	outfile.printf("Glom%d ",i)
+    outfile.printf("%5.4f ", u0)
+	outfile.printf(" %5.4f ",u1)
+    outfile.printf("\n")
+	
+    // FOR PG 
+	pg[i].gemmbody  PGinput[i] = new OdorInput(0.0)
+	PGinput[i].torn = Todor
+	PGinput[i].r    = 100
+    PGinput[i].del  = 0
+    PGinput[i].dur  = tstop 
+  
+    PGinput[i].f0  = Km2p*u0 	
+	PGinput[i].f1  = Km2p*u1
+	
+}
+
+outfile.close()
+
+
+
+
+
+ 

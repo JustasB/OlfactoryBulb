@@ -1,0 +1,64 @@
+{load_file("nrngui.hoc")}
+{load_file("param.hoc")}
+{load_file("pattern.hoc")}
+{load_file("netparmpi.hoc")}
+
+//mitrals_of_interest, granules_of_interest
+objref moi, goi
+moi= new Vector()
+goi = new Vector()
+moi.append(5, 50, 100, 400)
+goi.append(5, 50, 1000, 5000, 9000)
+
+objref pnm, pc
+pnm = new ParallelNetManager(0)
+pc = new ParallelContext()
+{load_file("split.hoc")}
+{load_file("net.hoc")}
+//mknet() // do not create til needed
+sparse_connections()
+objref wbase, odorfilename
+wbase=new String()
+odorfilename = new String()
+
+sprint(wbase.s, "%se%02dw%03dw%03dd%02d-%ds-%dpc", odorstr, global_exc_gmax*100, \
+  global_wl*100, global_wh*100, owfactor*10000, tstop/1000, g2m_mean*100)
+sprint(odorfilename.s, "stim-%s.hoc", odorstr)
+
+{load_file(odorfilename.s)}
+print wbase.s
+print odorfilename.s
+
+//create_stim() // do not create til needed
+objref gidvec
+gidvec = new Vector()
+{load_file("clear.hoc")}
+iterator cell_gids() { local i
+	for i=0, gidvec.size-1 {
+		$&1 = gidvec.x[i]
+		$&2 = i
+		iterator_statement
+	}
+}
+
+{load_file("weight_movie.hoc")}
+{load_file("show.hoc")}
+{load_file("weightsave.hoc")}
+{load_file("start.ses")}
+print_param()
+tstop = stop_time
+
+use_weight_file_ = 0
+xpanel("Weight initialization")
+xcheckbox("Use Weight File", &use_weight_file_, "use_weight_file()")
+xpanel(50,700)
+
+proc use_weight_file() {localobj s
+	s = new String()
+	sprint(s.s, "%s%s%s","weight-", wbase.s,".dat")
+	if (use_weight_file_) {
+		weight_initialize(s.s)
+	}else{
+		objref fih_weight_init_
+	}
+}

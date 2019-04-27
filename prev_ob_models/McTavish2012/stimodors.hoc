@@ -1,0 +1,270 @@
+objref inp
+
+// Read the odors.txt file and store in a matrix
+double odors[numodors][num_mitral]
+objref filepath
+filepath=new String()
+sprint(filepath.s, "%s/%s", prj_path, odor_dir)
+sprint(filepath.s, "%s/%s", filepath.s, odor_file)
+inp=new File()
+inp.ropen(filepath.s)
+for od=0, numodors-1 {
+	for tf=0, num_mitral-1 {
+		odors[od][tf]=inp.scanvar()
+		print " odor ",od, " mitral ",tf, odors[od][tf]
+	}
+}
+inp.close()
+
+// An OBStim gets assigned to every mitral cell (at this time
+// even when the magnitude of the stimulus is zero).
+begintemplate OBStim
+public nc     // NetCon onto the cell.synodor synapse
+public mgid   // Mitral cell gid
+public ww     // Relative weight (typically) on a [0,1] scale.
+public si     // Seed for the odor interval
+public sw     // Seed for the weight
+public endod, start, lastbreath, nextbreath, lastodorspike, lastnoisespike
+public freq
+public amp
+
+external cvode
+external breath_interval, breath_seed, breath_noise_mags, breath_noise_freqs
+external breath_noise_amps, odorfreq, stim_odor_max_delay
+
+objref nc, randbreath, randstim, randweight
+objref fih, this
+
+proc init() { localobj cell, pc, nil
+    pc = new ParallelContext()
+    // $1 is mitral_gid
+    mgid = $1
+    si = $2
+    ww = 0
+    endod=100000
+    start = 2
+    lastbreath = 0
+    nextbreath = 0
+    lastnoisespike = 0
+    lastodorspike = 0
+    freq = 0
+    amp = 0
+    if (numarg() > 2) { // Use breath noise
+        freq = $3
+    }
+    if (pc.gid_exists(mgid)) {
+        cell = pc.gid2cell(mgid)
+        nc = new NetCon(nil, cell.synodor)
+        nc.delay = 0.1
+        fih = new FInitializeHandler(0, "init_ev()", this)
+    }
+}
+
+proc init_ev() { local low, hiw, firstspike
+//	printf("%s t=%g %g\n", this, t, start)
+
+    randbreath = new Random()
+    randbreath.MCellRan4(breath_seed)
+    randbreath.uniform(breath_interval.x[0], breath_interval.x[1])
+
+    randstim = new Random()
+    randstim.MCellRan4(si)
+    randstim.uniform(0,1)
+
+    low=0.95
+    hiw=1.05
+    randweight = new Random()
+    randweight.MCellRan4(si+1)
+    randweight.uniform(low, hiw)
+
+    firstspike = t + start + nc.delay
+    lastbreath = firstspike
+    
+    nextbreath = (breath_interval.x[0]+breath_interval.x[1])/2 
+
+    cvode.event(firstspike, "breath_event()")
+    if (freq > 0) {
+        firstspike += next_noise_spike()
+        cvode.event(firstspike, "noise_event()")
+    }
+    nc.event(firstspike)
+    nc.weight = 0
+}
+
+
+proc breath_event() {local next
+    next = randbreath.repick()
+    if (nextbreath != (breath_interval.x[0]+breath_interval.x[1])/2) {
+        lastbreath = nextbreath
+    }
+    nextbreath = next + t
+    //printf("BREATH %s t=%g next=%g\n", this, t, nextbreath)
+
+    if (next<endod) {
+        cvode.event(nextbreath, "breath_event()")
+        if (freq == 0) {
+            cvode.event(lastbreath+0.1, "odor_event()")
+        }
+    }
+}
+
+func next_odor_spike() { local val
+    if (lastodorspike < lastbreath) {
+        lastodorspike = lastbreath
+    }
+    return -1
+    /*val = (1000./odorfreq) + ((lastodorspike - lastbreath)/4.)
+    //val *= randweight.repick() // 5 % noise
+    if ((val + lastodorspike - lastbreath) > ((nextbreath-lastbreath)/2)) {
+        return -1
+    }
+    return val*/
+}
+
+proc odor_event() { local next
+    nc.weight = ww*randweight.repick()*1e-3
+    next = next_odor_spike()
+    nc.event(t+nc.delay+randstim.repick()*stim_odor_max_delay)
+    //printf("ODOR %s t=%g w=%g next=%g\n", this, t, nc.weight, next)
+    if (next <= 0) {
+        return // Next breath will trigger again
+    }
+    next += t
+    lastodorspike = next
+
+    if (next<endod) {
+        cvode.event(next, "odor_event()")
+    }
+}
+
+func next_noise_spike() { local val, thresh, count
+    val = lastnoisespike -log(randstim.repick())*1000/freq/2
+    thresh = 0.5 + cos(2*PI*val/(nextbreath-lastbreath))*amp
+    count = 0
+    while (randstim.repick() < thresh) {
+        val -= log(randstim.repick())*1000/freq/2
+        thresh = 0.5 + cos(2*PI*val/(nextbreath-lastbreath))*amp
+        count += 1
+    }
+    return val - lastnoisespike
+}
+
+proc noise_event() {local next
+    next = next_noise_spike()
+    nc.weight = ww*randweight.repick()*1e-3
+    printf("%s t=%g %g w=%g\n", this, t, next, nc.weight)
+    next += t
+    lastnoisespike = next - lastbreath
+
+    if (next<endod) {
+        cvode.event(next, "noise_event()")//, this)
+        nc.event(next + nc.delay)
+    }
+}
+
+endtemplate OBStim
+
+objref stim_list_
+
+// Create the stimulation objects. This assumes that the global variables
+// stim_odor_ids, stim_odor_mags, stim_odors_dur, stim_odors_start, stim_odors_end, 
+// and stim_odors_seed have been assigned.
+proc create_stim() { local ii, od, index, odor_id
+    stim_list_ = new List() // Make a list si that as we create new objects
+                            // we add them to the list si they remain in memory.	
+    index = 0
+    for od = 0, stim_odor_ids.size() - 1 {
+        odor_id = stim_odor_ids.x[od]
+        for ii = 0, num_mitral-1 {
+            stim_list_.append(new OBStim(ii, stim_odors_seed.x[od]))
+            stim_list_.o(index).ww=odors[odor_id][ii]*stim_odor_mags.x[od]
+            stim_list_.o(index).start=stim_odors_start.x[od]
+            stim_list_.o(index).endod=stim_odors_end.x[od]
+            index=index+1
+        }
+    }
+
+    // Add random inputs
+    for ii = 0, num_mitral -1 {
+        if (breath_noise_mags.x[ii] > 0) {
+            stim_list_.append(new OBStim(ii, ii+1, breath_noise_freqs.x[ii]))
+            stim_list_.o(index).ww=breath_noise_mags.x[ii]
+            stim_list_.o(index).start=0
+            stim_list_.o(index).endod=tstop
+            stim_list_.o(index).amp = breath_noise_amps.x[ii]
+            index=index+1
+        }
+    }
+
+    write_breath_events()
+    write_stim_weights_per_event()
+    write_stim_delays_per_event()
+}
+
+proc write_breath_events() { local evtime localobj fileobj, filepath, randbreath
+    filepath=new String()
+    sprint(filepath.s, "%s/%s", prj_path, breath_events_file)
+    fileobj=new File()
+    fileobj.wopen(filepath.s)
+    randbreath = new Random()
+    randbreath.MCellRan4(breath_seed)
+    randbreath.uniform(breath_interval.x[0], breath_interval.x[1])
+    evtime = .2 // See above for nc.delay
+    while (evtime < tstop) {
+        evtime += randbreath.repick()
+        fileobj.printf("%g\n", evtime)
+    }
+    fileobj.close()
+}
+
+proc write_stim_weights_per_event() { local ii, jj, od, odor_id, ww localobj fileobj, filepath, randweight
+    filepath=new String()
+    sprint(filepath.s, "%s/%s", prj_path, "stimweightevents.txt")
+    fileobj=new File()
+    fileobj.wopen(filepath.s)
+    for od = 0, stim_odor_ids.size() - 1 {
+        odor_id = stim_odor_ids.x[od]
+        for ii = 0, num_mitral-1 {
+            ww=odors[odor_id][ii]*stim_odor_mags.x[od]
+            if (ww < 10e-5) {
+                continue
+            }
+            randweight = new Random()
+            randweight.MCellRan4(stim_odors_seed.x[od]+1)
+            randweight.uniform(0.95, 1.05)
+            
+            for jj=0, 20*6 {
+                fileobj.printf("%d\t%.2f\n", ii, randweight.repick())
+            }
+        }
+    }
+
+    fileobj.close()
+
+}
+
+proc write_stim_delays_per_event() { local ii, jj, od, odor_id, ww localobj fileobj, filepath, rand
+    filepath=new String()
+    sprint(filepath.s, "%s/%s", prj_path, "stimdelayevents.txt")
+    fileobj=new File()
+    fileobj.wopen(filepath.s)
+    for od = 0, stim_odor_ids.size() - 1 {
+        odor_id = stim_odor_ids.x[od]
+        for ii = 0, num_mitral-1 {
+            ww=odors[odor_id][ii]*stim_odor_mags.x[od]
+            if (ww < 10e-5) {
+                continue
+            }
+            rand = new Random()
+            rand.MCellRan4(stim_odors_seed.x[od]+1)
+            rand.uniform(0, 1)
+            
+            for jj=0, 20*6 {
+                fileobj.printf("%d\t%.2f\n", ii, rand.repick()*stim_odor_max_delay)
+            }
+        }
+    }
+
+    fileobj.close()
+
+}

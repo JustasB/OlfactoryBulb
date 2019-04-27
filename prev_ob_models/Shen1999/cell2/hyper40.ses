@@ -1,0 +1,30 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[12]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+
+//Begin MulRunFitter[0]
+{
+load_file("mulfit.hoc", "MulRunFitter")
+}
+{
+ocbox_ = new MulRunFitter(1)
+}
+{object_push(ocbox_)}
+{
+version(2)
+ranfac = 2
+fspec = new File("./hyper40.ft1")
+fdat = new File("./hyper40.fd1")
+read_data()
+build()
+}
+{object_pop()}
+{
+ocbox_.map("MulRunFitter[0]", 522, 50, 595.2, 242.88)
+}
+objref ocbox_
+//End MulRunFitter[0]
+
+objectvar scene_vector_[1]
+{doNotify()}

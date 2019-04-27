@@ -1,0 +1,31 @@
+load_file("nrngui.hoc")
+load_file("init.hoc")
+load_file(1, "fig3a.ses")
+doNotify()
+
+for i=0, 1 {
+        InhiSyn[i].gmaxampa = 0
+        InhiSyn[i].gmaxnmda = 0
+}
+hoc_ac_ = .5
+tuftden[1] PointProcessManager[1].move()
+hoc_ac_ = .5
+tuftden[0] PointProcessManager[2].move()
+GluSyn[0].onset = 2
+GluSyn[1].onset = 2
+tstop = 15
+
+proc grun() {local i
+	for i=0, 1 {
+		GluSyn[i].gmaxampa = $1
+		GluSyn[i].gmaxnmda = $1*.5
+	}
+        run()
+}
+
+xpanel("GluSyn Strength Run")
+xbutton("3(nS)", "grun(.003)")
+xbutton("6.5(nS)", "grun(.0065)")
+xbutton("7(nS)", "grun(.007)")
+xpanel(100, 400)
+

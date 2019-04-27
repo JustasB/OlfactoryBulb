@@ -1,0 +1,105 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[6]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+xpanel("NEURON Main Panel", 0)
+xcheckbox("Quiet",&stdrun_quiet,"")
+realtime = 1
+xvalue("Real Time","realtime", 0,"", 0, 1 )
+celsius = 23
+xvalue("celsius","celsius", 1,"", 0, 1 )
+global_ra = 200
+xvalue("global_Ra","global_ra", 1,"set_ra()", 1, 1 )
+xbutton("RunControl","nrncontrolmenu()")
+xmenu("New Graph")
+xbutton("Voltage axis","newPlotV()")
+xbutton("Current axis","newPlotI()")
+xbutton("State axis","newPlotS()")
+xbutton("Shape plot","newshapeplot()")
+xbutton("Vector movie","newvectorplot()")
+xbutton("Phase Plane","newphaseplane()")
+xbutton("Grapher","load_proc(\"makegrapher\") makegrapher()")
+xmenu()
+xmenu("Point Processes")
+xmenu("Managers")
+xbutton("Point Manager","load_template(\"PointProcessManager\") makeppm()")
+xbutton("Point Group","load_template(\"PointProcessGroupManager\") makeppgm()")
+xbutton("Electrode","load_proc(\"makeelectrode\") makeelectrode()")
+xmenu()
+xmenu("Viewers")
+xmenu("PointProcesses")
+xbutton("IClamp","makePointBrowser(\"IClamp\")")
+xbutton("AlphaSynapse","makePointBrowser(\"AlphaSynapse\")")
+xbutton("TrigKSyn","makePointBrowser(\"TrigKSyn\")")
+xbutton("SEClamp","makePointBrowser(\"SEClamp\")")
+xbutton("VClamp","makePointBrowser(\"VClamp\")")
+xbutton("APCount","makePointBrowser(\"APCount\")")
+xmenu()
+xmenu()
+xmenu()
+xmenu("Distributed Mechanisms")
+xmenu("Managers")
+xbutton("Inserter","load_template(\"Inserter\") makeinserter()")
+xbutton("Homogeneous Spec","load_proc(\"makeshowmechanism\") makeshowmechanism()")
+xmenu()
+xmenu("Viewers")
+xbutton("Shape Name","load_template(\"MenuExplore\") makeMenuExplore()")
+xbutton("Name Values","nrnallsectionmenu()")
+xmenu("Mechanisms (Globals)")
+xbutton("na_ion","nrnglobalmechmenu(\"na_ion\")")
+xbutton("k_ion","nrnglobalmechmenu(\"k_ion\")")
+xbutton("hh","nrnglobalmechmenu(\"hh\")")
+xbutton("kd","nrnglobalmechmenu(\"kd\")")
+xbutton("na","nrnglobalmechmenu(\"na\")")
+xmenu()
+xmenu()
+xmenu()
+xmenu("Miscellaneous")
+xmenu("Clipboard")
+xbutton("Save to File","load_proc(\"clipboard_save\") clipboard_save()")
+xbutton("Retrieve from File","load_proc(\"clipboard_retrieve\") clipboard_retrieve()")
+xbutton("Gather Values","load_template(\"GatherVec\") makeGatherVec()")
+xbutton("Vector Play","load_template(\"VectorPlay\") makeVectorPlay()")
+xbutton("Vector Wrapper","load_template(\"VecWrap\") makeVecWrap()")
+xmenu()
+xmenu("Family")
+xbutton("Family","load_template(\"Family\") makeFamily()")
+xbutton("Command","load_template(\"ExecCommand\") newcommand()")
+xmenu()
+xbutton("Parameterized Function","load_template(\"FunctionFitter\") makefitter()")
+xbutton("Run Fitter","load_template(\"RunFitter\") makerunfitter()")
+xmenu("Impedance")
+xbutton("Frequency","load_template(\"ImpedanceRatio\") makeImpRatio()")
+xbutton("Path","load_template(\"Impx\") makeImpx()")
+xbutton("log(A) vs x","load_template(\"LogAvsX\") makelogax()")
+xbutton("Shape","load_template(\"ImpShape\") makeImpShape()")
+xmenu()
+xbutton("Archive and Hardcopy","prjnrn()")
+xmenu()
+xpanel(449,638)
+}
+{
+xpanel("RunControl", 0)
+xcheckbox("Use CVode",&using_cvode_,"cvode_active(using_cvode_)")
+v_init = -65
+xvalue("Init","v_init", 1,"stdinit()", 1, 1 )
+xbutton("Init & Run","run()")
+xbutton("Stop","stoprun=1")
+runStopAt = 5
+xvalue("Continue til","runStopAt", 1,"{continuerun(runStopAt) stoprun=1}", 1, 1 )
+runStopIn = 1
+xvalue("Continue for","runStopIn", 1,"{continuerun(t + runStopIn) stoprun=1}", 1, 1 )
+xbutton("Single Step","steprun()")
+t = 12
+xvalue("t","t", 2 )
+tstop = 12
+xvalue("Tstop","tstop", 1,"tstop_changed()", 0, 1 )
+dt = 0.025
+xvalue("dt","dt", 1,"setdt()", 0, 1 )
+steps_per_ms = 40
+xvalue("Points plotted/ms","steps_per_ms", 1,"setdt()", 0, 1 )
+xpanel(14,211)
+}
+objectvar scene_vector_[1]
+{doNotify()}

@@ -1,0 +1,3488 @@
+<?xml version="1.0"?>
+<X3D xmlns:xsd="http://www.w3.org/2001/XMLSchema-instance" profile="Immersive" version="3.1" xsd:noNamespaceSchemaLocation=" http://www.web3d.org/specifications/x3d-3.1.xsd ">
+  <Scene>
+    <Background skyColor="1.0 1.0 1.0"/>
+    <Viewpoint description="Down z axis, 3mm away" position="0 0 3000"/>
+    <Viewpoint description="Down z axis, 500 microns away" position="0 0 500"/>
+    <Transform rotation="0 0 1 -1.570795">
+      <Shape>
+        <Appearance>
+          <Material diffuseColor="0 1 0"/>
+        </Appearance>
+        <Cylinder height="200" radius="0.5"/>
+      </Shape>
+      <Transform translation="0 105 0">
+        <Shape>
+          <Appearance>
+            <Material diffuseColor="0 1 0"/>
+          </Appearance>
+          <Cone height="10" bottomRadius="1"/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <Transform>
+      <Shape>
+        <Appearance>
+          <Material diffuseColor="1 1 0"/>
+        </Appearance>
+        <Cylinder height="200" radius="0.5"/>
+      </Shape>
+      <Transform translation="0 105 0">
+        <Shape>
+          <Appearance>
+            <Material diffuseColor="1 1 0"/>
+          </Appearance>
+          <Cone height="10" bottomRadius="1"/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <Transform rotation="1 0 0 1.570795">
+      <Shape>
+        <Appearance>
+          <Material diffuseColor="1 0 0"/>
+        </Appearance>
+        <Cylinder height="200" radius="0.5"/>
+      </Shape>
+      <Transform translation="0 105 0">
+        <Shape>
+          <Appearance>
+            <Material diffuseColor="1 0 0"/>
+          </Appearance>
+          <Cone height="10" bottomRadius="1"/>
+        </Shape>
+      </Transform>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="32"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 32  0  0"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 0  -25.9808  15"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, -25.9808  3.18173e-15  15"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 0  25.9808  15"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 25.9808  0  15"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="7.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  0, 0  0  95"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="10"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  0, 32  0  -10"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  -25.9808  15, 0  -60.6218  35"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-25.9808  3.18173e-15  15, -60.6218  7.42403e-15  35"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  25.9808  15, 0  60.6218  35"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="25.9808  0  15, 60.6218  0  35"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="7.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  95, 0  0  190"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -10, 32  0  -20"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  -60.6218  35, 0  -71.0141  41"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-60.6218  7.42403e-15  35, -71.0141  8.69672e-15  41"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  60.6218  35, 0  71.0141  41"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="60.6218  0  35, 71.014  0  41"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="6.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  190, 0  0  285"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -20, 32  0  -30"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  -71.0141  41, 0  -148.288  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  -71.0141  41, 54.641  -125.655  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-71.0141  8.69672e-15  41, -137.935  38.637  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-71.0141  8.69672e-15  41, -148.288  1.81601e-14  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  71.0141  41, 0  148.288  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  71.0141  41, -38.637  137.935  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="71.014  0  41, 137.935  -38.637  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="71.014  0  41, 137.935  38.637  61.7055"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  285, 0  0  380"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -30, 32  0  -40"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  -148.288  61.7055, 20  -222.929  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="54.641  -125.655  61.7055, 109.282  -180.296  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-137.935  38.637  61.7055, -204.857  77.2741  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-148.288  1.81601e-14  61.7055, -215.209  -38.637  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  148.288  61.7055, 20  222.929  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-38.637  137.935  61.7055, -77.2741  204.857  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="137.935  -38.637  61.7055, 204.857  -77.2741  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="137.935  38.637  61.7055, 204.857  77.2741  82.411"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="5.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  380, 0  0  475"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -40, 32  0  -50"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20  -222.929  82.411, 40  -297.57  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="109.282  -180.296  82.411, 163.923  -234.937  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-204.857  77.2741  82.411, -271.778  115.911  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-215.209  -38.637  82.411, -282.131  -77.2741  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20  222.929  82.411, 40  297.57  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-77.2741  204.857  82.411, -115.911  271.778  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="204.857  -77.2741  82.411, 271.778  -115.911  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="204.857  77.2741  82.411, 271.778  115.911  103.117"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="4.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  475, 0  0  570"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -50, 32  0  -60"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="40  -297.57  103.117, 60  -372.211  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="163.923  -234.937  103.117, 218.564  -289.578  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-271.778  115.911  103.117, -338.699  154.548  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-282.131  -77.2741  103.117, -349.052  -115.911  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="40  297.57  103.117, 60  372.211  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-115.911  271.778  103.117, -135.911  346.419  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="271.778  -115.911  103.117, 338.699  -154.548  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="271.778  115.911  103.117, 338.699  154.548  123.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  570, -10  1.22465e-15  587.32"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="0  0  570, 10  0  587.32"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -60, 32  0  -80"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="60  -372.211  123.822, 72.5  -418.862  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="218.564  -289.578  123.822, 252.715  -323.729  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-338.699  154.548  123.822, -380.525  178.696  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-349.052  -115.911  123.822, -390.878  -140.059  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="60  372.211  123.822, 72.5  418.862  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-135.911  346.419  123.822, -148.411  393.07  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="338.699  -154.548  123.822, 380.525  -178.696  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="3.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="338.699  154.548  123.822, 380.525  178.696  136.763"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-10  1.22465e-15  587.32, -12.5882  4.48288  606.639"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-10  1.22465e-15  587.32, -12.5882  -4.48288  606.639"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="10  0  587.32, 12.5882  -4.48288  606.639"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="10  0  587.32, 12.5882  4.48288  606.639"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -80, 32  0  -130"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="252.715  -323.729  136.763, 301.011  -407.38  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="252.715  -323.729  136.763, 321.016  -392.03  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-390.878  -140.059  136.763, -484.179  -165.059  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-390.878  -140.059  136.763, -452.966  -214.053  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-148.411  393.07  136.763, -173.411  486.371  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-148.411  393.07  136.763, -232.063  441.366  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="380.525  178.696  136.763, 477.118  178.696  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="380.525  178.696  136.763, 428.821  262.348  162.645"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  4.48288  606.639, -20.0882  17.4733  632.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  4.48288  606.639, -20.3528  4.48288  635.617"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  -4.48288  606.639, -25.5786  -11.9829  632.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  -4.48288  606.639, -12.5882  -25.6961  627.852"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  -4.48288  606.639, 20.0882  -17.4733  632.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  -4.48288  606.639, 20.3528  -4.48288  635.617"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  4.48288  606.639, 25.5786  11.9829  632.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  4.48288  606.639, 12.5882  25.6961  627.852"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -130, 32  0  -180"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="301.011  -407.38  162.645, 301.011  -503.973  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="321.016  -392.03  162.645, 389.317  -460.331  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-484.179  -165.059  162.645, -567.831  -116.763  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-452.966  -214.053  162.645, -515.055  -288.048  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-173.411  486.371  162.645, -198.411  579.672  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-232.063  441.366  162.645, -325.364  466.366  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="477.118  178.696  162.645, 570.419  153.696  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="428.821  262.348  162.645, 453.821  355.649  188.527"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.0882  17.4733  632.62, 2.4118  30.4636  617.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.0882  17.4733  632.62, -24.6635  22.0486  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.3528  4.48288  635.617, -34.8417  29.5784  643.381"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.3528  4.48288  635.617, -20.3528  4.48288  660.617"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-25.5786  -11.9829  632.62, -38.569  10.5171  617.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-25.5786  -11.9829  632.62, -30.8789  -15.6942  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  -25.6961  627.852, -35.0882  -38.6865  612.852"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-12.5882  -25.6961  627.852, -6.3382  -36.5214  649.503"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.0882  -17.4733  632.62, -2.4118  -30.4636  617.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.0882  -17.4733  632.62, 24.6635  -22.0486  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.3528  -4.48288  635.617, 34.8417  -29.5784  643.381"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.3528  -4.48288  635.617, 20.3528  -4.48288  660.617"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="25.5786  11.9829  632.62, 38.569  -10.5171  617.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="25.5786  11.9829  632.62, 30.1539  16.5582  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  25.6961  627.852, 35.0882  38.6865  612.852"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="12.5882  25.6961  627.852, 6.3382  36.5214  649.503"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -180, 32  0  -270"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="301.011  -503.973  188.527, 301.011  -600.566  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="389.317  -460.331  188.527, 472.969  -508.628  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-567.831  -116.763  188.527, -651.482  -68.4667  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-515.055  -288.048  188.527, -515.055  -384.64  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  579.672  188.527, -198.411  676.265  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-325.364  466.366  188.527, -421.957  466.366  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="570.419  153.696  188.527, 654.071  105.4  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="453.821  355.649  188.527, 502.118  439.301  214.409"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-24.6635  22.0486  656.768, -9.6635  48.0293  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-24.6635  22.0486  656.768, -49.759  36.5375  664.533"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.3528  4.48288  660.617, -31.1781  10.7329  682.267"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-20.3528  4.48288  660.617, -24.2351  -2.24144  689.595"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-30.8789  -15.6942  656.768, -52.5295  -3.19419  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-30.8789  -15.6942  656.768, -42.9529  -36.6071  663.238"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-6.3382  -36.5214  649.503, -13.8382  -49.5118  675.484"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-6.3382  -36.5214  649.503, 8.9711  -45.3602  667.181"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="24.6635  -22.0486  656.768, 9.6635  -48.0293  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="24.6635  -22.0486  656.768, 45.5764  -34.1227  663.238"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.3528  -4.48288  660.617, 31.1781  -10.7329  682.267"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="20.3528  -4.48288  660.617, 24.2351  2.24144  689.595"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="30.1539  16.5582  656.768, 51.8045  4.0582  656.768"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="30.1539  16.5582  656.768, 42.228  37.4711  663.238"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="6.3382  36.5214  649.503, 13.8382  49.5118  675.484"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="6.3382  36.5214  649.503, -8.9711  45.3602  667.181"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -270, 32  0  -360"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="301.011  -600.566  214.409, 301.011  -697.158  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="472.969  -508.628  214.409, 556.62  -556.924  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-651.482  -68.4667  214.409, -735.134  -20.1704  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-515.055  -384.64  214.409, -515.055  -481.233  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  676.265  214.409, -198.411  772.857  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-421.957  466.366  214.409, -518.549  466.366  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="654.071  105.4  214.409, 737.722  57.1037  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="502.118  439.301  214.409, 570.419  507.602  240.291"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-49.759  36.5375  664.533, -56.009  47.3628  686.183"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-49.759  36.5375  664.533, -62.259  36.5375  642.882"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-24.2351  -2.24144  689.595, -9.235  -2.24144  715.575"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-24.2351  -2.24144  689.595, -14.5932  -18.9416  712.576"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-42.9529  -36.6071  663.238, -53.7783  -42.8571  684.889"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-42.9529  -36.6071  663.238, -42.9529  -51.6071  637.258"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8.9711  -45.3602  667.181, 8.9711  -57.8602  688.831"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8.9711  -45.3602  667.181, 34.9519  -30.3602  667.181"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="45.5764  -34.1227  663.238, 51.8264  -44.948  684.889"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="45.5764  -34.1227  663.238, 58.0764  -34.1227  641.588"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="24.2351  2.24144  689.595, 9.2351  2.24144  715.575"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="24.2351  2.24144  689.595, 14.5932  18.9416  712.576"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="42.228  37.4711  663.238, 42.228  52.4711  637.258"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-8.9711  45.3602  667.181, -34.9519  30.3602  667.181"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -360, 32  0  -450"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="301.011  -697.158  240.291, 301.011  -755.114  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="556.62  -556.924  240.291, 606.811  -585.902  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-735.134  -20.1704  240.291, -785.325  8.8074  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-515.055  -481.233  240.291, -515.055  -539.188  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  772.857  240.291, -198.411  830.813  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-518.549  466.366  240.291, -576.505  466.366  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="2.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="737.722  57.1037  240.291, 787.913  28.1259  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="570.419  507.602  240.291, 599.397  557.793  255.82"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-56.009  47.3628  686.183, -48.9379  54.4338  668.863"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-56.009  47.3628  686.183, -65.6683  49.951  703.504"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-9.235  -2.24144  715.575, -20.0604  -8.49144  737.226"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-9.235  -2.24144  715.575, -16.3061  4.82963  698.255"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-53.7783  -42.8571  684.889, -60.8493  -35.786  667.569"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-53.7783  -42.8571  684.889, -56.3665  -52.5164  702.21"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8.9711  -57.8602  688.831, 13.9711  -66.5205  706.152"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="8.9711  -57.8602  688.831, 0.779598  -63.596  671.511"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="51.8264  -44.948  684.889, 44.7553  -52.019  667.569"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="51.8264  -44.948  684.889, 61.4857  -47.5362  702.21"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="9.2351  2.24144  715.575, 20.0604  8.49144  737.226"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="9.2351  2.24144  715.575, 16.3061  -4.82963  698.255"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="42.228  52.4711  637.258, 53.0533  58.7211  658.908"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-34.9519  30.3602  667.181, -34.9519  42.8602  688.831"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="32  0  -450, 32  0  -540"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="606.811  -585.902  255.82, 661.452  -640.543  276.525"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="606.811  -585.902  255.82, 684.086  -585.902  276.525"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-515.055  -539.188  255.82, -558.522  -614.475  279.114"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-515.055  -539.188  255.82, -495.055  -613.829  276.525"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  830.813  255.82, -198.411  917.746  279.114"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  830.813  255.82, -218.411  905.454  276.525"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="787.913  28.1259  255.82, 849.384  -33.3452  279.114"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="787.913  28.1259  255.82, 862.554  8.12592  276.525"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-65.6683  49.951  703.504, -60.6683  41.2907  720.824"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-65.6683  49.951  703.504, -70.1511  47.3628  722.822"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-56.3665  -52.5164  702.21, -47.7062  -47.5164  719.53"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-56.3665  -52.5164  702.21, -53.7783  -56.9992  721.528"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="61.4857  -47.5362  702.21, 56.4857  -38.8759  719.53"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="61.4857  -47.5362  702.21, 65.9686  -44.948  721.528"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="53.0533  58.7211  658.908, 60.1243  51.65  641.588"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="53.0533  58.7211  658.908, 55.6415  68.3804  676.229"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-34.9519  42.8602  688.831, -39.9519  51.5205  706.152"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.8"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-34.9519  42.8602  688.831, -27.8808  49.9313  671.511"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="661.452  -640.543  276.525, 716.094  -695.184  297.231"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="684.086  -585.902  276.525, 758.727  -565.902  297.231"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-558.522  -614.475  279.114, -633.808  -657.942  302.407"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-495.055  -613.829  276.525, -456.418  -680.751  297.231"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-198.411  917.746  279.114, -154.944  993.033  302.407"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-218.411  905.454  276.525, -273.052  960.095  297.231"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="849.384  -33.3452  279.114, 910.855  -94.8164  302.407"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="862.554  8.12592  276.525, 937.195  -11.8741  297.231"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-60.6683  41.2907  720.824, -65.6683  36.2907  727.895"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-60.6683  41.2907  720.824, -52.3031  39.0493  725.824"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-47.7062  -47.5164  719.53, -42.7062  -52.5164  726.601"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-47.7062  -47.5164  719.53, -45.4648  -39.1512  724.53"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="56.4857  -38.8759  719.53, 61.4857  -33.8759  726.601"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="56.4857  -38.8759  719.53, 48.1205  -36.6345  724.53"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="55.6415  68.3804  676.229, 46.9812  63.3804  693.549"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.7"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="55.6415  68.3804  676.229, 53.0533  72.8632  695.547"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="716.094  -695.184  297.231, 770.734  -749.825  317.936"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="758.727  -565.902  297.231, 825.648  -527.265  317.936"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-633.808  -657.942  302.407, -709.094  -701.408  325.701"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-456.418  -680.751  297.231, -417.781  -747.672  317.936"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-154.944  993.033  302.407, -79.658  1036.5  325.701"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-273.052  960.095  297.231, -327.693  1014.74  317.936"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="910.855  -94.8164  302.407, 972.33  -156.288  325.701"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="937.195  -11.8741  297.231, 1014.47  -11.8741  317.936"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="46.9812  63.3804  693.549, 41.9812  68.3804  700.62"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.5"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="46.9812  63.3804  693.549, 44.7398  55.0152  698.549"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="770.734  -749.825  317.936, 825.376  -804.466  338.642"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="825.648  -527.265  317.936, 892.569  -488.628  338.642"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-709.094  -701.408  325.701, -784.381  -744.875  348.995"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-417.781  -747.672  317.936, -379.144  -814.593  338.642"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-79.658  1036.5  325.701, -4.37152  1079.97  348.995"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-327.693  1014.74  317.936, -382.334  1069.38  338.642"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="972.33  -156.288  325.701, 1033.8  -217.759  348.995"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1014.47  -11.8741  317.936, 1091.74  -11.8741  338.642"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="825.376  -804.466  338.642, 874.552  -853.643  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="892.569  -488.628  338.642, 952.798  -453.854  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-784.381  -744.875  348.995, -811.149  -760.33  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-379.144  -814.593  338.642, -344.37  -874.823  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-4.37152  1079.97  348.995, 22.397  1095.42  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-382.334  1069.38  338.642, -431.511  1118.55  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.6"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1033.8  -217.759  348.995, 1055.65  -239.615  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1091.74  -11.8741  338.642, 1161.29  -11.8741  357.277"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-811.149  -760.33  357.277, -886.436  -716.863  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-811.149  -760.33  357.277, -886.436  -803.796  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="22.397  1095.42  357.277, 97.683  1138.89  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="22.397  1095.42  357.277, 65.8637  1170.71  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1055.65  -239.615  357.277, 1117.13  -301.086  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1055.65  -239.615  357.277, 1139.63  -217.115  380.571"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-886.436  -716.863  380.571, -947.907  -655.392  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-886.436  -803.796  380.571, -929.903  -879.083  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="97.683  1138.89  380.571, 172.97  1182.35  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="65.8637  1170.71  380.571, 65.8637  1257.64  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1117.13  -301.086  380.571, 1178.6  -362.557  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.3"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1139.63  -217.115  380.571, 1223.6  -194.615  403.864"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-947.907  -655.392  403.864, -1009.38  -593.921  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-929.903  -879.083  403.864, -973.369  -954.369  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="172.97  1182.35  403.864, 256.941  1159.85  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="65.8637  1257.64  403.864, 22.397  1332.93  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1178.6  -362.557  403.864, 1201.1  -446.529  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1223.6  -194.615  403.864, 1307.57  -172.115  427.158"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1009.38  -593.921  427.158, -1070.85  -532.45  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-973.369  -954.369  427.158, -1016.84  -1029.66  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="256.941  1159.85  427.158, 340.912  1137.35  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="22.397  1332.93  427.158, -21.0696  1408.21  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1201.1  -446.529  427.158, 1223.6  -530.5  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.2"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1307.57  -172.115  427.158, 1391.54  -149.615  450.452"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1070.85  -532.45  450.452, -1098.17  -505.129  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.4"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1016.84  -1029.66  450.452, -1036.15  -1063.12  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="340.912  1137.35  450.452, 378.233  1127.35  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-21.0696  1408.21  450.452, -40.3882  1441.67  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1223.6  -530.5  450.452, 1233.6  -567.82  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="1391.54  -149.615  450.452, 1428.86  -139.615  460.805"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1036.15  -1063.12  460.805, -1098.06  -1098.86  479.957"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1.1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1036.15  -1063.12  460.805, -1071.89  -1125.02  479.957"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1098.06  -1098.86  479.957, -1163.37  -1081.36  498.074"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="1"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1071.89  -1125.02  479.957, -1105.7  -1183.57  498.074"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1163.37  -1081.36  498.074, -1228.68  -1063.86  516.192"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1105.7  -1183.57  498.074, -1111.59  -1250.93  516.192"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1228.68  -1063.86  516.192, -1293.99  -1046.36  534.309"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1111.59  -1250.93  516.192, -1117.49  -1318.29  534.309"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1293.99  -1046.36  534.309, -1359.3  -1028.86  552.426"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+    <Transform translation="0 0 0">
+      <Shape>
+        <Appearance>
+          <Material/>
+          <LineProperties applied="true" linewidthScaleFactor="0.9"/>
+        </Appearance>
+        <LineSet vertexCount="2">
+          <Coordinate point="-1117.49  -1318.29  534.309, -1123.38  -1385.65  552.426"/>
+          <Color color="0 0 0, 0 0 0"/>
+        </LineSet>
+      </Shape>
+    </Transform>
+  </Scene>
+</X3D>

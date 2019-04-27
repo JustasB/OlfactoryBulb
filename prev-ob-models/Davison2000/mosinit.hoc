@@ -1,3 +1,0 @@
-load_file("nrngui.hoc")
-xopen("mit4_init.hoc")
-

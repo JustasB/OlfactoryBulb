@@ -1,0 +1,93 @@
+// assume show.hoc already loaded (via start.hoc).
+// i.e sc_ is a ShowConnect instance
+
+begintemplate RecordInfo
+public gid, sec, x, record, yvec, tvec, name
+objref vv, yvec, tvec, this
+external Mitral, Granule, nmitral
+strdef sec
+proc init() {
+	gid = $1
+	sec = $s2
+	x = $3
+}
+
+proc record() {localobj cell, s, pc
+  pc = new ParallelContext()
+  yvec = new Vector()
+  tvec = new Vector()
+  cell = pc.gid2cell(gid)
+  s = new String()
+  sprint(s.s, "%s.%s {yvec.record(&v(%g)) tvec.record(&t)}", cell, sec, x)
+  execute(s.s, this)
+}
+
+obfunc name() {localobj s
+  s = new String()
+  if (gid < nmitral) {
+	  sprint(s.s, "Mitral(%d).%s(%g)", gid, sec, x)
+  }else{
+	  sprint(s.s, "Granule(%d).%s(%g)", gid-nmitral, sec, x)
+  }
+  return s
+}
+endtemplate RecordInfo
+
+objref recinfo
+recinfo = new List(0)
+
+// record soma voltage for arglist of mitral indices
+proc rm() {local i
+	for i=1, numarg() {
+		sc_.msel.x[$i] = 1
+		recinfo.append(new RecordInfo($i, "soma", 0.5))
+	}
+}
+
+// record soma voltage for arglist of granule indices
+proc rg() {local i
+	for i=1, numarg() {
+		sc_.gsel.x[$i] = 1
+		recinfo.append(new RecordInfo($i+nmitral, "soma", 0.5))
+	}
+}
+
+// record mitral secden voltage at positions given by arglist of granule
+// indices. (first arg is mitral index). If mitral does not have a position
+// at an indicated granule index, then that granule index arg is ignored
+
+proc rmx() {local i, x  localobj sden
+	return // not implemented yet
+	sc_.msel.x[$1] = 1
+	for i=2, numarg() {
+		recinfo.append($1, sden.s, x)
+	}
+}
+
+proc go() {local i
+	sc_.create_subnet()
+	for i=0, recinfo.count-1 {
+		recinfo.o(i).record()
+	}
+	run()
+	pfile("tplot.dat")
+}
+
+proc pfile() {local i, sz  localobj f
+	f = new File()
+	f.wopen($s1)
+	sz = recinfo.o(0).tvec.size
+	f.printf("nrow ncol\n")
+	f.printf("%d %d\n", sz, recinfo.count + 1)
+	f.printf("t\n")
+	for i=0, recinfo.count-1 {
+		f.printf("%s\n", recinfo.o(i).name().s)
+	}
+	for i=0, sz-1 {
+		f.printf("%g", recinfo.o(0).tvec.x[i])
+		for j=0, recinfo.count-1 {
+			f.printf(" %g", recinfo.o(j).yvec.x[i])
+		}
+		f.printf("\n")
+	}
+}

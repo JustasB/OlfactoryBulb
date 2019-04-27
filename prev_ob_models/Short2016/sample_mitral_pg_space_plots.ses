@@ -1,0 +1,58 @@
+objectvar save_window_, rvp_
+objectvar scene_vector_[7]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{
+save_window_ = new Graph(0)
+save_window_.size(-987.5,525,-80,40)
+scene_vector_[4] = save_window_
+{save_window_.view(-987.5, -80, 1512.5, 120, 111, 372, 300.48, 200.32)}
+flush_list.append(save_window_)
+save_window_.save_name("flush_list.")
+objectvar rvp_
+rvp_ = new RangeVarPlot("v")
+m1.secden[1] rvp_.begin(1)
+m1.secden[0] rvp_.end(1)
+rvp_.origin(12.5)
+save_window_.addobject(rvp_, 2, 1, 0.8, 0.9)
+objectvar rvp_
+rvp_ = new RangeVarPlot("v")
+m1.secden[1] rvp_.begin(1)
+m1.tuftden rvp_.end(1)
+rvp_.origin(12.5)
+save_window_.addobject(rvp_, 3, 1, 0.8, 0.9)
+}
+{
+save_window_ = new PlotShape(0)
+save_window_.size(-282.792,214.292,-266.667,229.667)
+save_window_.variable("v")
+scene_vector_[5] = save_window_
+{save_window_.view(-282.792, -266.667, 497.083, 496.333, 451, 471, 200.64, 200.32)}
+fast_flush_list.append(save_window_)
+save_window_.save_name("fast_flush_list.")
+}
+{
+save_window_ = new PlotShape(0)
+save_window_.size(-214.635,1114.64,-43.467,513.467)
+save_window_.variable("v")
+scene_vector_[3] = save_window_
+{save_window_.view(-214.635, -43.467, 1329.27, 556.934, 455, 364, 454.08, 189.76)}
+fast_flush_list.append(save_window_)
+save_window_.save_name("fast_flush_list.")
+}
+{
+save_window_ = new Graph(0)
+save_window_.size(-94,108,-80,40)
+scene_vector_[6] = save_window_
+{save_window_.view(-94, -80, 202, 120, 109, 105, 300.48, 200.32)}
+flush_list.append(save_window_)
+save_window_.save_name("flush_list.")
+objectvar rvp_
+rvp_ = new RangeVarPlot("v")
+pg1.gemmbody1 rvp_.begin(1)
+pg1.dend rvp_.end(1)
+rvp_.origin(8)
+save_window_.addobject(rvp_, 2, 1, 0.8, 0.9)
+}
+objectvar scene_vector_[1]
+{doNotify()}

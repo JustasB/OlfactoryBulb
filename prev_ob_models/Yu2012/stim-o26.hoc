@@ -1,0 +1,269 @@
+objref inp
+numodors=73
+numactive=500
+ngranule=10000
+stod=global_stod //2
+endod=global_endod //1000
+double odors[numodors][numactive]
+
+{
+	inp=new File()
+	inp.ropen("odors-forsim500-kensaku.txt")
+	for od=0, numodors-1 {
+		for tf=0, numactive-1 {
+			odors[od][tf]=inp.scanvar()
+//			print " odor ",od, " mitral ",tf, odors[od][tf]
+		}
+	}
+	inp.close()
+}
+
+begintemplate OBStim
+public nc, mgid, exists, ww,si,sw,odors, pr, wl, wh, spktime
+
+external cvode, owfactor, stod, endod
+objref nc, rinterval, rweight, fih, this, spktime
+
+proc init(){localobj cell, pc, nil
+	pc = new ParallelContext()
+	exists = 0
+	// $1 is mitral_gid
+	mgid = $1
+	si=1
+	sw=1
+	ww=0
+	wl=0.2
+	wh=0.3
+//	stod = 2
+//	endod=1000
+    if (pc.gid_exists(mgid)) {
+	exists = 1
+//	seed_interval = mgid*10000 + 1
+//	seed_weight = mgid*10000 + 5000
+	cell = pc.gid2cell(mgid)
+	nc = new NetCon(nil, cell.synodor)
+	nc.delay = 0.5
+	spktime = new Vector()
+	fih = new FInitializeHandler(0, "init_ev()", this)
+    }
+}
+
+proc init_ev() {
+	//printf("%s t=%g %g\n", this, t, stod)
+	spktime.resize(0)
+
+	seed_interval = si*10000 + 1
+	seed_weight = sw*10000 + 5000
+
+	rinterval = new Random()
+	rinterval.MCellRan4(seed_interval)
+	rinterval.uniform(100, 250)
+
+	rweight = new Random()
+	rweight.MCellRan4(seed_weight)
+	rweight.uniform(wl, wh)
+
+	cvode.event(t + stod, "ev()")//, this)
+	nc.event(t + stod + nc.delay)
+	nc.weight = 0
+}
+
+proc ev() {local next, dummy
+	spktime.append(t)
+	dummy=rweight.repick()
+	if (t>=stod && t<=endod){nc.weight = ww*dummy*owfactor} else {nc.weight=0}
+	next = rinterval.repick()
+//	next = 800
+//	printf("%s t=%g %g mt=%d rnd=%g w=%g\n", this, t, next, mgid, dummy, nc.weight)
+	next += t
+
+	cvode.event(next, "ev()")//, cell.synodor,1)
+	nc.event(next + nc.delay)
+}
+
+proc pr() {
+    printf("%d %g %g %g %g %g %g %g\n", mgid, seed_interval, seed_weight, ww, wl, wh, stod, endod)
+}
+
+endtemplate OBStim
+
+// MT noise---1.5 Hz
+begintemplate MNoiseStim
+public ggid, exists, nc, seed, wx, wlx, whx, six, swx
+external cvode, stod, endod
+objref nc, rinterval, rweight, fih, this
+
+proc init() { localobj cell, pc, nil 
+	pc = new ParallelContext()
+        //start=0
+	exists = 0
+	// $1 is granule_gid
+	ggid = $1
+	six=ggid*10000
+	swx=ggid*20000+2
+	wx=1e-2
+	wlx=0.3
+	whx=0.7
+//	stod = 2
+//	endod=1000
+
+    if (pc.gid_exists(ggid)) {
+        exists = 1
+        cell = pc.gid2cell(ggid)
+
+        // Connect to the synapse
+        nc=new NetCon(nil,cell.external_syn)
+//        nc.weight=0.032
+//        seed=ggid*1000
+        fih = new FInitializeHandler(0, "init_ev()", this)
+    }
+}
+
+proc init_ev() {
+	//printf("%s t=%g %g\n", this, t, stod)
+        
+        seed_interval = six*2000+1
+        seed_weight = swx*2000+5000
+        rinterval = new Random()
+	rinterval.MCellRan4(seed_interval)
+	rinterval.uniform(100,700)
+
+        rweight = new Random()
+        rweight.MCellRan4(seed_weight)
+	rweight.uniform(wlx,whx)
+
+
+	cvode.event(t, "ev()")//, this)
+	nc.event(t + stod + nc.delay)
+	//nc.weight = 0
+}
+
+proc ev() {local next, dummyx
+        dummyx=rweight.repick()
+       	if (t>=stod && t<=endod){nc.weight = wx*dummyx} else {nc.weight=0}
+	next = rinterval.repick()
+	// printf("%s t=%g %g w=%g\n", this, t, next, nc.weight)
+	next += t
+
+//	if (next<endod) {
+    if (next>t) {
+		cvode.event(next, "ev()")//, this)
+		nc.event(next + nc.delay)
+	}
+}
+endtemplate MNoiseStim
+
+// GC noise---1.5 Hz
+begintemplate GNoiseStim
+public ggid, exists, nc, seed, wx, wlx, whx, six, swx
+external cvode, stod, endod
+objref nc, rinterval, rweight, fih, this
+
+proc init() { localobj cell, pc, nil 
+	pc = new ParallelContext()
+        //start=0
+	exists = 0
+	// $1 is granule_gid
+	ggid = $1
+	six=ggid*10000
+	swx=ggid*20000+2
+	wx=1e-3
+	wlx=0.5
+	whx=1.5
+//	stod = 2
+//	endod=1000
+
+    if (pc.gid_exists(ggid)) {
+        exists = 1
+        cell = pc.gid2cell(ggid)
+
+        // Connect to the synapse
+        nc=new NetCon(nil,cell.external_syn)
+//        nc.weight=0.032
+//        seed=ggid*1000
+        fih = new FInitializeHandler(0, "init_ev()", this)
+    }
+}
+
+proc init_ev() {
+	// printf("%s t=%g %g\n", this, t, stod)
+        
+        seed_interval = six*2000+1
+        seed_weight = swx*2000+5000
+        rinterval = new Random()
+	rinterval.MCellRan4(seed_interval)
+	rinterval.uniform(100,900)
+
+        rweight = new Random()
+        rweight.MCellRan4(seed_weight)
+	rweight.uniform(wlx,whx)
+
+
+	cvode.event(t, "ev()")//, this)
+	nc.event(t + stod + nc.delay)
+	//nc.weight = 0
+}
+
+proc ev() {local next, dummyx
+        dummyx=rweight.repick()
+       	if (t>=stod && t<=endod){nc.weight = wx*dummyx} else {nc.weight=0}
+	next = rinterval.repick()
+	// printf("%s t=%g %g w=%g\n", this, t, next, nc.weight)
+	next += t
+
+//	if (next<endod) {
+    if (next>t) {
+		cvode.event(next, "ev()")//, this)
+		nc.event(next + nc.delay)
+	}
+}
+endtemplate GNoiseStim
+
+
+objref stim_list_
+objref mt_noise_stim_list_
+objref gc_noise_stim_list_
+
+proc create_stim() {localobj nil, wl, wh, mts, gns
+	stim_list_ = new List()
+        mt_noise_stim_list_=new List()
+	index=0
+	od=26
+	for i=0, numactive-1 {
+		stim_list_.append(new OBStim(i)) 
+		stim_list_.o(index).ww=odors[od][i]
+		stim_list_.o(index).si=global_si
+		stim_list_.o(index).sw=index
+//		stim_list_.o(index).stod=2
+//		stim_list_.o(index).endod=1000
+		stim_list_.o(index).wl=global_wl //0.08
+		stim_list_.o(index).wh=global_wh  //0.12
+	
+                mts=new MNoiseStim(i)
+                mt_noise_stim_list_.append(mts)
+	        mt_noise_stim_list_.o(index).six=i+1000
+	        mt_noise_stim_list_.o(index).swx=index+5000
+		index=index+1
+            	}
+	    // Add the noisy stims to granule cells.
+    		gc_noise_stim_list_=new List()
+    		index=0
+    		for i=numactive, numactive+ngranule-1 {
+    	         gns=new GNoiseStim(i)
+       		 gc_noise_stim_list_.append(gns)
+   	         gc_noise_stim_list_.o(index).six=index+3000
+	         gc_noise_stim_list_.o(index).swx=index+7000
+   	  	 index=index+1
+        		 }
+}
+
+create_stim()
+
+proc all_obstim_pr() {local i  localobj list
+  list = new List("OBStim")
+  print "total stims: ", list.count()
+  for i=0, list.count-1 {list.object(i).pr()}
+}
+
+//all_obstim_pr()
+

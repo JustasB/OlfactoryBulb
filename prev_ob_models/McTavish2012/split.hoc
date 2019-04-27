@@ -1,0 +1,88 @@
+if (!name_declared("is_split")) {execute("is_split = 0")}
+
+splitbit = 6e8
+func basegid() {
+	// from piece gid, return base gid
+	return $1 % splitbit
+}
+func piecegid() {
+	// from base gid return -1 if no piece on this cpu, otherwise
+	// the piece gid
+	// note that if several pieces of a mitral cell exist on this
+	// cpu, then the smallest gid is returned
+	if (pc.gid_exists($1)) {
+		return $1
+	}else if (pc.gid_exists($1 + splitbit)) {
+		return $1 + splitbit
+	}else if (pc.gid_exists($1 + 2*splitbit)) {
+		return $1 + 2*splitbit
+	}else{
+		return -1
+	}
+}
+obfunc gid2piece() {local sgid  localobj nil
+	// from base gid return nil if no piece, otherwise
+	// the cell piece object
+	// note that a cell object may contain 1, 2, or 3 mitral pieces
+	sgid = piecegid($1)
+	if (sgid >= 0) {
+		return pc.gid2cell(sgid)
+	}else{
+		return nil
+	}
+}
+
+func exists() {localobj cell
+	cell = gid2piece($1)
+	if (object_id(cell)) if (section_exists($s2, cell)) {
+		return 1
+	}
+	return 0
+}
+
+// split a mitral cell ($1 gid, $o2 whole cell) into three pieces
+// destroy the pieces not on this cpu
+// and connect pieces with multisplit
+// arg is the base gid
+proc splitmitral() {localobj cell, sl, nil
+	if ($1 >= num_mitral) return // it is a granule
+	cell = $o2
+	if (is_split == 0) {
+		//cell.axon pc.cell($1, new NetCon(&v(1), nil), 1)
+		cell.soma pc.cell($1, new NetCon(&v(.5), nil), 1)
+		// do not split
+		return
+	}
+	// split
+	cell.secden[0] disconnect()
+	cell.secden[1] disconnect()
+	// destroy what is not supposed to exist on this cpu
+	if (!pc.gid_exists($1 + splitbit)) {
+		cell.secden[0] delete_section()
+	}
+	if (!pc.gid_exists($1 + 2*splitbit)) {
+		cell.secden[1] delete_section()
+	}
+	if (!pc.gid_exists($1)) {
+		sl = new SectionList()
+		cell.soma sl.wholetree()
+		forsec sl {
+			delete_section()
+		}
+	}
+	// multisplit connect using the base gid
+	// also associate the split gids with the cell object
+	if (pc.gid_exists($1))cell.soma {
+		pc.multisplit(.5, $1)
+		//cell.axon pc.cell($1, new NetCon(&v(1), nil), 1)
+		pc.cell($1, new NetCon(&v(.5), nil), 1)
+	}
+	if (pc.gid_exists($1 + splitbit)) cell.secden[0] {
+		pc.multisplit(0, $1)
+		pc.cell($1 + splitbit, new NetCon(&v(.5), nil), 0)
+	}
+	if (pc.gid_exists($1 + 2*splitbit)) cell.secden[1] {
+		pc.multisplit(0, $1)
+		pc.cell($1 + 2*splitbit, new NetCon(&v(.5), nil), 0)
+	}
+}

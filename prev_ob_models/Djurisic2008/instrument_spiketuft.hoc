@@ -1,0 +1,40 @@
+// $Id: instrument_spiketuft.hoc,v 1.1 2007/03/11 04:38:42 ted Exp ted $
+
+// based on instrument_probetuft.hoc
+
+// this assumes that geometry will not be changed
+// otherwise, it would be necessary to calculate distance in proc init()
+
+soma {
+  area(0.5)  // force initialization of geometry
+  distance(0, 0.5)  // origin is mid-soma
+  // origin needs to be default (i.e. 0) for ready comparison with Impedance tool GUI
+  distance()  // origin is soma(0)
+}
+
+forsec tuft {
+  insert monx
+  for (x,0) dist_monx(x) = distance(x)  // avoid 0 & 1 ends; otherwise overwrites adjacent internal nodes
+}
+
+// we've given up on RangeVarPlots of peak amplitude, 
+// so call the distance tuftorigin rather than rvporigin
+apic[1] {
+//  insert monx
+//  for (x,0) dist_monx(x) = distance(x)
+//  rvporigin = distance(1) // use apic[1](1) as origin of RangeVarPlot of vmax_monx
+  tuftorigin = distance(1) // use apic[1](1) as origin of tuft for scatterplots
+}
+
+// <<>> is this needed for init_spiketuft.hoc?
+// create a List of SectionRefs that point to terminal branches in tuft
+objref tempref, terminalreflist
+terminalreflist = new List()
+forsec tuft {
+  tempref = new SectionRef()
+  if (tempref.nchild() == 0) {
+//    tempref.sec print secname()  // for development/diagnostic purposes only
+    terminalreflist.append(tempref)
+  }
+}
+objref tempref

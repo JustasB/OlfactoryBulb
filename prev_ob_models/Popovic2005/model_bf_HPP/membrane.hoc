@@ -1,0 +1,24 @@
+proc set_membrane() { local Rms
+  Cms = $1
+  Rms = $2
+  Raxial = $3
+  forall {
+      insert pas
+      e_pas = Erest
+      g_pas = 1/Rms
+      Ra = Raxial
+      cm = Cms
+  }
+}
+set_membrane(1.18,9600,54)
+
+//objref epsp1
+//tuft_nl.sect[0] epsp1 = new EPSPClamp(0)
+//epsp1.delay = 36
+//epsp1.rs=1
+
+objref hpp_stim
+soma_sc hpp_stim = new IClamp(0)
+hpp_stim.del=100
+hpp_stim.dur=800
+hpp_stim.amp=-1

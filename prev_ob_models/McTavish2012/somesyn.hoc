@@ -1,0 +1,37 @@
+begintemplate SomeSyn
+external graphList, tstop
+objref g, cells
+proc init() {local i
+	build()
+	draw($o1)
+}
+
+proc unref() {
+	//print "refcount=", $1
+	if ($1 == 0) {
+		graphList[0].remove(graphList.index(g))
+	}
+}
+
+proc build() {
+	g = new Graph(0)
+	g.view(0, 0, 1, 1, 400, 250, 700, 250)
+	graphList[0].append(g)
+	g.size(0, tstop, 0, 1)
+}
+proc draw() {local i, m, gr  localobj nc, syn, s, s2
+	s = new String()
+	s2 = new String()
+	g.label(.6,.9,"",2)
+	for i=0, $o1.count-1 {
+		nc = $o1.object(i)
+		syn = nc.syn
+		m = syn.mgid		
+		ggid = syn.ggid
+		sprint(s2.s, "%s.weight[2]", nc)
+		sprint(s.s, "(%s, %d, %d) %s", syn, m, ggid, nc)
+		g.addvar(s.s, s2.s)
+	}
+}
+endtemplate SomeSyn
+

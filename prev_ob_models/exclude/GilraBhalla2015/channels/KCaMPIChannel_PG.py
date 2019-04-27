@@ -1,0 +1,100 @@
+#!/usr/bin/env python
+# -*- coding: utf-8 -*-
+import sys
+import math
+import os
+
+# The PYTHONPATH should contain the location of moose.py and _moose.so
+# files.  Putting ".." with the assumption that moose.py and _moose.so
+# has been generated in ${MOOSE_SOURCE_DIRECTORY}/pymoose/ (as default
+# pymoose build does) and this file is located in
+# ${MOOSE_SOURCE_DIRECTORY}/pymoose/examples
+# sys.path.append('..\..')
+try:
+    import moose
+except ImportError:
+    print "ERROR: Could not import moose. Please add the directory containing moose.py in your PYTHONPATH"
+    import sys
+    sys.exit(1)
+
+from channelConstants import *
+
+##### MPI stuff
+## This Channel needs to write a data file and have it read by moose -
+## since moose doesn't support assignment to individual elements in the 2D table in HHChannel2D.
+## I don't want to make every process generate the same data file,
+## so have KCaChannel.py generate the file once in this directory.
+
+VKCa = -80.0e-3 # Volts # kca3.mod has a vshift=-10mV in addition to ek=-70mV
+
+GKCa = 142.0*sarea # Siemens, from mit4.hoc
+
+CaMIN = 0.0
+CaMAX = 1.0e-2 # mol/m^2 same as millimol/litre
+CaNDIVS = 100
+
+class KCaChannel_PG(moose.HHChannel2D):
+    """KCa channel inherits from HHChannel2D."""
+    def __init__(self, *args):
+        """Setup the KCa channel with defaults"""
+        moose.HHChannel2D.__init__(self,*args)
+        ### Since this channel is table based and
+        ### this script is for reading in of KCaA.dat and KCaB.dat,
+        ### while KCaChannel.py is for writing these tables,
+        ### we hard code the VMIN, VMAX and NDIVS
+        ### so that those in globalConstants.py
+        ### do not spoil the reading in of already created tables.
+        VMIN = -0.1 # V
+        VMAX = 0.05 # V
+        NDIVS = 150
+        dv = (VMAX-VMIN)/NDIVS
+        ## For HHChannel2D; Ek, Gbar, etc don't get set via python assignments!!!
+        ## Have to use moose shell commands.
+        #self.Ek = VKCa
+        self.getContext().runG('setfield '+self.path+' Ek '+str(VKCa))
+        #self.Gbar = GKCa
+        self.getContext().runG('setfield '+self.path+' Gbar '+str(GKCa))
+        self.addField('ion')
+        self.setField('ion','K')
+        self.addField('ionDependency')
+        self.setField('ionDependency','Ca')
+        ## This will create HHGate2D instance xGate inside the KCa channel.
+        ## (2D since it is within HHChannel2D)
+        self.Xpower = 1
+        ## VOLT_C1_INDEX: VOLTAGE message specifies x variable
+        ## and CONCEN1 variable specifies y variable of X_A and X_B tables;
+        ## pg 323, sec 19.4.6 of Book of Genesis
+        self.Xindex = "VOLT_C1_INDEX"
+        ## xGate was already created and wrapped when Xpower was set non-zero
+        #self.xGate = moose.HHGate2D(self.path + "/xGate")
+        #self.getContext().runG("showfield "+self.path +"/xGate/A -all")
+        self.xGate.A.xmin = VMIN
+        self.xGate.A.xmax = VMAX
+        #self.xGate.A.xdivs = NDIVS # these get overridden by the number of values in the table
+        self.xGate.B.xmin = VMIN
+        self.xGate.B.xmax = VMAX
+        #self.xGate.B.xdivs = NDIVS # these get overridden by the number of values in the table
+
+        ### HHGate2D is not wrapped properly in pyMOOSE. ymin, ymax and ydivs are not exposed.
+        ### Setting them creates new and useless attributes within HHGate2D without warning!
+        ### Hence use runG to set these via Genesis command
+        self.getContext().runG("setfield "+self.path+"/xGate/A"+\
+            #" ydivs "+str(CaNDIVS)+\ # these get overridden by the number of values in the table
+            " ymin "+str(CaMIN)+\
+            " ymax "+str(CaMAX))
+        self.getContext().runG("setfield "+self.path+"/xGate/B"+\
+            #" ydivs "+str(CaNDIVS)+\ # these get overridden by the number of values in the table
+            " ymin "+str(CaMIN)+\
+            " ymax "+str(CaMAX))
+
+        ### PRESENTLY, Interpol2D.cpp in MOOSE only allows loading via a data file,
+        ### one cannot set individual entries A[0][0] etc.
+        ### Thus pyMOOSE also has not wrapped Interpol2D
+
+        #### KCaA_PG.dat and KCaB_PG.dat MUST have been generated previously by KCaChannel_PG.py
+        #### and kept in the directory where this channel file is kept
+
+        selfdir = os.path.dirname(__file__)
+        if selfdir != '': selfdir += os.sep
+        self.getContext().runG("call "+self.path+"/xGate/A load "+selfdir+"KCaA_PG.dat 0")
+        self.getContext().runG("call "+self.path+"/xGate/B load "+selfdir+"KCaB_PG.dat 0")
