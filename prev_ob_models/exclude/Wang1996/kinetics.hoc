@@ -1,22 +1,4 @@
-load_file("nrngui.hoc")
-cvode.active(1)
-cvode.atol(1.e-3)
-create a
-a	{nseg=1 diam=5 L=5 
-	insert kamt ek=-85 sha_kamt=0 shi_kamt=0
-	insert kdrmt ek=-85
-	insert pas g_pas=1/10000 Ra=150 cm=1}
-access a
-
-celsius=24
-tstop=200
-vlow=-90
-vhigh=60
-dt=0.1
-
-mtfac=1
-htfac=5
-drfac=10
+xload("mitral.hoc")
 
 objref gk, b,gt,vc, gs,c, gf,ic
 b = new VBox()
