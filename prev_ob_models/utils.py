@@ -1,4 +1,5 @@
 import os, inspect
+debug = False
 
 class RunInClassDirectory:
     '''
@@ -18,11 +19,16 @@ class RunInClassDirectory:
         self.cur_dir = os.getcwd()
         class_file = inspect.getfile(self.the_class)
         class_dir = os.path.join(os.getcwd(), os.path.dirname(class_file))
-        print('Temporarily changing directory to', class_dir)
+
+        if debug:
+            print('Temporarily changing directory to', class_dir)
+
         os.chdir(class_dir)
 
     def __exit__(self, exc_type, exc_value, traceback):
-        print('Restoring working dir to', self.cur_dir)
+        if debug:
+            print('Restoring working dir to', self.cur_dir)
+
         os.chdir(self.cur_dir)
 
 

@@ -25,6 +25,31 @@ class Cell(BaseModel):
     class Meta:
         table_name = 'cell'
 
+class Source(BaseModel):
+    error_type = TextField(null=True)
+    id = TextField(primary_key=True)
+    journal_book_title = TextField(null=True)
+    liquid_junction_potential = TextField(null=True)
+    notes = TextField(null=True)
+    publication_class = TextField(null=True, unique=True)
+    temperature_celsius = UnknownField(null=True)  # FLOAT
+    title = TextField(null=True)
+    url = TextField()
+
+    class Meta:
+        table_name = 'source'
+
+class CellModel(BaseModel):
+    rowid = IntegerField(primary_key=True)
+    cell_type = ForeignKeyField(column_name='cell_type', field='id', model=CellType, null=True)
+    isolated_model_class = TextField(null=True)
+    name = TextField(null=True)
+    source = ForeignKeyField(column_name='source_id', field='id', model=Source, null=True)
+
+    class Meta:
+        table_name = 'cell_model'
+        primary_key = False
+
 class Glomerulus(BaseModel):
     radius = FloatField()
     x = FloatField()
@@ -60,25 +85,17 @@ class LfpElectrode(BaseModel):
     class Meta:
         table_name = 'lfp_electrode'
 
-class Source(BaseModel):
-    journal_book_title = TextField(null=True)
-    short_title = TextField()
-    title = TextField(null=True)
-    url = TextField()
-    year = IntegerField(null=True)
-
-    class Meta:
-        table_name = 'source'
-
 class Property(BaseModel):
     id = TextField(primary_key=True)
     is_emergent = IntegerField(null=True)
+    units = TextField(null=True)
     mean = FloatField(null=True)
     n = IntegerField(null=True)
     name = TextField(null=True)
-    type = TextField(null=True)
     picked_value = FloatField(null=True)
     std = FloatField(null=True)
+    test_class_generic = TextField(null=True)
+    type = TextField(null=True)
 
     class Meta:
         table_name = 'property'
@@ -88,11 +105,12 @@ class Measurement(BaseModel):
     n = IntegerField()
     notes = TextField(null=True)
     property = ForeignKeyField(column_name='property_id', field='id', model=Property)
-    source = ForeignKeyField(column_name='source_id', field='id', model=Source)
+    source = ForeignKeyField(column_name='source_id', field='id', model=Source, null=True)
     std = FloatField(null=True)
 
     class Meta:
         table_name = 'measurement'
+        primary_key = False
 
 class SqliteSequence(BaseModel):
     name = UnknownField(null=True)  # 

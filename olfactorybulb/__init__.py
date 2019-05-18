@@ -1,8 +1,10 @@
 from database import *
-from netpyne import specs as netpyne_specs, sim as netpyne_sim
 
 class OlfactoryBulb:
+
     def __init__(self):
+        from netpyne import specs as netpyne_specs, sim as netpyne_sim
+
         # Load parameters
 
         # import pydevd
