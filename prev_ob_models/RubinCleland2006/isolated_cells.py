@@ -12,4 +12,4 @@ class MC(IsolatedCell):
             self.soma = self.h.soma
 
             h.cvode_active(0)
-            h.dt = 0.01
+            h.dt = 1/16.0 # Using instead of 0.01
