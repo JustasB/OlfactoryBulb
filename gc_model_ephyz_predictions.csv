@@ -1,0 +1,492 @@
+,CellCapacitanceTestBurtonUrban2015,FISlopeTestBurtonUrban2015,InputResistanceTestBurtonUrban2015,InputResistanceTestStroh2012,MembraneTimeConstantTestBurtonUrban2015,RestingVoltageTestBurtonUrban2015,RestingVoltageTestStroh2012,RheobaseTestBurtonUrban2015,SagVoltageTestHu2016,SpikeAmplitudeTestBurtonUrban2015,SpikeHalfWidthTestBurtonUrban2015,SpikeThresholdTestBurtonUrban2015,model
+0,77.35575096668428 pF,110.0 Hz/nA,1386.451539281037 megaohm,1357.4673917483087 megaohm,107.25 ms,-65.21934366148022 mV,-65.21934366148022 mV,1.9523636047288637 pA,0.004046523755391718 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Davison2003.isolated_cells.GC
+1,90.6650142919938 pF,100.0 Hz/nA,1398.003419398266 megaohm,1367.899345492044 megaohm,126.75 ms,-65.20476726582473 mV,-65.20476726582473 mV,1.8447018446477146 pA,-19.15338251731768 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.KaplanLansner2014.isolated_cells.GC
+2,10.034581212228664 pF,370.0 Hz/nA,2242.2460413774243 megaohm,1545.1890289203407 megaohm,22.5 ms,-75.07777988138997 mV,-75.07802331672724 mV,13.210205212641862 pA,-5.634939964746408 mV,[63.96116367] mV,1.5000000000000568 ms,[-31.4684936] mV,prev_ob_models.LiCleland2013.isolated_cells.GC
+3,18.110300644814686 pF,350.0 Hz/nA,1352.8212745057217 megaohm,1310.1328766209344 megaohm,24.5 ms,-67.50947489031986 mV,-67.51102522367464 mV,24.366567415442855 pA,-1.1091955601455226 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.McTavish2012.isolated_cells.GC
+4,20.779964860087706 pF,350.0 Hz/nA,1028.6350407192065 megaohm,997.5688751525444 megaohm,21.375 ms,-67.62806441914725 mV,-67.6304706444295 mV,32.10226613179888 pA,0.002434166978360963 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Migliore2008microcircuits.isolated_cells.GC
+5,17.078705962320306 pF,340.0 Hz/nA,1346.7062464066935 megaohm,1306.2974482213103 megaohm,23.0 ms,-67.50718959112356 mV,-67.50713394364419 mV,23.88894766424388 pA,0.0009436813120089482 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Migliore2014bulb3d.isolated_cells.GC
+6,18.110295868182092 pF,350.0 Hz/nA,1352.8216313154746 megaohm,1310.189777822552 megaohm,24.5 ms,-67.50932203130452 mV,-67.51004044440288 mV,24.366505816472188 pA,0.00018496423247427174 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Migliore2015operators.isolated_cells.GC
+7,20.779964860087706 pF,350.0 Hz/nA,1028.6350407192065 megaohm,997.5688751525444 megaohm,21.375 ms,-67.62806441914725 mV,-67.6304706444295 mV,32.10226613179888 pA,0.002434166978360963 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.MiglioreMcTavish2013.isolated_cells.GC
+8,22.168194962337154 pF,20.0 Hz/nA,1031.8837433026765 megaohm,964.6936902650829 megaohm,22.875 ms,-69.80493285239086 mV,-69.80729544985823 mV,77.68956831908613 pA,0.0022284979977911235 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Saghatelyan2005.isolated_cells.GC
+9,18.110300644814686 pF,350.0 Hz/nA,1352.8212745057217 megaohm,1310.1328766209344 megaohm,24.5 ms,-67.50947489031986 mV,-67.51102522367464 mV,24.366567415442855 pA,-1.1091955601455226 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Short2016.isolated_cells.GC
+10,18.110295868182092 pF,350.0 Hz/nA,1352.8216313154746 megaohm,1310.189777822552 megaohm,24.5 ms,-67.50932203130452 mV,-67.51004044440288 mV,24.366505816472188 pA,0.00018496423247427174 mV,"Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 382, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 393, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+","Traceback (most recent call last):
+  File ""<ipython-input-2-c3138b1a791a>"", line 51, in dowork
+    result = test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 360, in generate_prediction_nocache
+    ap = self.get_dependent_prediction(FirstSpikeTestHelper, model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 93, in get_dependent_prediction
+    return dependent_test.generate_prediction(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/__init__.py"", line 27, in generate_prediction
+    result = self.generate_prediction_nocache(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 350, in generate_prediction_nocache
+    return self.get_first_ap(model)
+  File ""/home/justas/Repositories/neuronunit_justasb/neuronunit/tests/olfactory_bulb/tests.py"", line 345, in get_first_ap
+    raise Exception(""The voltage trace does not contain any detectable action potentials using method: "" + self.threshold_method)
+Exception: The voltage trace does not contain any detectable action potentials using method: dv/dt=20
+",prev_ob_models.Yu2012.isolated_cells.GC
