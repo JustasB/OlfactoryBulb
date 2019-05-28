@@ -1,0 +1,54 @@
+ok so now i have the scores of all the models, including models with the lowest score
+
+the results here are a major section of the project: which of the existing models most closelly model the experimental data?
+
+to present this section, i would want:
+	-table with all the exp data, model scores, z scores and total score per model (as supplementary table)
+		-sorted by the model score
+		-the same table should contain our model, with the goal of showing a better score
+	-the traces of the best previous model - a figure arranged
+	-traces of my best fitted model - either same or another figure, for comparison
+
+could make the above during the fitting process
+
+diam, L control input resistance, rheobase
+Cm controls time constant and delay to first spike and FI slope
+g_pass or gl_hh controls input resistance and resting v slightly
+
+e_pass affects the resting potentialsom
+el_hh controls resting potential strongly
+
+ena controls fi slope, spike height
+ek resting potential, rheobase, spontaneus firing
+
+gnabar_hh rheobase, fi slope, spont firing, spike height
+
+gkbar_hh rheobnase, resting potnetial, AHP
+	-if too small, AP will not AHP
+
+what wee need is to set up a pipeline where params are set, and then tests are run, score computed
+	i think the primary issue is WHICH params to vary? which channels to include FIRST? what are the ranges of the params
+
+	probably channels from the closest cells can be reused
+	
+	can look at papers that report wierd features like sags and rebound spikes and isi variabily
+
+	the other issue is channel distribution - soma, apical, lateral
+
+
+sag, - caused by Ih - ih is expressed in apical dendrites in the glom (angelo 2012) - but varies from glom to glom, but same for sister MCs
+isicv - high CV cells had no sag. Sag/ih seems to regullarize firing - YES
+
+stuttering can be caused by iA channels (rush rinzel, a type of bursting)
+
+rebound - mcs dont have rebounds, but shown to have LVA T-type Ca channels in apical dendrite (Johnson delaney)
+		lack of rebounds may indicate additional I-A channels - they stop "anodal breaks" (rush rinzel 95)
+		
+		but rebounds are present in TCs which also stutter
+		maybe lva ca overcome the ia rebound inhibition?
+
+ahp duration - stronger potassium channels 
+
+fi slope/gain is probably due to k channels too
+
+spike accommodation - slow k channels
