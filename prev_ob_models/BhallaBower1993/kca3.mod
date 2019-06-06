@@ -24,7 +24,6 @@ INDEPENDENT {t FROM 0 TO 1 WITH 1 (ms)}
 
 PARAMETER {
 	v (mV)
-	dt (ms)
 	gkbar= 0.120 (mho/cm2) <0,1e9>
 	ek = -70 (mV)
 	Ybeta = 0.05 (/ms)

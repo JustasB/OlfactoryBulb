@@ -1,0 +1,18 @@
+begintemplate MCT
+    public morphology
+    public all, somatic, axonal, basal, apical
+    objref this
+
+    proc init() {
+        morphology()
+    }
+
+    proc morphology() { localobj nl,import
+              nl = new Import3d_SWC_read()
+              nl.quiet = 1
+              nl.input("SWCs/MC/IF04168.CNG.swc")
+              import = new Import3d_GUI(nl, 0)
+              import.instantiate(this)
+    }
+
+endtemplate MCT

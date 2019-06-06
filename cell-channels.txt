@@ -47,8 +47,44 @@ rebound - mcs dont have rebounds, but shown to have LVA T-type Ca channels in ap
 		but rebounds are present in TCs which also stutter
 		maybe lva ca overcome the ia rebound inhibition?
 
+		high sag -> more regular
+		low sag -> more stutter
+
+		ih+ia interaction?
+
 ahp duration - stronger potassium channels 
 
 fi slope/gain is probably due to k channels too
 
 spike accommodation - slow k channels
+
+
+Channels: Na, Kd, Kslow, Ia, CaT+Pool and Ih in apical dend
+	would be interesting to get a single compartment cell to reproduce the behavior - or come close to it
+	we need a folder with the proposed channel mod files, + cell hoc file, and a list of params to modify
+	then run a GA 
+
+Nseg - needs to follow the lamda rule in NEURON
+
+
+surrogate model optimization
+
+first sample some points in the param space -> NU score
+	compute the gradient of those points 2x points
+
+build a surrogate model of the param->NU score function
+
+
+
+
+pre-selection based surrogate GA (doi:10.1016/j.swevo.2011.05.001)
+	a large population is used to initially evaluate on the surogate
+	the best surrogate fitness ones are selected to be tested by real fitness
+	surrogate is updated with the new data
+	generate another large pop based on the new surrogate
+
+	what do you do initially? no surrogate, so evaluate a set of real pop fitness, ie. skip the pre-selection
+
+
+
+using multiproces library (diff from python built in - better serialization)
