@@ -6,5 +6,7 @@ python fit2.py &> fit.log
 
 git add .
 git commit -m 'fit results'
-git push
+
+git remote set-url origin https://justasb:THaswu98@github.com/JustasB/OlfactoryBulb.git
+git push origin $branch_name
 
