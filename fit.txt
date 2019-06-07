@@ -1,0 +1,5 @@
+test2
+Traceback (most recent call last):
+  File "fit2.py", line 2, in <module>
+    raise
+TypeError: exceptions must be old-style classes or derived from BaseException, not NoneType

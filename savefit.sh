@@ -2,7 +2,7 @@ branch_name=fit-`date +%Y%m%d%H%M%S`
 git branch $branch_name
 git checkout $branch_name
 
-python fit2.py &> fit.log
+python fit2.py &> fit.txt
 
 git add .
 git commit -m 'fit results'
