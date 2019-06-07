@@ -3,7 +3,7 @@ from prev_ob_models.utils import RunInClassDirectory, IsolatedCell
 class MC(IsolatedCell):
     def __init__(self):
         with RunInClassDirectory(MC):
-            from neuron import h #,gui
+            from neuron import h#, gui
             h.load_file("stdrun.hoc")
 
             h.celsius = 35
