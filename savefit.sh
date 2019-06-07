@@ -9,4 +9,4 @@ git commit -m 'fit results'
 
 git remote set-url origin https://justasb:THaswu98@github.com/JustasB/OlfactoryBulb.git
 git push origin $branch_name
-
+shutdown -h
