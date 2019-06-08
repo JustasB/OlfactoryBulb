@@ -32,7 +32,7 @@ class RunInClassDirectory:
         os.chdir(self.cur_dir)
 
 
-class IsolatedCell:
+class IsolatedCell(object):
     def close_window(self, name_contains):
         if not hasattr(self,"pwm"):
             from neuron import h
