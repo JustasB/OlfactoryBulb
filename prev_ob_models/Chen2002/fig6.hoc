@@ -1,0 +1,60 @@
+load_file("init.hoc")
+load_file(1, "fig6.ses")
+
+hoc_ac_ = .5
+tuftden[1] PointProcessManager[1].move()
+hoc_ac_ = .5
+tuftden[0] PointProcessManager[2].move()
+
+for i=0,1 GluSyn[i].onset=40
+for i=0,1 {GluSyn[i].gmaxampa = 0.01 GluSyn[i].gmaxnmda = 0.005}
+for i=0,1 {InhiSyn[i].gmaxampa = 0 InhiSyn[i].gmaxnmda = 0.12}
+
+tstop=41
+
+proc fig6ginit() {
+	priden.gbar_na = soma.gbar_na
+	priden.gbar_kd = soma.gbar_kd
+	priden.g_pas = soma.g_pas
+	priden.e_pas = soma.e_pas
+}
+
+proc fig6init() {local i
+	fig6ginit()
+	stdrun_quiet=1
+	stdinit()
+	if (!stoprun) continuerun(41)
+	stdrun_quiet=0
+	if (!stoprun) continuerun(43.4)
+}
+
+//control
+fig6init()
+if (!stoprun) continuerun(47)
+Graph[0].exec_menu("Keep Lines")
+
+//eliminate sodium
+fig6init()
+priden.gbar_na = 0
+if(!stoprun)continuerun(47)
+
+// eliminate sodium and potasium
+fig6init()
+priden.gbar_na = 0
+priden.gbar_kd = 0
+if(!stoprun)continuerun(47)
+
+// freeze the conductance
+fig6init()
+priden.gbar_na = 0
+priden.gbar_kd = 0
+priden for (x) if (x > 0 && x < 1) {
+	gp = g_pas(x)
+	g = gp + 1e-4*gna_na(x) + 1e-4*gk_kd(x)
+	g_pas(x) = g
+	e_pas(x) = (gp*e_pas(x) + 1e-4*gna_na(x)*ena(x) + 1e-4*gk_kd(x)*ek(x))/g
+}
+if(!stoprun)continuerun(47)
+
+fig6ginit()
+

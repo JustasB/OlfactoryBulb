@@ -1,0 +1,33 @@
+{load_file("nrngui.hoc")}
+objectvar save_window_, rvp_
+objectvar scene_vector_[4]
+objectvar ocbox_, ocbox_list_, scene_, scene_list_
+{ocbox_list_ = new List()  scene_list_ = new List()}
+{pwman_place(0,0,0)}
+{
+ocbox_ = new VBox()
+ocbox_list_.prepend(ocbox_)
+ocbox_.intercept(1)
+}
+{
+ocbox_ = ocbox_list_.object(0)
+ocbox_.intercept(0)
+//ocbox_.map("c:\nrn\bin64\nrniv.exe", 163, 350, 321, 289.8)
+}
+objref ocbox_
+{
+save_window_ = new Graph(0)
+save_window_.size(-987.5,1012.5,-80,40)
+scene_vector_[3] = save_window_
+{save_window_.view(-987.5, -80, 2000, 120, 798, 354, 301.8, 233.8)}
+flush_list.append(save_window_)
+save_window_.save_name("flush_list.")
+objectvar rvp_
+rvp_ = new RangeVarPlot("v")
+mt[0].secden[0] rvp_.begin(1)
+mt[0].secden[1] rvp_.end(1)
+rvp_.origin(12.5)
+save_window_.addobject(rvp_, 2, 1, 0.8, 0.9)
+}
+objectvar scene_vector_[1]
+{doNotify()}

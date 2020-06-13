@@ -1,0 +1,103 @@
+// granule.tem
+// Template for three-compartment granule cell model
+// Andrew Davison, The Babraham Institute, 2000
+
+begintemplate Gran
+  public soma, periph, deep, AMPAr, NMDAr, spiketimes, spikecount
+  create soma, periph, deep, s2d, s2p
+  objref AMPAr, NMDAr, spiketimes, spikecount
+
+  proc init() { local Len, Erest, RM, p, q, Atotal, gsp, gsd, AMPAtau, NMDAalpha, NMDAbeta, Erev, rsd, rsp
+    create soma, periph, deep, s2d, s2p
+
+    spiketimes = new Vector()
+    lastspikecount = 0
+
+    Erest		= -65		// mV
+    Atotal		= 8353		// um2
+    gsp			= 3.08e-10	// S/cm2
+    gsd			= 4.34e-10
+    RM			= 120000	// ohm.cm2
+    Len			= 50
+    p			= 0.0136
+    q			= 0.308
+    rsd 		= 1/(gsd*Atotal)
+    rsp 		= 1/(gsp*Atotal)
+    NMDAalpha		= 0.0163	// ms-1
+    NMDAbeta		= 0.00292	// ms-1
+    AMPAtau		= 5.5		// ms
+    Erev		= 0		// mV
+
+    soma {
+      L 		= Len
+      diam 		= p*Atotal/(PI*Len)
+      Ra 		= PI/(4*Len*Atotal)
+      insert pas
+      e_pas 		= Erest		// reversal potential mV
+      g_pas 		= 1/RM 		// membrane conductance S/cm2
+      insert nagrantab
+      insert kslowtab
+      insert kM
+      insert kA
+      gnabar_nagrantab 	= 0.1611	// S/cm2
+      gkbar_kslowtab 	= 0.1313
+      gkbar_kM 		= 0.1334
+      gkbar_kA 		= 0.0088
+    }
+    periph {
+      L 		= Len
+      diam 		= q*Atotal/(PI*Len)
+      Ra 		= PI/(4*Len*Atotal)
+      insert pas
+      e_pas 		= Erest
+      g_pas 		= 1/RM
+      insert nagrantab
+      insert kslowtab
+      gnabar_nagrantab 	= 0.1355
+      gkbar_kslowtab 	= 0.0243
+      AMPAr = new ExpSyn(0.5)
+      AMPAr.tau 	= AMPAtau
+      AMPAr.e 		= Erev
+      NMDAr = new NMDA(0.5)
+      NMDAr.Alpha	= NMDAalpha
+      NMDAr.Beta	= NMDAbeta
+      NMDAr.e		= Erev
+      spikecount = new APCount(0.5)
+      spikecount.thresh = -30
+      spikecount.record(spiketimes)
+    }
+    deep {
+      L 		= Len
+      diam 		= (1-p-q)*Atotal/(PI*Len)
+      Ra 		= PI/(4*Len*Atotal)
+      insert pas
+      e_pas 		= Erest
+      g_pas 		= 1/RM
+    }
+    s2d { 
+      diam 		= 1
+      Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsd )
+      L 		= 1
+    }
+    s2p { 
+      diam 		= 1
+      Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsp )
+      L 		= 1
+    }
+
+    soma connect s2p(0), 0
+    s2p connect periph(0), 1
+    soma connect s2d(0), 1
+    s2d connect deep(0), 1
+
+    // set reversal potentials, etc.
+    forall if (ismembrane("na_ion")) {
+      ena = 45	// mV
+    }
+    forall if (ismembrane("k_ion")) {
+      ek  = -70	//  mV
+    }
+
+  }
+
+endtemplate Gran

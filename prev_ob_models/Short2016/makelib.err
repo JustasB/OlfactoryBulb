@@ -1,0 +1,190 @@
+Translating ampanmda.mod into ampanmda.c
+Thread Safe
+Translating cadecay2.mod into cadecay2.c
+Notice: Assignment to the GLOBAL variable, "cai", is not thread safe
+Translating cadecay.mod into cadecay.c
+Notice: Assignment to the GLOBAL variable, "cai", is not thread safe
+Translating Caint.mod into Caint.c
+Thread Safe
+Translating Can.mod into Can.c
+Thread Safe
+Translating CaPN.mod into CaPN.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating CaT.mod into CaT.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating fi.mod into fi.c
+Thread Safe
+Translating GradeAMPA.mod into GradeAMPA.c
+Notice: Use of POINTER is not thread safe.
+Translating GradeGABA.mod into GradeGABA.c
+Notice: Use of POINTER is not thread safe.
+Translating GradNMDA.mod into GradNMDA.c
+Notice: Use of POINTER is not thread safe.
+Translating hpg.mod into hpg.c
+Notice: Assignment to the GLOBAL variable, "linf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "taul", is not thread safe
+Translating Ih.mod into Ih.c
+Notice: Assignment to the GLOBAL variable, "rexp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_r", is not thread safe
+Translating kamt.mod into kamt.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating KCa.mod into KCa.c
+Notice: Assignment to the GLOBAL variable, "Yalpha", is not thread safe
+Translating kdrmt.mod into kdrmt.c
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating kfasttab.mod into kfasttab.c
+Notice: Assignment to the GLOBAL variable, "ktau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "kinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ntau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ninf", is not thread safe
+Translating kM.mod into kM.c
+Notice: Assignment to the GLOBAL variable, "xtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "xinf", is not thread safe
+Translating kslowtab.mod into kslowtab.c
+Notice: Assignment to the GLOBAL variable, "ktau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "kinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ntau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ninf", is not thread safe
+Translating KS.mod into KS.c
+Thread Safe
+Translating LCa.mod into LCa.c
+Notice: Assignment to the GLOBAL variable, "rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "stau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "sinf", is not thread safe
+Translating nafast.mod into nafast.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating NaP.mod into NaP.c
+Thread Safe
+Translating naxn.mod into naxn.c
+Thread Safe
+Translating Nicotin.mod into Nicotin.c
+Thread Safe
+Translating nmdanet.mod into nmdanet.c
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Translating OdorInput.mod into OdorInput.c
+Thread Safe
+Translating order1.mod into order1.c
+Thread Safe
+Translating pnetstim.mod into pnetstim.c
+Thread Safe
+Translating thetastim.mod into thetastim.c
+Thread Safe
+Translating ThreshDetect.mod into ThreshDetect.c
+Thread Safe
+Translating vecstim1.mod into vecstim1.c
+Thread Safe
+Translating vecstim.mod into vecstim.c
+Notice: VERBATIM blocks are not thread safe
+Translating ampanmda.mod into ampanmda.c
+Thread Safe
+Translating cadecay2.mod into cadecay2.c
+Notice: Assignment to the GLOBAL variable, "cai", is not thread safe
+Translating cadecay.mod into cadecay.c
+Notice: Assignment to the GLOBAL variable, "cai", is not thread safe
+Translating Caint.mod into Caint.c
+Thread Safe
+Translating Can.mod into Can.c
+Thread Safe
+Translating CaPN.mod into CaPN.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating CaT.mod into CaT.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating fi.mod into fi.c
+Thread Safe
+Translating GradeAMPA.mod into GradeAMPA.c
+Notice: Use of POINTER is not thread safe.
+Translating GradeGABA.mod into GradeGABA.c
+Notice: Use of POINTER is not thread safe.
+Translating GradNMDA.mod into GradNMDA.c
+Notice: Use of POINTER is not thread safe.
+Translating hpg.mod into hpg.c
+Notice: Assignment to the GLOBAL variable, "linf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "taul", is not thread safe
+Translating Ih.mod into Ih.c
+Notice: Assignment to the GLOBAL variable, "rexp", is not thread safe
+Notice: Assignment to the GLOBAL variable, "rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "tau_r", is not thread safe
+Translating kamt.mod into kamt.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating KCa.mod into KCa.c
+Notice: Assignment to the GLOBAL variable, "Yalpha", is not thread safe
+Translating kdrmt.mod into kdrmt.c
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating kfasttab.mod into kfasttab.c
+Notice: Assignment to the GLOBAL variable, "ktau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "kinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ntau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ninf", is not thread safe
+Translating kM.mod into kM.c
+Notice: Assignment to the GLOBAL variable, "xtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "xinf", is not thread safe
+Translating kslowtab.mod into kslowtab.c
+Notice: Assignment to the GLOBAL variable, "ktau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "kinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ntau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "ninf", is not thread safe
+Translating KS.mod into KS.c
+Thread Safe
+Translating LCa.mod into LCa.c
+Notice: Assignment to the GLOBAL variable, "rtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "rinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "stau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "sinf", is not thread safe
+Translating nafast.mod into nafast.c
+Notice: Assignment to the GLOBAL variable, "htau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "hinf", is not thread safe
+Notice: Assignment to the GLOBAL variable, "mtau", is not thread safe
+Notice: Assignment to the GLOBAL variable, "minf", is not thread safe
+Translating NaP.mod into NaP.c
+Thread Safe
+Translating naxn.mod into naxn.c
+Thread Safe
+Translating Nicotin.mod into Nicotin.c
+Thread Safe
+Translating nmdanet.mod into nmdanet.c
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Notice: Use of state_discontinuity is not thread safeNotice: Use of state_discontinuity in a NET_RECEIVE block is unnecessary and prevents use of this mechanism in a multithreaded simulation.
+Translating OdorInput.mod into OdorInput.c
+Thread Safe
+Translating order1.mod into order1.c
+Thread Safe
+Translating pnetstim.mod into pnetstim.c
+Thread Safe
+Translating thetastim.mod into thetastim.c
+Thread Safe
+Translating ThreshDetect.mod into ThreshDetect.c
+Thread Safe
+Translating vecstim1.mod into vecstim1.c
+Thread Safe
+Translating vecstim.mod into vecstim.c
+Notice: VERBATIM blocks are not thread safe

@@ -1,0 +1,67 @@
+
+Nd  = 10
+
+objref f1
+f1 = new File()
+
+strdef filepath, filename
+filepath  = "celldata/"
+
+objref time, Vt, Vp, Vs, Vd
+time = new Vector()
+Vt   = new Vector() 
+Vp   = new Vector() 
+Vs   = new Vector() 
+Vd   = new Vector() 
+
+time.record(&t, Nd*dt)
+Vt.record(&mit.tuft.v(0.5), Nd*dt)
+Vp.record(&mit.prim.v(0.5), Nd*dt)
+Vs.record(&mit.soma.v(0.5), Nd*dt)
+Vd.record(&mit.dend.v(0.5), Nd*dt)
+
+
+//====================================================
+//                 Save DATA
+//====================================================	
+	
+proc save_data() {
+
+ // Simulation time
+   sprint(filename, "%st",filepath)
+   f1.wopen(filename)
+   time.printf(f1)
+   f1.close()
+   
+ // Somatic spike time
+   sprint(filename, "%sMT",filepath)
+   f1.wopen(filename)
+   mit.spiketimes.printf(f1)
+   f1.close()
+
+ // Voltage 
+   sprint(filename, "%sVs",filepath)
+   f1.wopen(filename)
+   Vs.printf(f1)
+   f1.close()   
+ 
+ /*
+   sprint(filename, "%sVt",filepath)
+   f1.wopen(filename)
+   Vt.printf(f1)
+   f1.close()
+
+   sprint(filename, "%sVp",filepath)
+   f1.wopen(filename)
+   Vp.printf(f1)
+   f1.close()
+
+
+   sprint(filename, "%sVd",filepath)
+   f1.wopen(filename)
+   Vd.printf(f1)
+   f1.close()    
+*/   
+   
+}
+  

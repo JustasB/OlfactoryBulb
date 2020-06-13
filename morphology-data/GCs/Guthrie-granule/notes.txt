@@ -1,0 +1,5 @@
+the radii of these cells are too thin - won't use radii metrics
+
+full thickness slices - soma, apical, basal
+
+one cell with super large soma - probably not scalled right - excluded it

@@ -1,0 +1,25 @@
+// run_on_serial.hoc
+// lets you run on a serial processor to explore model or try a short test run
+
+// modified from python start up file init.py
+/*
+  run_folder = "run_%d"%(id) # helper folder name variable
+  parameters_dot_hoc_file = run_folder+"/parameters.hoc"
+  num_of_columns_dot_hoc_file = run_folder+"/num_of_columns.hoc"
+  tank_folder = "tdt2mat_data/"
+  #tank_folder = run_folder+"_tdt2mat_data_"
+  
+  # make these variables exist in NEURON so the approp. files and can be loaded/saved
+  # The first two are used in buil_net_Shep_NSG.hoc and the tank_folder is used
+  # in this NSG version of tdt2mat_data.hoc
+*/  
+strdef parameters_dot_hoc_file
+strdef num_of_columns_dot_hoc_file
+strdef tank_folder
+print "it is expected that you have made a run_test folder similar to run_0 for example"
+print "however set for a short run time and with the quit commented out (see parameters.hoc)"
+parameters_dot_hoc_file="run_test/parameters.hoc"
+num_of_columns_dot_hoc_file="run_test/num_of_columns.hoc"
+tank_folder="run_test/tdt2mat_data/"
+load_file("build_net_Shep_NSG.hoc")
+

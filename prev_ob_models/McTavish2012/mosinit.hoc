@@ -1,0 +1,8 @@
+load_file("nrngui.hoc")
+load_file("start.hoc")
+
+print "ATTENTION:"
+print "Select at least one cell (by clicking on it) and then"
+print "click the \"Simulate\" button before clicking \"Init & Run\""
+print "or else you will crash"
+print " "

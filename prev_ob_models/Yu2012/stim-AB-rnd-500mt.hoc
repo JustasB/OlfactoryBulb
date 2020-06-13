@@ -1,0 +1,120 @@
+objref inp
+numodors=6
+numactive=5
+double odors[numodors][numactive]
+
+	inp=new File()
+	inp.ropen("odors.txt")
+	for od=0, numodors-1 {
+		for tf=0, numactive-1 {
+			odors[od][tf]=inp.scanvar()
+//			print " odor ",od, " mitral ",tf, odors[od][tf]
+		}
+	}
+	inp.close()
+
+begintemplate OBStim
+public nc, mgid, exists, ww,si,sw, endod, odors, pr, stod, wl, wh
+
+external cvode
+objref nc, rinterval, rweight, fih, this
+
+proc init(){localobj cell, pc, nil
+	pc = new ParallelContext()
+	exists = 0
+	// $1 is mitral_gid
+	mgid = $1
+	si=1
+	sw=1
+	ww=0
+	wl=0.4
+	wh=0.5
+	stod = 2
+	endod=10000
+    if (pc.gid_exists(mgid)) {
+	exists = 1
+//	seed_interval = mgid*10000 + 1
+//	seed_weight = mgid*10000 + 5000
+	cell = pc.gid2cell(mgid)
+	nc = new NetCon(nil, cell.synodor)
+	nc.delay = 0.5
+	fih = new FInitializeHandler(0, "init_ev()", this)
+    }
+}
+
+proc init_ev() {
+//	printf("%s t=%g %g\n", this, t, stod)
+
+	seed_interval = si*10000 + 1
+	seed_weight = sw*10000 + 5000
+
+	rinterval = new Random()
+	rinterval.MCellRan4(seed_interval)
+	rinterval.uniform(100, 250)
+
+	rweight = new Random()
+	rweight.MCellRan4(seed_interval)
+	rweight.uniform(wl, wh)
+
+	cvode.event(t + stod, "ev()")//, this)
+	nc.event(t + stod + nc.delay)
+	nc.weight = 0
+}
+
+proc ev() {local next, dummy
+	dummy=rweight.repick()
+	if (t>=stod && t<=endod){nc.weight = ww*dummy*1e-3} else {nc.weight=0}
+	next = rinterval.repick()
+//	next = 800
+	printf("%s t=%g next=%g mt=%d rndsw=%g start=%d end=%d rndw=%g w=%g\n", this, t, next, mgid, seed_weight, stod, endod, dummy, nc.weight)
+	next += t
+
+	cvode.event(next, "ev()")//, cell.synodor,1)
+	nc.event(next + nc.delay)
+}
+
+proc pr() {
+    printf("%d %g %g %g %g %g %g %g\n", mgid, seed_interval, seed_weight, ww, wl, wh, stod, endod)
+}
+
+endtemplate OBStim
+
+objref stim_list_
+
+proc create_stim() {localobj nil, wl, wh, rseq
+
+        rseq = new Random()
+        rseq.MCellRan4(3524315)
+        rseq.uniform(0, 4)
+
+	stim_list_ = new List()
+	index=0
+	gr=3
+	for kks=0, 59 {
+	od=rseq.repick()
+	for kkg=-gr, gr {
+	for i=0, numactive-1 {
+		stim_list_.append(new OBStim(i*100+50+kkg)) 
+		stim_list_.o(index).ww=odors[od][i]
+		stim_list_.o(index).si=125
+		stim_list_.o(index).sw=index+20000
+		stim_list_.o(index).stod=kks*2000
+		stim_list_.o(index).endod=(kks+1)*2000
+		stim_list_.o(index).wl=0.4
+		stim_list_.o(index).wh=0.5
+		index=index+1
+	}
+	}
+	}
+}
+
+create_stim()
+
+proc all_obstim_pr() {local i  localobj list
+  list = new List("OBStim")
+  print "total stims: ", list.count()
+  for i=0, list.count-1 {list.object(i).pr()}
+}
+
+//all_obstim_pr()
+

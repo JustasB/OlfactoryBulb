@@ -1,0 +1,22 @@
+// mit_init.hoc (for the Bhalla and Bower 1993 model)
+// Andrew Davison
+// 24-11-98
+
+xopen("mit_param.hoc")			  // parameter file
+xopen("mit_morph.hoc")		      	  // topology, geometry, compartmentalization
+xopen("mit_memb.hoc")       		  // membrane properties
+
+electrode_leak()
+print "<< Mitral cell model loaded >>"
+
+objref stim
+soma stim = new IClamp(0.5)
+stim.amp = 0.5
+stim.del = 0
+stim.dur = 200
+
+xopen("mitral.ses")
+
+clipboard_retrieve("fig5a.dat")
+hoc_obj_[0].plot(Graph[0],hoc_obj_[1],2,5)
+

@@ -1,0 +1,100 @@
+//////////////////////////////////////////////////////////////////////////////
+//	Combined epithelium olfactory bulb model
+//	----------------------------------------
+//	Author: bkaplan@kth.se
+//  File: start_file.hoc
+// 	Initial file to be executed with the command: 
+// 	after compiling models with nrnivmodl
+// 	mpirun -np 4 $(which nrniv) -mpi start_file.hoc
+//////////////////////////////////////////////////////////////////////////////
+
+load_file("nrngui.hoc")		// needed to get stdrun methods
+load_file("netparmpi.hoc")	// for mpi usage
+
+// ------------ I N I T I A L   S E T U P ------------
+pattern_nr = 0
+// pattern_nr can be redefined when calling nrniv -c "x=123" start_file.hoc for example.
+if (name_declared("x") == 5) {
+	pattern_nr = x
+} else {
+	print "Please give a pattern number and by using this command:"
+	print "mpirun -np 2 $(which nrniv) -mpi -c \"x=1\" start_file.hoc"
+}
+
+// ------------- READ NAME OF PARAMETER FILE FROM COMMAND LINE -------------
+if (name_declared("param_file") == 4) { // means as strdef
+	print "NEURON reads parameters from: ", param_file
+} else {
+	print "Please give a parameter file by using this command:"
+    print "mpirun -np [np] $(which nrniv) -mpi -nobanner -nogui -c \"x=[P]\" -c \"strdef param_file\" -c \"sprint(param_file, \"[PATH]\")\" start_file.hoc"
+}
+
+load_file(param_file)
+celsius = temperature
+
+objref pnm                  // Parallel Network Manager: manages the setup and running of a parallel network simulation
+pnm = new ParallelNetManager(n_cells) // tell the parallel network manager how many cells to handle
+n_proc = pnm.pc.nhost()
+
+xopen("tabchannels.hoc")      // channel tables, needed for kfast/kslowtab
+load_file("setup_network.hoc")	// includes functions for creating and connecting cells
+// set data folder, create files for spike output and parameters
+objref testfile
+testfile = new File()
+strdef testfile_name
+sprint(testfile_name, "%s/delme_testfile", folder_name)
+testfile.wopen(testfile_name)
+testfile.printf("delme")
+
+distribute_orn_gids()
+distribute_ob_gids()
+
+print "read orn params from: ", orn_params_file // defined in setup_network.hoc
+read_orn_parameters(orn_params_file)
+
+init_rnd()
+create_orns()
+create_ob_cells()
+
+/*connect_cells_without_oc()*/
+connect_orns_to_ob()
+connect_cells_ob_dendrodendritic()
+
+if (with_auto_receptors){
+	connect_mit_autoreceptors()
+}
+
+record_time_vec()
+record_sample_orn_cells()
+record_sample_mit_cells()
+record_sample_gran_cells()
+record_sample_pg_cells()
+/*record_cells_from_file()*/
+
+
+// CHANGE dt:
+dt = time_step // defined in network_parameters
+steps_per_ms = 1. / dt
+pnm.set_maxstep(steps_per_ms)
+setdt()
+stdinit()
+start = startsw()
+// RUN
+pnm.psolve(t_sim)
+
+print_time_vec()
+print_sample_orn_cells()
+print_sample_orn_cells()
+print_sample_mit_cells()
+print_sample_gran_cells()
+print_sample_pg_cells()
+
+/*runtime = startsw() - start*/
+/*wait = pnm.pc.wait_time() - wait*/
+/*printf("id: %d\truntime: %f\n", pnm.pc.id(), runtime)*/
+
+// save all output spikes into a dedicated process individual file
+write_spikes_to_files_epth_ob(pattern_nr)
+
+pnm.pc.runworker()
+pnm.pc.done()

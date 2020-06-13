@@ -1,0 +1,203 @@
+
+//======================================================================
+//               Specify Network Connectivity
+//======================================================================
+
+strdef outfilepath, filename
+outfilepath = "Connection/"
+
+objref outfile, outfile1, outfile2
+outfile   = new File()
+outfile1  = new File()
+outfile2  = new File()
+
+  for k = 0, nGran-1 {
+		sprint(filename, "%sGC%d",outfilepath, k)
+		outfile2.wopen(filename)
+		outfile2.printf("This GC connects to the following MCs\n")
+		outfile2.close()
+   }
+
+objref ru, rn
+ru = new Random(seedU)
+rn = new Random(seedN)
+
+null = ru.uniform(0, 1)
+
+if (NICOTIN == 0) { 
+    gnic_MC = 0.0e-3  // 
+    gnic_PG = 0.0e-3  
+   } else {
+    gnic_MC = 1.0e-3   // Maximal density of the nicotinc current in MC, in mS/cm2
+    gnic_PG = 15.0e-3  // Maximal density of the nicotinc current in PG, in mS/cm2 
+   }
+   
+   
+//================== Creat cells ================================
+objref mit[nMit], pg[nPG], gran[nGran]
+// MC
+for i = 0, nMit-1 {    
+	  seed = i
+      mit[i] = new Mitral(gnic_MC)
+}
+
+// PG
+for i = 0, nPG-1 {
+      pg[i] = new PGcell(gnic_PG)
+}
+
+// GC
+if (NTCE==0) {
+    for i = 0, nGran-1 {
+      gran[i] = new Granule(MUSCARIN)
+    }
+}
+
+//=========================================================================
+//              Connection between MCs and  PGs
+//=========================================================================
+objref m2pAMPA[nMit], m2pNMDA[nMit], p2m[nMit]
+
+for i=0, nMit-1 {
+    // AMPA synapses
+	AMPAgmax = Wm2p*AMPAgmaxPG
+    pg[i].gemmbody m2pAMPA[i] = new gradAMPA(0.5)	
+	setpointer    m2pAMPA[i].vpre, mit[i].tuft.v(0.5) 
+	m2pAMPA[i].gmax  = AMPAgmax  
+    m2pAMPA[i].alpha = AMPAalpha 
+    m2pAMPA[i].beta  = AMPAbeta  	
+    m2pAMPA[i].thetasyn = AMPAact
+	m2pAMPA[i].sigma = AMPAsigma
+    m2pAMPA[i].e = AMPArev 
+    
+    // NMDA synapses
+	NMDAgmax = Wm2p*NMDAgmaxPG 
+    pg[i].gemmbody m2pNMDA[i] = new gradNMDA(0.5)	
+	setpointer    m2pNMDA[i].vpre, mit[i].tuft.v(0.5) 
+	m2pNMDA[i].gmax  = NMDAgmax  
+    m2pNMDA[i].alpha = NMDAalpha 
+    m2pNMDA[i].beta  = NMDAbeta  	
+    m2pNMDA[i].thetasyn = NMDAact
+	m2pNMDA[i].sigma = NMDAsigma
+    m2pNMDA[i].e = NMDArev 	
+	
+	// GABAA synapses
+	GABAAgmax = Wp2m*GABAAgmaxPG
+    mit[i].tuft p2m[i] = new gradGABA(0.5)	
+	setpointer     p2m[i].vpre, pg[i].gemmbody.v(0.5) 
+	p2m[i].gmax  = GABAAgmax  
+    p2m[i].alpha = GABAAalpha 
+    p2m[i].beta  = GABAAbeta  	
+    p2m[i].thetasyn = GABAAact
+	p2m[i].sigma = GABAAsigma
+    p2m[i].e = GABAArev 
+
+}
+
+
+
+//========================================================================
+//              Connection between MCs and GCs
+//========================================================================
+ 
+ objref NC
+ NC = new Vector()
+
+ objref m2gAMPA[nMit][nGran], m2gNMDA[nMit][nGran], g2m[nMit][nGran]
+
+ null = ru.uniform(0, 1)
+
+ outfile.wopen("Connection/MC2GC")
+ outfile1.wopen("Connection/Ngc")  // File to store the number of GC inputs to each MC
+
+if (NTCE==0) { 
+ 
+ for i=0, nMit-1 {
+    
+	count = 0
+	Z = 0          // for the pointer 
+	
+	outfile.printf("From the MC cell%d:\n", i)	
+	
+    for k = 0, nGran-1 {
+	   
+		Pr = ru.repick()
+		if (Pr<= P) {
+		
+		d = ru.repick()*LL  // The point of inhibitory synapitc contact
+                            // on MC lateral dend is randomly decided (varied from 0 to 500 um)
+		
+		sprint(filename, "%sGC%d",outfilepath, k)
+		outfile2.aopen(filename)
+		outfile2.printf("MC%d\n", i)
+		outfile2.printf("%f\n",d)
+		outfile2.close()
+        		
+		// AMPA synapses
+		AMPAgmax = Wm2g*AMPAgmaxGC
+        gran[k].gemmbody m2gAMPA[i][Z] = new gradAMPA(0.5)	
+	    setpointer    m2gAMPA[i][Z].vpre, mit[i].dend.v(d/LL) 
+	    m2gAMPA[i][Z].gmax  = AMPAgmax  
+        m2gAMPA[i][Z].alpha = AMPAalpha 
+        m2gAMPA[i][Z].beta  = AMPAbeta  	
+        m2gAMPA[i][Z].thetasyn = AMPAact
+	    m2gAMPA[i][Z].sigma = AMPAsigma
+        m2gAMPA[i][Z].e = AMPArev
+	
+        // NMDA synapses
+ 		NMDAgmax = Wm2g*NMDAgmaxGC       
+		gran[k].gemmbody m2gNMDA[i][Z] = new gradNMDA(0.5)	
+	    setpointer    m2gNMDA[i][Z].vpre, mit[i].dend.v(d/LL) 
+        m2gNMDA[i][Z].gmax  = NMDAgmax   
+        m2gNMDA[i][Z].alpha = NMDAalpha
+        m2gNMDA[i][Z].beta  = NMDAbeta	
+        m2gNMDA[i][Z].thetasyn = NMDAact
+	    m2gNMDA[i][Z].sigma = NMDAsigma
+        m2gNMDA[i][Z].e = NMDArev	
+		
+		// Graded inhibtion
+        GABAAgmax = Wg2m*GABAAgmaxGC
+		mit[i].dend g2m[i][Z] = new gradGABA(d/LL)	
+	    setpointer  g2m[i][Z].vpre, gran[k].gemmbody.v(0.5)
+        g2m[i][Z].gmax  = GABAAgmax   
+        g2m[i][Z].alpha = GABAAalpha
+        g2m[i][Z].beta  = GABAAbeta
+        g2m[i][Z].thetasyn = GABAAact
+	    g2m[i][Z].sigma = GABAAsigma
+        g2m[i][Z].e = GABAArev
+		
+		Z = Z + 1
+        count = count + 1	
+		outfile.printf("GC%d; ", k)
+		
+		if ( count/5-int(count/5) == 0){
+		   outfile.printf("\n")
+		}
+		//outfile.aopen("Connection/MC2GC")
+    
+      }
+    
+    }
+	NC.append(count)
+	outfile.printf("\n%d\n\n", count)
+	outfile1.printf("%d\n", count)
+	//outfile.close()	 
+ }
+  	
+ outfile.close()
+ outfile1.close()  
+ 
+ Ntotal = NC.sum()
+ print "\nTotal number of MC-GC projection is\n"
+ print Ntotal	 
+
+ print "\nThe average number of GC inputs per MC is\n"
+ print Ntotal/nMit
+ print "\nThe average number of MC inputs per GC is\n"
+ print Ntotal/nGran
+ print "\n"	 
+
+}
+
+  
+  

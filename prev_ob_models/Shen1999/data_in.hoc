@@ -1,0 +1,164 @@
+seamp1 = 0.4
+seamp2 = 0.8
+peamp1 = 0.5
+peamp2 = 0.8
+peamp3 = 0.68
+onset = 1
+dura = 10.05
+
+objref pestim, sestim, ccc
+
+se.electrode sestim = new IClamp(.5)
+pe.electrode pestim = new IClamp(.5)
+
+proc protocol() {
+	if (attached == 0) { //protocol 0
+		sestim.del = onset
+		sestim.dur = dura
+		sestim.amp = seamp1
+		pestim.del = 0
+		pestim.dur = 0
+		pestim.amp = 0
+	}else if (attached == 1) {
+		sestim.del = 0
+		sestim.dur = 0
+		sestim.amp = 0
+		pestim.del = onset
+		pestim.dur = dura
+		pestim.amp = peamp1
+	} else if (attached == 3) {
+		sestim.del = onset
+		sestim.dur = dura
+		sestim.amp = seamp2
+		pestim.del = 0
+		pestim.dur = 0
+		pestim.amp = 0
+	}else if (attached == 4) {
+		sestim.del = 0
+		sestim.dur = 0
+		sestim.amp = 0
+		pestim.del = onset
+		pestim.dur = dura
+		pestim.amp = peamp2
+	}
+}
+
+strdef tstr
+objref g[6], rf
+for i=0, 5 { if (i==0 || i==1 || i==3 || i==4) {
+	g[i] = new Graph(0)
+	g[i].size(0,15,-80,40)
+	if (i==0 || i==3) {
+	g[i].addexpr("se.electrode.v( 0.5 )-sestim.i*(se.electrode.Ra+2.2)", 2, 1, 0.541214, 1.04377, 2)
+	g[i].addexpr("pe.electrode.v( 0.5 )", 1, 1, 0.541214, 1.05815, 2)
+	} else {
+	g[i].addexpr("se.electrode.v( 0.5 )", 2, 1, 0.541214, 1.04377, 2)
+	g[i].addexpr("pe.electrode.v( 0.5 )-pestim.i*(pe.electrode.Ra+2.5)", 1, 1, 0.541214, 1.05815, 2)
+	}
+	sprint(tstr, "g[%d]", i)
+	g[i].label(0.469649, 0.0718849, tstr, 2, 1, 0, 0, 1)
+    } else {
+        preamp3 = preamp3
+    }
+}
+{g[0].view(0, -80, 15, 120, 811, 75, 300.48, 200.32)}
+{g[1].view(0, -80, 15, 120, 811, 348, 300.48, 200.32)}
+{g[3].view(0, -80, 15, 120, 463,  75, 300.48, 200.32)}
+{g[4].view(0, -80, 15, 120, 463, 348, 300.48, 200.32)}
+
+{g[0].save_name("g[0]")}
+{g[1].save_name("g[1]")}
+{g[3].save_name("g[3]")}
+{g[4].save_name("g[4]")}
+
+attached = -1
+
+proc g_attach() { local i //arg is graph index
+	if (attached >= 0) {
+		i = graphList[0].index(g[attached])
+		graphList[0].remove(i)
+	}	
+	attached = $1
+	if (attached >= 0) {
+		graphList[0].append(g[attached])
+	}
+	protocol()
+}
+
+proc pan_attach() {
+	xpanel("Attach Graph to Run")
+	xradiobutton("none", "g_attach(-1)")
+	xradiobutton("g[0]: soma weak", "g_attach(0)")
+	xradiobutton("g[1]: primary weak", "g_attach(1)")
+	xradiobutton("g[3]: soma strong", "g_attach(3)")
+	xradiobutton("g[4]: primary strong", "g_attach(4)")
+	xvalue("Onset of Stimulus", "onset", 1, "protocol()")
+	xvalue("Duration of Stimulus", "dura", 1, "protocol()")
+	xvalue("Soma weak current stimulus", "seamp1", 1, "protocol()")
+	xvalue("Priden weak current stimulus", "peamp1", 1, "protocol()")
+//	xvalue("Soma hyperpolarization current", "hyper", 1, "protocol()")
+	xvalue("Soma strong current stimulus", "seamp2", 1, "protocol()")
+	xvalue("Priden strong current stimulus1", "peamp2", 1, "protocol()")
+//	xvalue("Priden strong current stimulus2", "peamp3", 1, "protocol()")
+	xpanel()
+}
+
+pan_attach()
+
+objref vt[6], vs[6], vd[6], m, f
+strdef fname
+
+proc rdata() {local i // $s1 is filename $2 is g index, $3 is the trace num
+	i = $2        // $4 is the voltage shift of the trace pair
+	fname = $s1
+	f = new File()
+	f.ropen(fname)
+	m = new Matrix()
+	m.scanf(f)
+	f.close()
+	ntrace = (m.ncol-1)/2
+	if (ntrace > 1) {
+		sprint(tstr, "%s has more than one trace pair", fname)
+	}
+	vt[i] = m.getcol(0)
+	vs[i] = m.getcol(ntrace+$3)
+	vd[i] = m.getcol($3)
+	vs[i].add($4)
+	vd[i].add($5)
+	vs[i].plot(g[i], vt[i], 2, 5)
+	vd[i].plot(g[i], vt[i], 1,5)
+	sprint(tstr, "file=%s", fname)
+	g[i].label(0.1, 0.85, tstr, 2, 1, 0, 0, 1)        
+}
+func baseline() {local i // $s1 is filename
+	fname = $s1
+	f = new File()
+	f.ropen(fname)
+	m = new Matrix()
+	m.scanf(f)
+	return m.x[0][1]
+}
+
+rdata("data/3459.dat", 0,2,-20, -19.7)
+rdata("data/3327.dat", 1,1,-19.5, -20)
+rdata("data/3459.dat", 3,1,-20, -20)
+rdata("data/3327.dat", 4,2, -20, -21)
+
+//Initializes the starting resting potential to the hyperpolarized initials
+proc init() {local dtsav, i
+        finitialize(v_init)
+        fcurrent()
+        forsec sad for(x) if (x>=0 && x<=1) {
+		e_pas(x) = (ina(x) + ik(x) + g_pas(x)*v_init)/g_pas(x)
+	} 
+        t = -200
+        dtsav = dt
+        dt = 10
+        for i = 0, 19 {
+        	fadvance()
+        }
+        dt = dtsav
+        t = 0
+	fcurrent()
+}
+g_attach(0)

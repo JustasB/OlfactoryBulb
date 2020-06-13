@@ -1,0 +1,1 @@
+these don't have valid radii (very small) except for the soma

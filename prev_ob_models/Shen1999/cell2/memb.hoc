@@ -1,0 +1,35 @@
+//Wei's two electrodes expriments show active channels in the
+//distal portion  of the primary dendrite. This set up a hotspot there.
+//using Zachs na and k channels with density similarities to his paper
+
+proc memb() {
+	forall {insert pas}
+	forall {insert na  insert kd}
+
+	celsius = 23
+
+	forall {
+		cm = 1.2
+		Ra = 70
+		g_pas = 1/30000
+		e_pas = -65
+		ek = -90
+		ena = 60
+	}
+
+	forsec "myelin" {
+		cm = 0.012
+		g_pas = 1/100000
+		gbar_na = 0
+		gbar_kd = 0
+	}
+	
+	forsec axon {
+	        g_pas = 1/1000
+	        gbar_na = 10115
+	        gbar_kd = 100
+	}
+}
+
+memb()
+

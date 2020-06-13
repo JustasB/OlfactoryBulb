@@ -1,0 +1,302 @@
+//mitral-granule reciprocal synapse
+
+//src, target
+// assume src,target unique
+func syn_gid() {local i
+    if ($1 < num_mitral) { // target is granule
+	i = ($2 * num_mitral + $1 + 1 + ncell) * 100 + 1
+    }else{ // target is mitral
+	i = ($1 * num_mitral + $2 + 1 + ncell) * 100
+    }
+    return i
+}
+
+// gid, &mitral, &granule, &is_m2g
+proc gid2mg() {local i, m, g, m2g
+	m2g = $1%2
+	i = $1 - m2g
+	i /=100
+	i -= ncell + 1
+	m = i%num_mitral
+	i -= m
+	g = i/num_mitral - num_mitral
+	$&2 = m
+	$&3 = g
+	$&4 = m2g
+}
+
+// imitral, igranule, target_is_granule
+proc test_gid2mg() {local gid, m, g, is_m2g
+	if ($3 == 0) {
+		gid = syn_gid($2+num_mitral, $1)
+	}else{
+		gid = syn_gid($1, $2+num_mitral)
+	}
+	gid2mg(gid, &m, &g, &is_m2g)
+	printf("gid2mg gid=%g m=%d g=%g is_m2g=%g\n", gid, m, g, is_m2g)
+}
+
+begintemplate MGRS
+public md, gd, md_gid, gd_gid, clear, complete
+public fi, ampanmda,  mitral, granule, mitral_gid, granule_gid
+public md2ampanmda, gd2fi, spine
+public fi_exists, ampa_exists, mexist, gexist
+public sm, sg, wm, wg, set_sm, set_sg, set_wm, set_wg, ws_str, ws_str_normalized
+public pr
+external pc, pnm, syn_gid, fi_gmax, fi_tau1, fi_tau2, ampanmda_gmax
+external ncell, num_mitral  //, nil,amp, rel, inh,synst, nmdafactor
+external gid2piece, piecegid
+objref mitral, granule
+objref md2ampanmda, gd2fi
+objref ampanmda, fi, md, gd, spine
+objref this, nil, ws_str_
+
+strdef tstr 
+
+proc clear() {
+	objref md2ampanmda, gd2fi
+	objref ampanmda, fi, md, gd
+	objref mitral, granule, spine
+}
+
+proc init() {
+    // if $7 == 1 then create fi and ampamda and put in cas
+    ws_str_ = new String()
+    mitral_gid = $1
+    granule_gid = $4
+    mexist = piecegid(mitral_gid) >= 0
+    gexist = piecegid(granule_gid) >= 0
+    md_gid = syn_gid(granule_gid, mitral_gid)
+    gd_gid = syn_gid(mitral_gid, granule_gid)
+    mitral = gid2piece(mitral_gid)
+    granule = gid2piece(granule_gid)
+    if (mexist) if (section_exists($s2, mitral)) {
+//	print mitral
+	create_syn("{mitral.%s { fi = new FastInhib(%-10.20g )}}",$s2, $3)
+	create_syn("{mitral.%s { md = new ThreshDetect(%-10.20g)}}",$s2, $3)
+	pc.set_gid2node(md_gid, pc.id)
+	pc.cell(md_gid, new NetCon(md, nil), 1)
+        fi.gmax=fi_gmax
+        fi.tau1=fi_tau1
+        fi.tau2=fi_tau2
+    }
+
+    if (gexist) {
+	spine = new GranuleSpine()
+	create_syn("{granule.%s { connect spine.neck(0), (%-10.20g) }}", $s5, $6)
+	spine.head { ampanmda = new AmpaNmda(0.5) }
+	spine.head { gd = new ThreshDetect(0.5)}
+	pc.set_gid2node(gd_gid, pc.id)
+	pc.cell(gd_gid, new NetCon(gd, nil), 1)
+        ampanmda.gmax=ampanmda_gmax		//default is 2
+    }
+//    print pnm.myid, this, mexist, gexist
+
+    if ($7 == 1) { // for showing synapses and weights when cells do not exist
+	complete()
+    }
+    update_netcon()
+}
+
+proc complete() {
+	if (object_id(fi) == 0) {
+		fi = new FastInhib(0.5)
+	}
+	if (object_id(ampanmda) == 0) {
+		ampanmda = new AmpaNmda(0.5)
+	}
+	update_netcon()
+}
+
+proc update_netcon() {
+    if (object_id(ampanmda)) {
+//	print pnm.myid, this, mitral_gid, granule_gid
+//	print pnm.myid, this, md_gid,gd_gid
+	if (object_id(md2ampanmda) == 0) {
+		md2ampanmda = pc.gid_connect(md_gid, ampanmda)
+	}
+//	print pnm.myid, this, md2ampanmda, 
+	ampanmda.mgid = mitral_gid
+	ampanmda.ggid = granule_gid
+	ampanmda.srcgid = md_gid
+    }
+    if (object_id(fi)) {
+//	print pnm.myid, this, mitral_gid, granule_gid
+//	print pnm.myid, this, md_gid,gd_gid
+	if (object_id(gd2fi) == 0) {
+		gd2fi   = pc.gid_connect(gd_gid, fi  )
+	}
+//	print pnm.myid, this, gd2fi
+	fi.mgid = mitral_gid
+	fi.ggid = granule_gid
+	fi.srcgid = gd_gid
+    }
+//    print pnm.myid, this, mitral_gid, granule_gid, mitral, granule
+    
+    if (object_id(md2ampanmda)) {
+	md2ampanmda.weight = 1 // normalized
+	md2ampanmda.delay = 1
+    }
+    if (object_id(gd2fi)) {
+	gd2fi.weight = 1 // normalized
+	gd2fi.delay = 1
+    }
+}
+
+proc create_syn() {
+    sprint(tstr, $s1, $s2, $3)
+    execute(tstr, this)
+}
+
+func fi_exists() {
+    return (fi != nil)
+}
+func ampa_exists() {
+    return (ampanmda != nil)
+}
+
+proc pr() {local x  localobj s
+	s = new String()
+	if (object_id(md)) {
+		x = md.get_loc()
+		sprint(s.s, "%s(%g) %d --- ", secname(), x, mitral_gid)
+		pop_section()
+	}else{
+		sprint(s.s, "%27d --- ", mitral_gid)
+	}
+	if (object_id(gd)) {
+		x = gd.get_loc()
+		sprint(s.s, "%s%d %s(%g)", s.s, granule_gid, secname(), x)
+		pop_section()
+	}else{
+		sprint(s.s, "%s%d", s.s, granule_gid)
+	}
+	printf("%d %s\n", pnm.myid, s.s)
+}
+
+//returns volatile String in proper wsfile format
+// srcid tarid s w
+// may be one line or two, no trailing newline
+obfunc ws_str() {
+	if (object_id(gd2fi)) {
+		if (object_id(md2ampanmda)) {
+			sprint(ws_str_.s, "%d %d %g %g\n%d %d %g %g",\
+				granule_gid, mitral_gid, sm(), wm(),\
+				mitral_gid, granule_gid, sg(), wg())
+		}else{
+			sprint(ws_str_.s, "%d %d %g %g",\
+				granule_gid, mitral_gid, sm(), wm())
+		}
+	}else if (object_id(md2ampanmda)) {
+		sprint(ws_str_.s, "%d %d %g %g", mitral_gid, granule_gid, sg(), wg())
+	}else{
+		ws_str_.s = ""
+	}
+	return ws_str_
+}
+
+obfunc ws_str_normalized() {
+	if (object_id(gd2fi)) {
+		if (object_id(md2ampanmda)) {
+			sprint(ws_str_.s, "%d %d %g %g\n%d %d %g %g",\
+				granule_gid, mitral_gid, sm(), wm_normalized(),\
+				mitral_gid, granule_gid, sg(), wg_normalized())
+		}else{
+			sprint(ws_str_.s, "%d %d %g %g",\
+				granule_gid, mitral_gid, sm(), wm_normalized())
+		}
+	}else if (object_id(md2ampanmda)) {
+		sprint(ws_str_.s, "%d %d %g %g", mitral_gid, granule_gid, sg(), wg_normalized())
+	}else{
+		ws_str_.s = ""
+	}
+	return ws_str_
+}
+
+proc set_sm() {
+	if (object_id(gd2fi)) {
+		gd2fi.weight[1] = $1
+		gd2fi.weight[2] = gd2fi.weight[0]*fi.plast($1)
+	}
+}
+proc set_sg() {
+    if (object_id(md2ampanmda)){
+		md2ampanmda.weight[1] = $1
+		md2ampanmda.weight[2] = md2ampanmda.weight[0]*ampanmda.plast($1)
+	}
+}
+
+// Normalized weights
+proc set_wm() { local val, max, min
+    if (object_id(gd2fi)) {
+        val = $1
+        max = 1.-(1./(1.+exp( 25./3.))) //fi.sighalf/fi.sigslope))
+        min = 1.-(1./(1.+exp(-25./3.))) //fi.sighalf/fi.sigslope))
+
+        if (val > max) {
+            val = max
+        }
+        if (val < min) {
+            val = min
+        }
+
+        gd2fi.weight[1] = fi.norm_weight_to_sig(val)
+        gd2fi.weight[2] = gd2fi.weight[0] * val
+    }
+}
+
+// Normalized weights
+proc set_wg() { local val, max, min
+    if (object_id(md2ampanmda)){
+        val = $1
+        max = 1.-(1./(1.+exp( 25./3.))) //ampanmda.sighalf/fi.sigslope))
+        min = 1.-(1./(1.+exp(-25./3.))) //ampanmda.sighalf/fi.sigslope))
+        if (val > max) {
+            val = max
+        }
+        if (val < min) {
+            val = min
+        }
+
+        md2ampanmda.weight[1] = ampanmda.norm_weight_to_sig(val)
+        md2ampanmda.weight[2] = val //md2ampanmda.weight[0] * $1 // * ampanmda.gmax
+    }
+}
+
+func sm() {
+    return gd2fi.weight[1]
+}
+func sg() {
+	return md2ampanmda.weight[1]
+}
+func wm() {
+	return gd2fi.weight[2] * fi.gmax
+}
+func wg() {
+	return md2ampanmda.weight[2] * ampanmda.gmax
+}
+
+func wm_normalized() {
+	return gd2fi.weight[2]
+}
+func wg_normalized() {
+	return md2ampanmda.weight[2]
+}
+
+endtemplate MGRS
+
+objref mgrs_list
+mgrs_list = new List()
+
+obfunc mk_mgrs() { local  mitral_gid, granule_gid    localobj mgrs
+    //$1 is the imitral, $s2 section name, $3 section arc position,
+    //$4 is the igranule, $s5 section name, $6 section arc position
+    mitral_gid = $1
+    granule_gid = $4 + num_granule_begin
+    if ($7 || exists(mitral_gid, $s2) || exists(granule_gid, $s5)) {
+	mgrs = new MGRS(mitral_gid, $s2, $3, granule_gid, $s5, $6, $7)
+	mgrs_list.append(mgrs)
+	return mgrs
+    }
+    return nil
+}

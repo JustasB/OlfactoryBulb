@@ -1,0 +1,37 @@
+Timing considerations in ThetaStim
+
+    outer loop:
+
+outer_event
+outer_on
+outer_ispike
+
+public variables:
+
+outer_interval
+outer_number
+outer_start
+outer_noise
+
+    inner loop:
+
+event
+on
+ispike
+
+public variables:
+
+interval
+number
+start
+noise
+
+General timing flow (assuming that the outer_number and number are >0):
+
+First outer_start is used to initiate an outer_event
+The outer_event initiates an event at “start” time later (start time now refers
+to a delay from each outer_event
+The events play out as in an ordinary netstim.  When done the next
+outer_event is initiated.
+
+

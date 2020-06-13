@@ -1,0 +1,47 @@
+// gauss.hoc
+// gauss(x, mu, sigma) returns the gaussian (normal) distribution
+// value for these parameters
+
+root2pi_=sqrt(2*PI)
+func gauss() { local x, mu, sigma
+  x=$1
+  mu=$2
+  sigma=$3
+  return exp(-(x-mu)*(x-mu)/(2*sigma*sigma))/(sigma*root2pi_)
+}
+
+// uni_gauss has peak height equal to one
+func uni_gauss() { local x, mu, sigma
+  x=$1
+  mu=$2
+  sigma=$3
+  return exp(-(x-mu)*(x-mu)/(2*sigma*sigma))
+}
+
+// below assumes global variables mu and sigma are created
+mu=0 // center of gaussian
+sigma=1  // width
+func gauss_x() {
+  return gauss($1, mu, sigma)
+}
+func uni_gauss_x() {
+  return uni_gauss($1, mu, sigma)
+}
+
+/*
+objref g
+g=new Graph()
+objref x_vec, y_vec
+x_vec = new Vector()
+y_vec = new Vector()
+x_vec.indgen(-100, 100, .1)
+
+for sigma=99,101 {
+
+y_vec = x_vec.c.apply("uni_gauss_x")
+
+y_vec.line(g, x_vec)
+}
+g.exec_menu("View = plot")
+
+*/

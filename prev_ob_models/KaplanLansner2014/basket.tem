@@ -1,0 +1,305 @@
+/*--------------------------------------------------------------
+	TEMPLATE FILE FOR REGULAR-SPIKING CORTICAL PYRAMIDAL CELL
+	---------------------------------------------------------
+	BASKET cell, copied the pyr_rs from pospischil et al and
+	set g_K_M to 4 * 10^-5, B.K.
+
+	One compartment model and currents derived from:
+
+   Pospischil, M., Toledo-Rodriguez, M., Monier, C., Piwkowska, Z., 
+   Bal, T., Fregnac, Y., Markram, H. and Destexhe, A.
+   Minimal Hodgkin-Huxley type models for different classes of
+   cortical and thalamic neurons.
+   Biological Cybernetics 99: 427-441, 2008.
+
+	This model was inspired from:
+
+   McCormick, D.A., Wang, Z. and Huguenard, J. Neurotransmitter 
+   control of neocortical neuronal activity and excitability. 
+   Cerebral Cortex 3: 387-398, 1993.
+
+	- one compartment model
+	- passive
+	- HH: Traub
+	- IM: m format
+
+	Alain Destexhe, CNRS, 2008
+	Modified by Bernhard Kaplan, KTH, 2009
+
+--------------------------------------------------------------*/
+
+
+begintemplate Basket // create a new template object
+
+	// synlist stores the synapses
+	// netconlist: list of NetCon objects, stores connections
+	public soma, ampa, gabaa, nmda, netconlist, noise_netconlist, synlist
+	public add_connection_to_soma, connect2target, record_v, print_v, spiketimes, spikecount, connect_Iclamp
+	public add_random_exc_spikes_to_soma, add_random_inh_spikes_to_soma
+	public add_random_exc_spikes_to_soma_with_seed, add_random_inh_spikes_to_soma_with_seed
+	public record_iampa, record_inmda, record_igaba
+	public print_iampa, print_inmda, print_igaba
+
+	external thresh
+	create soma[1]
+
+	objref spikecount, spiketimes, synlist, recv, rect, netconlist, noise_netconlist, ampa, gabaa, nmda
+	objref syn, nc, ns, ns_exc, ns_inh, nullobject // needed for adding a synapse and spiketrain as input
+	objref ns_exc_input, nc_exc_input // for artificial extra stimulus
+	objref v_netstim_exc, v_netstim_inh
+	objref reci_ampa, reci_nmda, reci_gaba // for recording synaptic input current --> noise measurements
+	objref stim
+
+	proc init() { local v_potassium, v_sodium, AMPAtau, AMPArev, GABAAtau, GABAArev
+
+		synlist = new List()
+		spiketimes = new Vector()
+		rect = new Vector()
+		recv = new Vector()
+		netconlist = new List()
+		noise_netconlist = new List()
+		v_netstim_exc = new List()
+		v_netstim_inh = new List()
+        reci_ampa = new Vector()
+        reci_nmda = new Vector()
+        reci_gaba = new Vector()
+
+		v_potassium = -100		// potassium reversal potential 
+		v_sodium = 50			// sodium reversal potential 
+
+		  soma {
+			  Ra = 100		// geometry 
+			  nseg = 1
+			  diam = 96
+			  L = 96			// so that area is about 29000 um2
+			  cm = 1
+
+			  insert pas		// leak current 
+			  e_pas = -70
+			  g_pas = 0.0001		// Rin = 34 Meg
+
+			  // conversion with McC units: 
+			  // g(S/cm2) = g(nS)*1e-9/29000e-8
+			  //	    = g(nS) * 3.45e-6
+
+			  insert hh2		// Hodgin-Huxley INa and IK 
+			  ek = v_potassium
+			  ena = v_sodium
+			  vtraub_hh2 = -55	// Resting Vm, BJ was -55
+			  gnabar_hh2 = 0.05	// McCormick=15 muS, thal was 0.09
+			  gkbar_hh2 = 0.005	// spike duration of pyr cells
+
+
+			  insert im		// M current 
+			  taumax_im = 1000
+		      gkbar_im = $1
+
+			  // synapses
+			  AMPAtau	= 10		//ms
+			  AMPArev	= 0		//mV
+			  GABAAtau	= 18		// from Sc&98
+			  GABAArev	= -80		// values taken from Malin's mitral cell synapses
+			  ampa = new ExpSyn(0.5)
+			  synlist.append(ampa)	//synlist[0]: excitation
+			  ampa.tau	= AMPAtau
+			  ampa.e		= AMPArev
+			  nmda = new NMDA(0.5)
+			  synlist.append(nmda)	// synlist[1]: slow excitation
+			  gabaa = new ExpSyn(0.5)
+			  synlist.append(gabaa) //synlist[2]: inhibition 
+			  gabaa.tau	= GABAAtau
+			  gabaa.e	= GABAArev
+
+			  spikecount = new APCount(0.5)
+			  spikecount.thresh = thresh
+			  spikecount.record(spiketimes)
+		  }
+	}
+
+	proc connect2target() {
+		// This function is called by ParallelNetManager.register_cell(gid, new Orn())
+		// This function has to construct a NetCon object and return it in the second argument
+		// with the following syntax:
+		soma $o2 = new NetCon(&v(0.5), $o1)
+		// the first argument of NetCon is the source cell (the cell which is being registered)
+		// the second argument of NetCon is the first argument of connect2target and
+		// represents the synapse object
+		$o2.threshold = thresh
+	}
+
+    proc record_v() {
+        recv.record(&soma.v(0.5))
+        rect.record(&t)
+    }
+
+    proc record_iampa() {
+        reci_ampa.record(&ampa.i)
+        rect.record(&t)
+    }
+
+    proc record_inmda() {
+        reci_nmda.record(&nmda.i)
+        rect.record(&t)
+    }
+
+    proc record_igaba() {
+        reci_gaba.record(&gabaa.i)
+        rect.record(&t)
+    }
+
+
+
+    proc print_v() {localobj file, m
+        strdef fn
+		fn = $s1
+		//sprint(fn, "data/mem_pot_mit_%d.v", gid)
+        file = new File()
+        file.wopen(fn)
+		// file.printf("#%d\t%f\n", rect.size(), recv.max())
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(recv.size(), 1)
+        m.setcol(0, recv)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_iampa() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_ampa.size(), 1)
+        m.setcol(0, reci_ampa)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_inmda() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_nmda.size(), 1)
+        m.setcol(0, reci_nmda)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_igaba() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_gaba.size(), 1)
+        m.setcol(0, reci_gaba)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+	proc add_connection_to_soma() {local threshold, delay, weight
+		threshold = thresh
+		delay = 1
+		weight = $1
+		// create a new synapse on the target section
+		// if synlist.o(0) => excitatory synapse
+		// if synlist.o(1) => inhibitory synapse
+		nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight) 
+		soma netconlist.append(nc)
+	}
+
+	proc connect_Iclamp() {local amp
+		amp = $1
+		soma stim = new IClamp(0.5)
+		stim.del = 100
+		stim.dur = 200
+		stim.amp = amp
+	}
+
+	proc add_random_exc_spikes_to_soma(){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		soma ns_exc = new NetStim(0.5)
+		ns_exc.interval = (1. / $2) * 1000.
+		ns_exc.number = $2 * (($3-start) / 1000.)
+		ns_exc.noise = 1.0
+		ns_exc.start = start
+		nc = new NetCon(ns_exc, synlist.o(0), threshold, delay, w_exc)
+		noise_netconlist.append(nc)
+	}
+
+	proc add_random_inh_spikes_to_soma(){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = 10
+		delay = 0
+		w_inh = $1
+		start = 0
+		soma ns_inh = new NetStim(0.5)
+		ns_inh.interval = (1. / $2) * 1000.
+		ns_inh.number = $2 * (($3-start) / 1000.)
+		ns_inh.noise = 1.0
+		ns_inh.start = start
+		nc = new NetCon(ns_inh, synlist.o(1), threshold, delay, w_inh)
+		noise_netconlist.append(nc)
+	}
+
+	proc add_random_inh_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-start) / 1000.)
+		ns.noise = 1.0
+		ns.start = start
+		ns.seed($4)
+		nc = new NetCon(ns, synlist.o(2), threshold, delay, w_exc)
+		v_netstim_inh.append(ns)
+		noise_netconlist.append(nc)
+	}
+
+	proc add_random_exc_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 100
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc_exc_input = new NetCon(ns, synlist.o(0), threshold, delay, w_exc)
+		noise_netconlist.append(nc_exc_input)
+		nc_exc_input = new NetCon(ns, synlist.o(1), threshold, delay, w_exc)
+		noise_netconlist.append(nc_exc_input)
+		v_netstim_exc.append(ns)
+	}
+
+
+endtemplate Basket
+
+
+

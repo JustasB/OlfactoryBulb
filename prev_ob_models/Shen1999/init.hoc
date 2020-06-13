@@ -1,0 +1,36 @@
+// beginning of two electrode mitral cell simulations
+load_file("noload.hoc")
+load_file("mulfit.hoc")
+xopen("mitral.hoc")
+xopen("memb.hoc")
+xopen("elec1.hoc")
+
+cut=0
+
+/* take into account new initialseg style
+proc nahigh(){ forsec axon gbar_na = 10000*$1
+	if (cut > 0) initialseg.gbar_na(0:cut) = soma.gbar_na:soma.gbar_na
+}
+proc kdhigh(){ forsec axon gbar_kd= 1000*$1
+	if (cut > 0) initialseg.gbar_kd(0:cut) = soma.gbar_kd:soma.gbar_kd
+}
+proc nalow(){ forsec somden gbar_na = 10*$1
+	if (cut > 0) initialseg.gbar_na(0:cut) = soma.gbar_na:soma.gbar_na
+}
+proc kdlow(){ forsec somden gbar_kd = 100*$1
+	if (cut > 0) initialseg.gbar_kd(0:cut) = soma.gbar_kd:soma.gbar_kd
+}
+*/
+
+objref sestim, pestim
+se.electrode sestim = new IClamp(.5)
+pe.electrode pestim = new IClamp(.5)
+sestim.del = 1
+sestim.dur = 10
+pestim.del = 1
+pestim.dur = 10
+
+xopen("mainpan.ses")
+xopen("data_in.hoc")
+
+

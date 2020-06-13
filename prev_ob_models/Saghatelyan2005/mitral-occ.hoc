@@ -1,0 +1,142 @@
+begintemplate Mitral
+
+public soma, priden, secden, tuftden, hillock, initialseg, ipgext
+public dendritic, somatic, second, somden, synodor, isynpg, igp, igm, igd
+public dampa
+
+create soma, priden, secden[2], tuftden, hillock, initialseg
+
+objref dendritic, somatic, second, somden, synodor
+objref isynpg, ipgext, igp, igm, igd, dampa
+
+forall Ra=70
+
+proc init() {
+
+dendritic = new SectionList()
+forsec "priden" dendritic.append()
+forsec "secden" dendritic.append()
+forsec "tuftden" dendritic.append()
+
+somatic = new SectionList()
+soma somatic.append
+hillock somatic.append
+
+somden = new SectionList()
+forsec somatic somden.append()
+forsec dendritic somden.append()
+
+topol()
+segments()
+geometry()
+memb()
+
+}
+
+
+proc topol() {local i
+	connect secden[0](0), soma(.5)
+	connect secden[1](0), soma(.5)
+	connect priden(0), soma(1)
+	connect tuftden(0), priden(1)
+
+	connect hillock(0), soma(0)
+	connect initialseg(0), hillock(1)
+}
+
+proc segments() {local i
+	soma.nseg= 1
+	priden.nseg = 5
+	forsec "tuftden" nseg = 10
+	forsec "secden" nseg = 10
+	initialseg.nseg = 3
+	hillock.nseg = 3
+}
+
+proc geometry() {local i
+	soma { L = 25  diam = 20 }
+	priden { L = 300  diam = 3.2 }
+	forsec "tuftden" { L=150  diam(0:1)=1.2:0.1 }
+	forsec "secden" { L=700  diam=2 }
+	initialseg{ L=30  diam=1.5}
+	hillock { L=5  diam(0:1) = soma.diam(0) : initialseg.diam(0) }
+	define_shape()
+}
+	
+
+
+proc memb() {
+	forall {insert pas}
+	forsec somden {
+		insert nax  insert kamt insert kdrmt
+		ek = -90
+		ena = 50
+		gbar_nax = 0.04 sh_nax=10
+	 	gbar_kdrmt = 0.0001
+		gbar_kamt = 0.004
+		}
+
+	forall {Ra = 70}
+
+	totarea=0
+	forall {
+		for (x) {totarea=totarea+area(x)}
+		cm = 1.8
+		g_pas = 1/20000
+		e_pas = -65
+	}
+//print "total area ", totarea
+
+	initialseg {
+		insert nax  insert kamt insert kdrmt
+		ek = -90
+		ena = 50
+	        g_pas = 1/1000
+	        gbar_nax = 0.4
+		sh_nax = 0
+	        gbar_kamt = 0.04
+	        gbar_kdrmt = 0.0001
+	}       
+  
+	tuftden {
+	synodor = new Exp2Syn(0.25)
+	synodor.e=0
+	synodor.tau1 = 0.5
+	synodor.tau2 = 500
+	isynpg = new Exp2Syn(0.25)
+	isynpg.e=-80
+	isynpg.tau1 = 1
+	isynpg.tau2 = 10
+	dampa = new Exp2Syn(0.8)
+	dampa.tau1=0.5
+	dampa.tau2=100
+	dampa.e=0
+	}
+
+priden {
+	ipgext = new Exp2Syn(0.8)
+	ipgext.e=-80
+	ipgext.tau1 = 1
+	ipgext.tau2 = 100
+}
+
+secden {
+	igp = new Exp2Syn(0.1)
+	igp.e=-80
+	igp.tau1 = 1
+	igp.tau2 = 10
+
+	igm = new Exp2Syn(0.5)
+	igm.e=-80
+	igm.tau1 = 1
+	igm.tau2 = 10
+
+	igd = new Exp2Syn(0.9)
+	igd.e=-80
+	igd.tau1 = 1
+	igd.tau2 = 10
+
+}
+}
+
+endtemplate Mitral

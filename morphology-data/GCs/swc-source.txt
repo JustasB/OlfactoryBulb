@@ -1,0 +1,2 @@
+Granule from:
+http://neuromorpho.org/MetaDataBrowseView.jsp?count=512&summary={%22neuron%22:{%22species%22:[%22mouse%22],%22age_classification%22:[%22adult%22],%22brain_region_1%22:[%22main%20olfactory%20bulb%22],%22cell_type_1%22:[%22interneuron%22],%22cell_type_2%22:[%22granule%22],%22experiment_condition%22:[%22Control%22]},%22ageWeightOperators%22:{},%22ageWeightOperations%22:{}}&browseBy=archive

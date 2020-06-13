@@ -1,0 +1,101 @@
+load_file("nrngui.hoc")
+load_file("mitral-occ.hoc")
+load_file("gc-occ.hoc")
+cvode_active(1)
+
+Vrest = -65
+dt = 0.1
+celsius=25
+tstop=100
+tdummy=5
+nmdafactor=0.015
+threshg=-45
+threshm=-30
+
+objref ncigcmt, ncmtgca, ncmtgcb, net, g, b, nil, stim, mt, gc
+
+mt = new Mitral()
+gc = new GC()
+
+amp=0
+delay=20
+
+b = new VBox()
+b.intercept(1)
+g = new Graph()
+g.size(0,tstop,-70,30)
+g.xaxis(1)
+g.addvar("gc.somagc.v(0.5)",3,1,2*tstop,0,2)
+g.addvar("gc.dend.v(1)",2,1,2*tstop,0,2)
+g.addvar("mt.soma.v(0.5)",1,1,2*tstop,0,2)
+g.color(1)
+g.label(0.1,0.05,"mitral")
+g.color(3)
+g.label(0.2,0.05,"GC soma")
+g.exec_menu("10% Zoom out")
+g.color(2)
+g.label(0.4,0.05,"GC dend")
+g.color(4)
+xpanel("",1)
+xbutton("control", "control()")
+xbutton("short dend", "rundend()")
+xbutton("Na shift", "runshift()")
+xpanel()
+b.intercept(0)
+b.map()
+
+access mt.soma
+	stim=new IClamp(0.5)
+	stim.del=5
+	stim.dur=2
+	stim.amp=1.5
+
+synstr=8 
+inh=10
+////////////////// circuit definition  
+
+gc.dend		ncigcmt= new NetCon(&v(1),mt.igp,threshg,0,inh*1e-3) 
+mt.secden	ncmtgca= new NetCon(&v(0.1),gc.synmt,threshm,0,synstr*nmdafactor) 
+mt.secden	ncmtgcb= new NetCon(&v(0.1),gc.sampa,threshm,0,synstr*1e-3) 
+
+////////////////// end circuit definition
+
+proc init() {
+	t=0
+	flag=0
+	finitialize(Vrest)
+        fcurrent()
+        forall { 
+		v=Vrest
+		if (ismembrane("nax")) {e_pas=v+(ina+ik)/g_pas} else {e_pas=v}
+	}
+	cvode.re_init()
+	g.begin()
+}
+
+proc advance() {
+	fadvance()
+	g.plot(t)
+	g.flush()
+	doNotify()
+}
+
+proc control() {
+gc.somagc.sh_nax= 15
+gc.pridengc.L =500
+run()
+}
+
+proc runshift() {
+gc.somagc.sh_nax= 5
+gc.pridengc.L =500
+run()
+}
+
+proc rundend() {
+gc.somagc.sh_nax= 15
+gc.pridengc.L =300
+run()
+}
+
+

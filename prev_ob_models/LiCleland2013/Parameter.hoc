@@ -1,0 +1,80 @@
+
+//======================================================================
+//               Specify parameters of the model
+//======================================================================
+
+
+NTCE = 0       // When NTCE=0, full model is simulated with EPL (with granule cells)
+               // When NTCE=1, glomerular model is simulated without granuel cells
+			   
+// Control ON/OFF of nicotinic and muscarinic effect
+NICOTIN  = 0  // 0: nAChRs inactive; 1: nAChRs activated
+MUSCARIN = 0  // 0: mAChRs inactive; 1: mAChRs activated			   
+			   
+netseed = 2    // Random seed used for the Netstim object in generating random background inputs 
+               // This parameter varied from 0 to 11 in Fig. 12 of the paper
+seedU = 88     // Random seed for uniform distribution
+seedN = 100    // Random seed for normal (Gaussian) distribution
+
+Todor = 2000  // Start time of odor
+
+// Synaptic weights
+Wm2p = 1    // MC to PG weight   
+Wm2g = 1    // MC to GC weight 
+
+Wp2m = 8    // PG to MC weight 
+Wg2m = 1    // GC to MC weight 
+
+// Number of neurons
+nMit  =  25   // 25
+nPG   =  25   // 25
+nGran =  100  // 100
+
+P  = 0.3      // Connectivity probability between MCs and GCs
+LL = 500      // MC latral dend length in um
+
+// Specific inputs
+Km2p   = 0.4    // Scaling factor between MC and PG input: Ipg=Km2p*Imc
+                // i.e., Odor input intensity is scaled down from MCs to PGs 
+// Peak conductance
+AMPAgmaxPG  =  2e-3    //  Maximal conductance for MC-PG synapses
+NMDAgmaxPG  =  1e-3    //  Maximal conductance for MC-PG synapses
+GABAAgmaxPG =  2e-3    //  Maximal conductance for PG-MC synapses
+
+AMPAgmaxGC  =  2e-3    //  Maximal conductance for MC-GC synapses
+NMDAgmaxGC  =  1e-3    //  Maximal conductance for MC-GC synapses
+GABAAgmaxGC =  1.5e-3  //  Maximal conductance for GC-MC synapses
+
+
+// Synaptic time constants
+tau1_AMPA  = 1       // Riset time constant
+tau2_AMPA  = 5.5     // Decay time constant
+tau1_NMDA  = 52      // Rise time
+tau2_NMDA  = 343     // Decay time
+tau1_GABA  = 1.25    // Rise time 
+tau2_GABA  = 18      // Decay time 
+
+AMPAalpha  = 1/tau1_AMPA      
+AMPAbeta   = 1/tau2_AMPA
+NMDAalpha  = 1/tau1_NMDA
+NMDAbeta   = 1/tau2_NMDA
+GABAAalpha = 1/tau1_GABA
+GABAAbeta  = 1/tau2_GABA
+
+// Reserval potentials
+AMPArev = 0
+NMDArev = 0
+GABAArev = -80
+
+// Synapitc half-activation 
+AMPAact  = 0    // 
+NMDAact  = 0    // 
+GABAAact = -40
+
+// Synaptic gradeness
+AMPAsigma  = 0.2     
+NMDAsigma  = 0.2     
+GABAAsigma = 2
+
+
+

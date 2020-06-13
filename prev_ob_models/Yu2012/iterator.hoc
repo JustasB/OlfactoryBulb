@@ -1,0 +1,11 @@
+//iterator over this cpu subnet
+iterator cell_gids() { local i
+    $&2 = 0
+    for (i = pnm.myid; i < ncell; i += pnm.nhost) {
+	$&1 = i
+	iterator_statement //executes statement that is changes value of first argument
+	$&2 += 1
+    }
+}
+
+

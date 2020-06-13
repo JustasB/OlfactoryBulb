@@ -1,0 +1,26 @@
+{load_file("stdlib.hoc")}
+objref f
+f = new File()
+f.chooser("r", "copy ascii spike file to binras.dat", "*.dat", "Read", "Quit")
+if (!f.chooser()){
+	quit()
+}
+strdef cmd
+{
+x = startsw()
+printf("sorting %s into out.spk\n", f.getname())
+x = startsw()
+sprint(cmd, "bash sortspike %s out.spk", f.getname())
+system(cmd)
+printf("sorted in %g seconds\n", startsw() - x)
+printf("Reading out.spk\n")
+x = startsw()
+clipboard_retrieve("out.spk")
+printf("Read out.spk in %g seconds\n", startsw() - x)
+x = startsw()
+f.wopen("binras.dat")
+hoc_obj_[1].vwrite(f)
+hoc_obj_[0].vwrite(f)
+printf("Wrote binras.dat in %g seconds\n", startsw() - x)
+f.close
+}

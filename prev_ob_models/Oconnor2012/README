@@ -1,0 +1,28 @@
+This is the readme for a model that reproduces Figure 8c in:
+
+O'Connor S., Angelo K., Jacob T.J.C. Burst firing versus synchrony in
+a gap junction connected olfactory bulb mitral cell network
+model. Frontiers in Computational Neuroscience 6:75.
+
+Description:
+
+In a network of 6 mitral cells connected by gap junctions in the
+apical dendrite tuft, continuous current injections of 0.06 nA are
+injected into 20 locations in the apical tuft of two of the mitral
+cells. The current injection into one of the cells starts 10 ms after
+the other to generate asynchronous firing in the cells (Migliore et
+al. 2005 protocol). Firing of the cells is asynchronous for the first
+120 ms. However after the burst firing phase is completed the firing
+in all cells becomes synchronous.
+
+This implementation is by Simon O'Connor, to whom questions should be
+addressed.
+
+Usage:
+1. Unzip oconnoretal2012.zip into an empty directory.
+2. Compile the mod files with (linux/unix) nrnivmodl or (mswin/mac)
+mknrndll.
+3. (mswin) Double click on init.hoc, or (linux/unix) execute nrngui
+init.hoc from the command line or (mac) drag and drop init.hoc onto
+the nrngui icon.
+4. The simulation will run reproducing Figure 8c.

@@ -1,0 +1,7 @@
+WHAT I DID: 
+i manually fixed these by moving the tuf to the end of the apical dendrite
+some dendites technically started as apical but then behaved like lateral (e.g. to the side along the EPL). I reclassified those branches as lateral dendrites
+
+these appear to be relatively thin slices with one edge of the slice right next to the soma
+
+height and width seems to be ok, but depth is not right

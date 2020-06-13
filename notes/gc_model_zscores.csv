@@ -1,0 +1,12 @@
+,RMS,Mad,,AfterDepolarizationDepthTest,AfterDepolarizationTimeTest,CellCapacitanceTest,FISlopeTest,InputResistanceTest,MembraneTimeConstantTest,RestingVoltageTest,RheobaseTest,SagVoltageTest,SpikeAmplitudeTest,SpikeHalfWidthTest,SpikeThresholdTest
+prev_ob_models.LiCleland2013.isolated_cells.GC,6.957,20.732,3.846,2.068,-1.778,-3.063,-1.485,3.244,-0.326,2.015,-1.127,-0.663,1.452,3.289,0.221
+prev_ob_models.Saghatelyan2005.isolated_cells.GC,8.440,26.777,8.495,2.735,-1.705,-1.952,-2.545,0.622,-0.250,2.843,1.940,2.950,-2.689,3.947,2.598
+prev_ob_models.Migliore2008microcircuits.isolated_cells.GC,10.406,27.154,15.587,5.649,-1.648,-2.029,-1.545,0.649,-0.326,3.185,-0.236,2.950,0.269,6.579,2.089
+prev_ob_models.MiglioreMcTavish2013.isolated_cells.GC,10.406,27.154,15.587,5.649,-1.648,-2.029,-1.545,0.649,-0.326,3.185,-0.236,2.950,0.269,6.579,2.089
+prev_ob_models.McTavish2012.isolated_cells.GC,10.533,28.093,15.657,5.903,-1.676,-2.298,-1.545,1.506,-0.098,3.204,-0.601,2.238,0.373,6.579,2.072
+prev_ob_models.Short2016.isolated_cells.GC,10.533,28.093,15.657,5.903,-1.676,-2.298,-1.545,1.506,-0.098,3.204,-0.601,2.238,0.373,6.579,2.072
+prev_ob_models.Migliore2014bulb3d.isolated_cells.GC,10.656,29.018,15.911,5.800,-1.688,-2.417,-1.576,1.492,-0.250,3.204,-0.623,2.949,0.576,6.579,1.864
+prev_ob_models.Migliore2015operators.isolated_cells.GC,10.706,28.801,16.365,5.904,-1.676,-2.298,-1.545,1.506,-0.098,3.204,-0.601,2.949,0.374,6.579,2.067
+prev_ob_models.Yu2012.isolated_cells.GC,10.706,28.801,16.365,5.904,-1.676,-2.298,-1.545,1.506,-0.098,3.204,-0.601,2.949,0.374,6.579,2.067
+prev_ob_models.Davison2003.isolated_cells.GC,12.096,33.692,21.064,1.898,-1.682,2.717,-2.273,1.610,6.114,3.564,-1.657,2.949,0.632,7.895,-0.702
+prev_ob_models.KaplanLansner2014.isolated_cells.GC,13.251,36.837,23.581,1.808,-1.705,3.887,-2.303,1.639,7.629,3.566,-1.663,2.949,0.837,7.895,-0.958

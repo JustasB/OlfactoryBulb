@@ -1,0 +1,62 @@
+begintemplate ShowHinton
+external fast_flush_list
+objref g, syns, sl, cells
+proc init() {
+	cells = $o1
+	ls = cells.object(0).secden[1].L
+	num_mitral = $2
+	num_granule = $3
+	syns = $o4
+	build()
+	draw()
+	fast_flush_list.append(g)
+}
+proc build() {local mx1, mx2
+	sl = new SectionList()
+	g = new PlotShape(sl)
+	g.scale(0, 50)
+	cells.object(0).soma mx1 = x3d(0)
+	cells.object(num_mitral-1).soma mx2 = x3d(0)
+	g.size(-ls + mx1, ls + mx2, -1, num_mitral)
+}
+proc draw() {local i, j, k, x, mx, gx  localobj mgr, sr
+	for i=0, num_mitral-1 {
+		cells.object(i).soma x = x3d(0)
+		g.beginline(9, 1)
+		g.line(x - cells.object(i).secden[1].L, i*200)
+		g.line(x + cells.object(i).secden[0].L, i*200)	
+		g.flush()
+		g.mark(x, i*200, "t", 10, 1, 1)
+	}
+	for i=0, num_granule-1 {
+		cells.object(num_mitral+i).soma x = x3d(0)
+		g.mark(x, -200, "o", 8, 1, 1)
+	}
+	for k=0, syns.count-1 {
+		mgr = syns.object(k)
+		mgr.mitral.soma mx = x3d(0)
+		mgr.granule.soma gx = x3d(0)
+		j = mgr.mitral_gid
+		i = mgr.granule_gid - num_mitral
+		x = mgr.md.get_loc()
+		x *= L
+		sr = new SectionRef()
+		pop_section()
+		mgr.mitral.secden[0] if (sr.is_cas()) {
+			x = mx + x 
+		}else{
+			x = mx - x
+		}
+		g.beginline(9, 1)
+		g.line(gx, -200)
+		g.line(x, j*200)
+		g.flush()
+		g.hinton(&mgr.md2ampanmda.weight[1], x, j*200, 40)
+	}
+}
+endtemplate ShowHinton
+
+objref shin_
+proc showhinton() {
+	shin_ = new ShowHinton(cells, num_mitral, num_granule, mgrs_list)
+}

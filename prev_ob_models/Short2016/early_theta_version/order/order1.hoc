@@ -1,0 +1,35 @@
+// this file demonstrates the order of execution of blocks in mod files
+// 
+// recomended usage:
+// i686/special order1.hoc > output
+// 
+
+load_file("nrngui.hoc")
+
+create soma[2]
+access soma
+insert pas
+soma[1] {insert hh }
+forall { diam=10 L=100/(PI*diam) }
+objref stim
+soma[1] stim = new IClamp(.5) // stim the hh cell
+{stim.del=.1 stim.dur=.1 stim.amp=.3 }
+
+proc advance() {
+	fadvance()
+	printf("after fadvance() t=%g soma[0].v=%g soma[1].v=%g\n", t, soma[0].v, soma[1].v)
+}
+
+ii=0
+forall {insert order1 index_order1 = ii ii+=1}
+tstop = .2
+print "fixed step"
+run()
+cvode_active(1)
+print "global variable"
+run()
+cvode_local(1)
+print "local variable"
+run()
+
+

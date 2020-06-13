@@ -1,0 +1,17 @@
+objref pattern_, pattern_tvec_, pattern_idvec_
+{load_file("clear.hoc")}
+pattern_ = new PatternStim()
+
+proc pattern() { localobj filepath
+    if (strcmp(spike_input_file, "") != 0) {
+            filepath = new String()
+            sprint(filepath.s, "../%s", spike_input_file)
+	clipboard_retrieve(filepath.s)
+	pattern_tvec_ = hoc_obj_[1].c
+	pattern_idvec_ = hoc_obj_[0].c
+	pattern_.play(pattern_tvec_, pattern_idvec_)
+    }
+}
+pattern()
+
+

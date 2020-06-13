@@ -1,0 +1,82 @@
+setuptime = startsw()
+{load_file("nrngui.hoc")}
+{load_file("param.hoc")}
+objref pnm
+{load_file("netparmpi.hoc")}
+pnm = new ParallelNetManager(0)
+{load_file("lptiter.hoc")}
+nthread = 1
+objref pc
+pc = new ParallelContext()
+if (pnm.nhost == 1) { execute1("{nthread=pc.nthread(4) cvode.cache_efficient(1) }", 0) }
+{load_file("net.hoc")}
+mknet()
+{load_file("stimodors.hoc")}
+create_stim()
+{load_file("perfrun.hoc")}
+{load_file("netparmpi.hoc")}
+{load_file("loadbal.hoc")}
+
+objref lb
+lb = new LoadBalance()
+tdat_.x[6] = lb.cpu_complexity() // actual to compare to cxcpu
+if (nthread > 1) { lb.thread_partition(1) }
+if (nthread > 1) { pc.thread_busywait(1) }
+
+{load_file("weightsave.hoc")}
+{want_all_spikes()}
+
+objref fih_progress
+if (pc.id == 0) fih_progress = new FInitializeHandler(2, "cvode.event(100, \"progress()\")")
+proc progress() {
+	print t
+	cvode.event(t + 100, "progress()")
+}
+
+
+// weight_snapshots(filename, starttime, interval_between_snapshots)
+objref wout
+wout=new String()
+sprint(wout.s, "%s", prj_path)
+if (strcmp(wt_output_file, "") == 0) {
+    sprint(wout.s, "%s/%s", wout.s, "weight")
+    for ii = 0, stim_odor_ids.size() - 1 {
+        sprint(wout.s, "_%s%d-%.2f", wout.s, stim_odor_ids.x[ii], stim_odor_mags.x[ii])
+    }
+    sprint(wout.s, "%s/%s", wout.s, ".dat")
+} else {
+    sprint(wout.s, "%s/%s", wout.s, wt_output_file)
+}
+
+weight_snapshots(wout.s, ws_start, ws_interval)
+objref filepath
+if (strcmp(wt_input_file, "") != 0) {
+    filepath=new String(prj_path)
+    sprint(filepath.s, "%s/%s", filepath.s, weight_dir)
+    sprint(filepath.s, "%s/%s", filepath.s, wt_input_file)
+    if (read_weights_normalized) {
+    	weight_initialize_normalized(filepath.s)
+    } else {
+        weight_initialize(filepath.s)
+    }
+}
+
+setuptime = startsw() - setuptime
+if (pc.id == 0) printf("setuptime=%g\n", setuptime)
+if (pnm.myid == -1) {
+	printf("cxcpu=%g tdat_.x[6]=%g\n", cxcpu, tdat_.x[6])
+	topology()
+	//for j=0,1 for i=0, lb.mt[j].count-1 {lb.mt[j].select(i) lb.mt[j].selected(tstr) printf("%s %g\n", tstr, lb.m_complex_[j].x[i])}
+}
+runtime = startsw()
+
+//if (pc.nhost > 1) {
+	prun(tstop)
+	spike2file()
+	if (pc.id == 0) printf("runtime=%g\n", runtime)
+	{pc.runworker()}
+	getstat()
+	print_spike_stat_info()
+
+	{pc.done() quit()}
+//}

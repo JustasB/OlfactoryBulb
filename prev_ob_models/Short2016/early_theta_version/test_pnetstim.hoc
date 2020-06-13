@@ -1,0 +1,22 @@
+// test_pnetstim.hoc
+// uses a simple pnetstim to follow flow
+
+create soma
+access soma
+insert pas  // needed to better see the result of synaptic activation
+
+objref pns, glut, nc
+
+soma pns = new NetStim(0.5) // new pNetStim(0.5)
+soma glut = new AmpaNmda(0.5)
+nc = new NetCon(pns, glut)
+nc.weight = 1 // change from initialization of 0 to 1
+xpanel("test pNetStim")
+  xvalue("pns.interval")
+  xvalue("pns.start")
+  xvalue("pns.number")
+  xvalue("pns.noise")
+  xvalue("nc.weight")
+xpanel()
+
+load_file("test_pns.ses")

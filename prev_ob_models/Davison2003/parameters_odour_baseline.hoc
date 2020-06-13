@@ -1,0 +1,40 @@
+// parameters_odour_baseline.hoc
+// Olfactory bulb network model: parameters file
+//   for odour input.
+// Andrew Davison, The Babraham Institute, 2000.
+
+nmitx       = 6			// 1st dimension of mitral cell array
+nmity       = 6			// 2nd dimension of mitral cell array
+nglom       = nmitx*nmity	// total number of mitral cells
+g2m         = 12		// 
+ngranx      = nmitx*g2m		// 1st dimension of granule cell array
+ngrany      = nmity*g2m		// 2nd dimension of granule cell array
+mitsep      = 1.0		// um	// mitral cell separation
+gransep     = mitsep/g2m	// granule cell separation
+seed        = 0			// seed for random number generator
+rmax        = ngranx*0.5	// maximum range of synaptic connections
+synpermit   = 500		// synapses per mitral cell
+thresh      = -10       // mV	// threshold for detecting spikes
+edelay      = 1.8       // ms	// time delay of mitral->granule synapses
+conducdel   = 0		// ms	// conduction delay in secondary dendrites
+idelay      = 0.6       // ms	// time delat of granule->mitral synapses
+AMPAweight  = 1e-3	// uS	// }
+NMDAweight  = 7e-4	// uS	// } synaptic conductances
+iweight     = 6e-4	// uS	// }
+maxinput    = 1.5	// nA	// measure of `odour intensity'
+nof         = 10        	// number of `odour features'
+diffglom    = 1			// } 0 - cells are in the same glomerulus
+				// } 1 - cells are in different glomeruli
+NMDArisetime = 30	// ms	// rise-time of NMDA conductance
+NMDAdecay    = 343      // ms   // NMDA decay time constant
+NMDArise     = 52       // ms   // NMDA rise time constant
+mgconc 	    = 1		// mM	// external magnesium ion concentration
+strdef fileroot
+sprint(fileroot,"odour_baseline") // root for output filenames
+odournumber = 1			// odour file
+inputnumber = 1			// fixed input file
+tstop	    = 3000	// ms	// total simulation time
+ttrans	    = 1000	// ms   // when calculating statistics, ignore
+				// spikes occuring before this time
+cvode.active(0)
+dt 	    = 0.05	//ms

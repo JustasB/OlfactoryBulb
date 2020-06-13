@@ -1,0 +1,10 @@
+// init.hoc
+// choose pg (periglom) or g (granule) cell network models
+
+xpanel("choose a model")
+  xlabel("Choose a network model to run:")
+  xbutton("peri-glomerular interneuron","load_file(\"build_pg_net.hoc\")")
+  xbutton("granule cell interneuron","load_file(\"build_net.hoc\")")
+  xbutton("mitral periglom granule cell theta stim","load_file(\"build_net_theta.hoc\")")
+  xbutton("mitral periglom granule cell gauss stim","load_file(\"build_net_Shep.hoc\")")
+xpanel()

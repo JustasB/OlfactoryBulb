@@ -1,0 +1,418 @@
+// par_periglomerular.tem
+// Modified from the template for three-compartment granule cell model
+// Andrew Davison, The Babraham Institute, 2000
+// this parallel version by Malin Sandström (KTH, Sweden) for NEUROCHEM
+// modified by Bernhard Kaplan (KTH, Sweden)
+
+begintemplate Perig 
+	public soma, periph, deep, ampaPG, nmdaPG, gabaa_periph, spiketimes, spikecount
+	public connect2target, synlist, noise_netconlist, ampa_netconlist, nmda_netconlist, record_v, print_v, record_periph_v, record_deep_v, print_periph_v, print_deep_v
+	public add_random_exc_spikes_to_periph, add_random_inh_spikes_to_periph
+	public add_netcon_to_ampa_glom, add_netcon_to_nmda_glom // required to simulate offline, i.e. without EPTH
+	public add_random_exc_spikes_to_soma_with_seed, add_random_inh_spikes_to_soma_with_seed
+	public add_random_exc_spikes_to_periph_with_seed, add_random_inh_spikes_to_periph_with_seed
+	public record_iampa_periph, record_inmda_periph, record_igaba_periph
+	public print_iampa_periph, print_inmda_periph, print_igaba_periph
+
+	external thresh
+	create soma, periph, deep, s2d, s2p // periph : location of interaction with mitral cells
+	objref ampaPG, nmdaPG, gabaa_periph, spiketimes, spikecount, synlist
+	objref noise_netconlist, ampa_netconlist, nmda_netconlist
+	objref recv, rect, deep_v, periph_v
+	objref reci_ampa_periph, reci_nmda_periph, reci_gaba_periph // for recording synaptic input current --> noise measurements
+	objref nc, nullobject // a netcon and a dummy source for the netcon which is connected to a synapse and then triggered by spikes from a file
+	objref ns_exc, ns_inh // netstim objects for external noise input
+	objref nil, src_netcons_periph, src_netcons_deep
+	objref v_netstim_exc, v_netstim_inh
+	public src_netcons_periph, src_netcons_deep
+
+	proc init() { local Len, Erest, RM, p, q, Atotal, gsp, gsd, tau_ampa, E_rev_ampa, alpha_nmda, beta_nmda, E_rev_nmda, tau_gabaa, E_rev_gabaa, rsd, rsp
+
+		create soma, periph, deep, s2d, s2p
+
+		my_seed = $1
+		
+		synlist = new List() 
+		ampa_netconlist = new List()	// to insert spikes 'offline', i.e. from pre-recorded sources
+		nmda_netconlist = new List()	// to insert spikes 'offline', i.e. from pre-recorded sources
+		noise_netconlist = new List() // insert noise spikes
+		spiketimes = new Vector()
+		lastspikecount = 0
+        rect = new Vector()
+        recv = new Vector()
+		periph_v = new Vector()
+		deep_v = new Vector()
+        reci_ampa_periph = new Vector()
+        reci_nmda_periph = new Vector()
+        reci_gaba_periph = new Vector()
+		v_netstim_exc = new List()
+		v_netstim_inh = new List()
+
+		src_netcons_periph = new List()
+		src_netcons_deep = new List()
+
+		Erest		= -65		// mV
+		Atotal		= 8353		// um2
+		gsp			= 3.08e-10	// S/cm2
+		gsd			= 4.34e-10
+		RM			= 120000	// ohm.cm2
+		Len			= 50
+		p			= 0.0136
+		q			= 0.308
+		rsd 		= 1/(gsd*Atotal)
+		rsp 		= 1/(gsp*Atotal)
+		alpha_nmda = 0.0163	// ms-1
+		beta_nmda = 0.00292	// ms-1
+		tau_ampa = 5.5		// ms
+		E_rev_ampa = 0		// mV
+		E_rev_nmda = 0		// mV
+		tau_gabaa = 18 		// ms
+		E_rev_gabaa = -80	// mV
+
+		soma {
+			L 		= Len
+			diam    = p*Atotal/(PI*Len)
+			Ra 		= PI/(4*Len*Atotal)
+			insert pas
+			e_pas 		= Erest		// reversal potential mV
+			g_pas 		= 1/RM 		// membrane conductance S/cm2
+			insert nagrantab
+			insert kslowtab
+			insert kM
+			insert kA
+			gnabar_nagrantab 	= 0.1611	// S/cm2
+			gkbar_kslowtab 	= 0.1313
+			gkbar_kM 		= 0.1334
+			gkbar_kA 		= 0.0088
+		}
+		periph {
+			L 		= Len
+			diam 		= q*Atotal/(PI*Len)
+			Ra 		= PI/(4*Len*Atotal)
+			insert pas
+			e_pas 		= Erest
+			g_pas 		= 1/RM
+			insert nagrantab
+			insert kslowtab
+			gnabar_nagrantab 	= 0.1355
+			gkbar_kslowtab 	= 0.0243
+			spikecount = new APCount(0.5)
+			spikecount.thresh = thresh
+			spikecount.record(spiketimes)
+			// create a netcon object for detecting threshold crossing
+			delay = 0
+			src_netcons_periph.append(new NetCon(&v(0.5), nil, -40, delay, 0))
+		}
+
+		deep {
+			L 		= Len
+			diam 		= (1-p-q)*Atotal/(PI*Len)
+			Ra 		= PI/(4*Len*Atotal)
+			insert pas
+			e_pas 		= Erest
+			g_pas 		= 1/RM
+			// create a netcon object for detecting threshold crossing
+			delay = 0
+			src_netcons_deep.append(new NetCon(&v(0.5), nil, -40, delay, 0))
+		}
+		s2d { 
+			diam 		= 1
+			Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsd )
+			L 		= 1
+		}
+		s2p { 
+			diam 		= 1
+			Ra = PI*diam*diam/(4*Len*Atotal) * ( 1/gsp )
+			L 		= 1
+		}
+
+		soma connect s2p(0), 0
+		s2p connect periph(0), 1
+		soma connect s2d(0), 1
+		s2d connect deep(0), 1
+
+		periph ampaPG = new ExpSyn(0.5)
+		periph nmdaPG = new NMDA(0.5)
+		periph gabaa_periph = new ExpSyn(0.5)
+		ampaPG.tau 	  = tau_ampa
+		ampaPG.e	  = E_rev_ampa
+		nmdaPG.Alpha  = alpha_nmda
+		nmdaPG.Beta	  = beta_nmda
+		nmdaPG.e	  = E_rev_nmda
+		gabaa_periph.tau = tau_gabaa
+		gabaa_periph.e = E_rev_gabaa
+
+		synlist.append(ampaPG) // synlist[0]
+		synlist.append(nmdaPG) // synlist[1]
+		synlist.append(gabaa_periph) // synlist[2]
+
+		// set reversal potentials, etc.
+		forall if (ismembrane("na_ion")) {
+			ena = 45	// mV
+		}
+		forall if (ismembrane("k_ion")) {
+			ek  = -70	//  mV
+		}
+
+	}
+
+	proc connect2target() {
+		// This function is called by ParallelNetManager.register_cell(gid, new Perig())
+		// This function has to construct a NetCon object and return it in the second argument
+		// with the following syntax:
+		// the first argument of NetCon is the source cell (the cell which is being registered)
+		// the second argument of NetCon is the first argument of connect2target and
+		// represents the synapse object
+		periph $o2 = new NetCon(&v(0.5), $o1)
+		$o2.threshold = thresh
+	}
+
+	proc record_v() {
+		recv.record(&soma.v(0.5))
+		rect.record(&t)
+	}
+
+	proc record_deep_v() {
+		deep_v.record(&deep.v(0.5))
+	}
+
+	proc record_periph_v() {
+		periph_v.record(&periph.v(0.5))
+	}
+    proc record_iampa_periph() {
+        reci_ampa_periph.record(&ampaPG.i)
+        rect.record(&t)
+    }
+    proc record_inmda_periph() {
+        reci_nmda_periph.record(&nmdaPG.i)
+        rect.record(&t)
+    }
+    proc record_igaba_periph() {
+        reci_gaba_periph.record(&gabaa_periph.i)
+        rect.record(&t)
+    }
+
+
+
+	proc print_v() {localobj file, m
+	/*        gid = $1*/
+		strdef fn
+		fn = $s1
+		//sprint(fn, "data/mem_pot_mit_%d.v", gid)
+		file = new File()
+		file.wopen(fn)
+		// file.printf("#%d\t%f\n", rect.size(), recv.max())
+/*        printf("DEBUG PG_V %d\t%f\n", rect.size(), recv.max())*/
+
+		// create a matrix out of these two vectors in order to
+		// be possible to print them to a file later
+		m = new Matrix()
+		m.resize(recv.size(), 1)
+		m.setcol(0, recv)
+		m.fprint(file, "\t%f") //with a stupid first line
+	}
+
+	proc print_periph_v() { localobj file, m
+		strdef fn
+		fn = $s1
+		file = new File()
+		file.wopen(fn)
+
+		// create a matrix out of these two vectors in order to
+		// be possible to print them to a file later
+		m = new Matrix()
+		m.resize(periph_v.size(), 1)
+		m.setcol(0, periph_v)
+		m.fprint(file, "\t%f") //with a stupid first line
+	}
+
+	proc print_deep_v() { localobj file, m
+		strdef fn
+		fn = $s1
+		file = new File()
+		file.wopen(fn)
+
+		// create a matrix out of these two vectors in order to
+		// be possible to print them to a file later
+		m = new Matrix()
+		m.resize(deep_v.size(), 1)
+		m.setcol(0, deep_v)
+		m.fprint(file, "\t%f") //with a stupid first line
+	}
+
+    proc print_iampa_periph() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_ampa_periph.size(), 1)
+        m.setcol(0, reci_ampa_periph)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+    proc print_inmda_periph() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_nmda_periph.size(), 1)
+        m.setcol(0, reci_nmda_periph)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+    proc print_igaba_periph() {localobj file, m
+        strdef fn
+		fn = $s1
+        file = new File()
+        file.wopen(fn)
+        // create a matrix out of these two vectors in order to
+        // be possible to print them to a file later
+        m = new Matrix()
+        m.resize(reci_gaba_periph.size(), 1)
+        m.setcol(0, reci_gaba_periph)
+        m.fprint(file, "\t%f") //with a stupid first line
+    }
+
+
+	proc add_random_exc_spikes_to_periph(){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = thresh
+		delay = 0
+		w_exc = $1
+		soma ns_exc = new NetStim(0.5)
+		ns_exc.interval = (1. / $2) * 1000.
+		ns_exc.number = $2 * (($3-start) / 1000.)
+		ns_exc.noise = 1.0
+		ns_exc.start = start
+		ns_exc.seed(my_seed)
+/*        nc = new NetCon(ns_exc, synlist.o(0), threshold, delay, w_exc)*/
+		nc = new NetCon(ns_exc, ampaPG, threshold, delay, w_exc)
+		noise_netconlist.append(nc) // netconlist[0]
+	}
+
+	proc add_random_inh_spikes_to_periph(){ local threshold, delay
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		threshold = thresh
+		delay = 0
+		w_inh = $1
+		start = 0
+		ns_inh = new NetStim(0.5)
+		ns_inh.interval = (1. / $2) * 1000.
+		ns_inh.number = $2 * (($3-start) / 1000.)
+		ns_inh.noise = 1.0
+		ns_inh.start = start
+		ns_inh.seed(my_seed+1)
+/*        nc = new NetCon(ns_inh, synlist.o(2), threshold, delay, w_inh)*/
+		nc = new NetCon(ns_inh, gabaa_periph, threshold, delay, w_inh)
+		noise_netconlist.append(nc) // nectonlist[1]
+	}
+
+	proc add_netcon_to_ampa_glom() {local threshold, delay
+		threshold = 10
+		delay = 0
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(0), threshold, delay, weight)
+		ampa_netconlist.append(nc)
+	}
+
+	proc add_netcon_to_nmda_glom() {local threshold, delay
+		threshold = 10
+		delay = 0
+		weight = $1
+		nc = new NetCon(nullobject, synlist.o(1), threshold, delay, weight)
+		nmda_netconlist.append(nc)
+	}
+
+	proc add_random_exc_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		noise_netconlist.append(new NetCon(ns, synlist.o(0), threshold, delay, w_exc))
+		noise_netconlist.append(new NetCon(ns, synlist.o(1), threshold, delay, w_exc))
+		v_netstim_exc.append(ns)
+	}
+
+	proc add_random_inh_spikes_to_soma_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		soma ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		nc = new NetCon(ns, synlist.o(2), threshold, delay, w_exc)
+		v_netstim_inh.append(ns)
+		noise_netconlist.append(nc)
+	}
+
+	proc add_random_exc_spikes_to_periph_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		periph ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		noise_netconlist.append(new NetCon(ns, synlist.o(0), threshold, delay, w_exc))
+		noise_netconlist.append(new NetCon(ns, synlist.o(1), threshold, delay, w_exc))
+		v_netstim_exc.append(ns)
+	}
+
+	proc add_random_inh_spikes_to_periph_with_seed(){ local threshold, delay, w_exc, t_stim_start localobj ns
+		// $1 = w_exc
+		// $2 = rate [Hz]
+		// $3 = t_stop
+		// $4 = seed
+		threshold = 10
+		delay = 0
+		w_exc = $1
+		t_stim_start = 0
+		periph ns = new NetStim(0.5)
+		ns.interval = (1. / $2) * 1000.
+		ns.number = $2 * (($3-t_stim_start) / 1000.)
+		ns.noise = 1.0
+		ns.start = t_stim_start
+		ns.seed($4)
+		v_netstim_inh.append(ns)
+		noise_netconlist.append(new NetCon(ns, synlist.o(2), threshold, delay, w_exc))
+	}
+
+
+
+endtemplate Perig

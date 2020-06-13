@@ -1,0 +1,84 @@
+load_file("nrngui.hoc")
+load_file("init.hoc")
+load_file(1, "fig3b.ses")
+
+/*
+Fig 3B in the paper was constructed by:
+Turning on the variable step method.
+Selecting "KeepLines" in the grapher
+Using Begin-End, Steps values for
+Proximal 2-12, 20
+Middle   2-6, 8   6-7.5, 50   7.5-12, 9
+Distal   2-5, 6   5-5.8, 30   5.8-6, 20   6-6.5, 10   6.5-12, 11
+*/
+
+for i=0, 1 {
+        InhiSyn[i].gmaxampa = 0
+        InhiSyn[i].gmaxnmda = 0
+}
+
+hoc_ac_ = .5
+tuftden[1] PointProcessManager[1].move()
+hoc_ac_ = .5
+tuftden[0] PointProcessManager[2].move()
+GluSyn[0].onset = 0
+GluSyn[1].onset = 0
+tstop = 12
+steps_per_ms = 400
+
+objref svec, pvec, tvec, mat, xvec, yvec
+svec = new Vector()
+pvec = new Vector()
+tvec = new Vector()
+svec.record(&soma.v(.5))
+pvec.record(&priden.v(.75))
+tvec.record(&t)
+
+mat = new Matrix(3,3)
+func tmax() {local i, x, x1, x2, y, y1, y2
+	// interpolated maximum under assumption of nonuniform t values
+	i = $o1.max_ind
+	if (i > 0 && i < $o1.size-1) {
+		yvec = $o1.c(i-1,i+1)
+		xvec = tvec.c(i-1,i+1)
+		mat.setcol(0, xvec.c.mul(xvec))
+		mat.setcol(1, xvec)
+		mat.setcol(2, 1)
+		yvec = mat.solv(yvec)
+		if (yvec.x[0] <= 0) { // good, it's convex
+			x = -yvec.x[1]/2/yvec.x[0]
+			if (x >= xvec.x[0] && x <= xvec.x[2]) {
+				// and we are in the original interval
+				return x
+			}
+		}
+		printf("failure in finding time of maximum around index %d\n", i)
+		print "x"  xvec.printf
+		print "y"  $o1.c(i-1,i+1).printf
+		print "quadratic fit a*x^2 + b*x + c"  yvec.printf
+	}
+	return tvec.x[i]
+}
+
+func spdiff() {
+        GluSyn[0].gmaxampa = $1*1e-3
+        GluSyn[1].gmaxampa = $1*1e-3
+	GluSyn[0].gmaxnmda = $1*1e-3*.5
+	GluSyn[1].gmaxnmda = $1*1e-3*.5
+        run()
+	return (tmax(svec) - tmax(pvec))
+}
+
+proc tuftlocate() {local i
+	hoc_ac_ = $1
+	tuftden[1] PointProcessManager[1].move()
+	hoc_ac_ = $1
+	tuftden[0] PointProcessManager[2].move()
+}
+
+xpanel("Synapse tuft location")
+xradiobutton("proximal", "tuftlocate(.17)")
+xradiobutton("middle", "tuftlocate(.5)", 1)
+xradiobutton("distal", "tuftlocate(.83)")
+xpanel()
+tuftlocate(.5)

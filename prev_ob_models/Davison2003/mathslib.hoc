@@ -1,0 +1,78 @@
+// mathslib.hoc
+// Collection of miscellaneous maths functions
+// Andrew Davison, The Babraham Institute, 2000.
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// mod(x,y)
+// Returns a number between 0 and y-
+// e.g. mod(7,4) returns 3
+
+func mod() { local x	// 2 args - $1 mod $2
+  x = $1
+  while (x < 0) {
+    x = x+$2
+  }
+  while (x >= $2) {
+    x = x-$2
+  }
+  return x
+}
+
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// arraymax(M) and arraymin(M)
+// Return maximum and minimum elements of a matrix object
+
+objref mymaths_work
+mymaths_work = new Vector()
+
+func arraymax() { local i, max // arg - matrix object
+  max = -1e10
+  for i = 0,$o1.nrow-1 {
+    mymaths_work = $o1.getrow(i)
+    if (mymaths_work.max() > max) { max = mymaths_work.max() }
+  }
+  return max
+}
+
+func arraymin() { local i, min // arg - matrix object
+  min = 1e10
+  for i = 0,$o1.nrow-1 {
+    mymaths_work = $o1.getrow(i)
+    if (mymaths_work.min() < min) { min = mymaths_work.min() }
+  }
+  return min
+}
+
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// nint(x)
+// Returns nearest integer
+// e.g. nint(3.6) returns 4
+
+func nint() {
+  if ( abs($1 - int($1)) <= 0.5) {
+    return int($1)
+  } else {
+    if ($1 < 0) { return int($1)-1 }
+    if ($1 >= 0) { return int($1)+1 }
+  }
+}
+
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=
+// invabs(x)
+// Returns absolute value of the inverse of the argument
+// e.g. invabs(-2) returns 0.5
+
+func invabs() {
+  if ($1 == 0) {
+    print "Error in invabs(): divide by zero"
+    return 1e3
+  } else {
+    return abs(1.0/$1)
+  }
+}
+
+
+// =-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=-=

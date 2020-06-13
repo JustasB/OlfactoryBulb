@@ -1,0 +1,81 @@
+begintemplate GC
+
+public somagc, dend, synmt, pridengc, sampa
+
+create somagc, pridengc, dend
+
+objref synmt, sampa
+
+forall Ra=70
+
+proc init() {
+
+topol()
+geometry()
+segments()
+memb()
+
+}
+
+
+proc topol() {local i
+	connect pridengc(0), somagc(1)
+	{connect dend(0), pridengc(0.5)}
+}
+
+proc segments() {local i
+	somagc.nseg= 1
+	forsec "den" nseg = 3
+}
+
+proc geometry() {local i
+	somagc { L = 8  diam = 8}
+	forsec "dend" { L=5  diam=0.1}
+	pridengc {L=500 nseg=50 diam(0:0.3)=1.5:1.5 diam(0.3:1)=0.8:0.8}
+	define_shape()
+}
+	
+
+
+proc memb() {
+	forall {insert pas }
+	forall {insert nax 
+		insert kamt 
+		insert kdrmt
+		gbar_nax = 0.0 
+		sh_nax=15
+		gbar_kamt = 0.006
+	        gbar_kdrmt = 0.0
+		}
+
+	forsec "soma" {
+		gbar_nax = 0.02
+		sh_nax=15
+	        gbar_kdrmt = 0.02
+	}
+
+	forsec "pridengc" {
+	}
+
+	forsec "dend" {
+	}
+
+	forall {
+		Ra = 70
+		cm = 1.5
+		g_pas = 1/20000
+		e_pas = -65
+		ek = -90
+		ena = 60
+	}
+
+	dend {
+	synmt = new nmdanet(1) 
+	sampa = new ExpSyn(1)
+	sampa.e=0
+	sampa.tau=3
+	}
+
+}
+
+endtemplate GC

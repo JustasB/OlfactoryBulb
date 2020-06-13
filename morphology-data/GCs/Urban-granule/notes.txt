@@ -1,0 +1,5 @@
+there are three thicker slice cells inlcluding spines - separated those
+
+most are thin slice, including soma and radii
+
+there is one thin slice cell with a fat dendrite -- excluded it

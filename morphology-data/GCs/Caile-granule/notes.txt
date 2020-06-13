@@ -1,0 +1,7 @@
+everything is labeled as basal dendrites - retyped apical dendrites as apical + soma
+
+some cells didn't have somas - they were excluded
+
+slices are thin
+
+publication: https://www.ncbi.nlm.nih.gov/pubmed/26372002

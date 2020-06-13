@@ -1,0 +1,138 @@
+// input.hoc
+// Olfactory bulb network model: define procedures to set-up input
+// Andrew Davison, The Babraham Institute, 2000.
+
+strdef odourfile,inputfile
+objref odour, inputarray
+objref A, X, S
+odour = new Vector(nof)
+inputarray = new Matrix(nmitx,nmity)
+
+
+proc set_no_input() {
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] = 0.0
+      input[i][j].amp = inputarray.x[i][j]
+    }
+  }
+}
+
+
+proc add_uniform_input() { local i,j // 2 args - min and max input
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] += random.uniform($1,$2)
+      input[i][j].amp = inputarray.x[i][j]
+    }
+  }
+}
+
+
+proc add_focal_input() {  // 4 args - max input, centre coords and half-width of spot
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] += $1*exp(-2.77259*((i-$3)*(i-$3)+(j-$2)*(j-$2))/($2*$2))
+      input[i][j].amp = inputarray.x[i][j]
+      //print i,j,input[i][j].amp
+    }
+  }
+}
+
+
+
+proc generate_odour_matrix() { local i,j,r,ix,iy,k,l,min,max
+  A = new Matrix(nglom,nof) 	// A is set here and should
+                		// not be changed elsewhere
+  S = new Matrix(nmitx,nmity)   // X and S are local
+  X = new Vector(nglom)     	// matrices
+
+  r = random.normal(0.0,0.5)
+
+  // Generate original matrix
+  for i = 0,nglom-1 for j = 0,nof-1 {
+    r = random.repick()
+    if (r < 0) {r = 0}
+    A.x[i][j] = r
+  }
+
+  // Average to obtain similar responses of nearby glomeruli
+  blur = 2
+
+  for j = 0,nof-1 {
+    X = A.getcol(j)
+    for ix = 0,nmitx-1 for iy = 0,nmity-1 {
+      S.x[ix][iy] = X.x[ix*nmity+iy]
+    }
+    for ix = 0,nmitx-1 for iy = 0,nmity-1 {
+      X.x[ix*nmity+iy] = 0
+      for k = -1,1 for l = -1,1 {
+        kx = mod(ix+k,nmitx)
+        ly = mod(iy+l,nmity)
+        X.x[ix*nmity+iy] += ( S.x[kx][ly] * exp(-blur*sqrt(k^2+l^2)) )
+      }
+    }
+    A.setcol(j,X)
+  }
+
+  max = arraymax(A)
+  min = arraymin(A)
+  print "min, max ",min,max
+  for i=0,nglom-1 for j=0,nof-1 {
+    A.x[i][j] += -min
+  }
+  A.muls(1/(max-min))
+}
+
+
+proc read_odour_file() {
+  sprint(odourfile,"odour%d",$1)
+  ropen(odourfile)
+  for i = 0,nof-1 {
+    odour.x[i] = fscan()
+  }
+  ropen()
+  printf("Odour %d loaded:\n",$1)
+  odour.printf("%6.3f")
+}
+
+proc map_odour_to_input() { local i,j // 2 args - odour vector and odour intensity
+  X = A.mulv($o1)
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] += $2 * X.x[i*nmity+j]
+      input[i][j].amp = inputarray.x[i][j]
+    }
+  }
+}
+
+proc add_odour_input() { // 2 args - odour number and input intensity
+  generate_odour_matrix()
+  read_odour_file($1)
+  map_odour_to_input(odour,$2)
+}
+
+proc add_fixed_input() { local i,j // 2 args - input vector and input intensity
+  sprint(inputfile,"input%d",$1)
+  ropen(inputfile)
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] = fscan()
+      input[i][j].amp = $2*inputarray.x[i][j]
+    }
+  }
+  ropen()
+  printf("Input %d loaded:\n",$1)
+  inputarray.printf("%6.3f")
+}
+
+proc glomshock() { local i,j // 3 args - amplitude, delay and duration
+  for i = 0, nmitx-1 {
+    for j = 0, nmity-1 {
+      inputarray.x[i][j] = $1
+      input[i][j].amp = inputarray.x[i][j]
+      input[i][j].del = $2
+      input[i][j].dur = $3
+    }
+  }
+}

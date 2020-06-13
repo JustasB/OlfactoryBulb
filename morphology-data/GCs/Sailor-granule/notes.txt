@@ -1,0 +1,5 @@
+thick slices
+
+apical dendrites only
+
+two cells have weird radii -- excluded them

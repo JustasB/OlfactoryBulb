@@ -1,0 +1,82 @@
+create soma, priden[2], secden[2], tuftden[2], hillock, initialseg[2]
+nmyelin = 5
+create node[nmyelin], myelin[nmyelin]
+
+objref dendritic, somatic, tuft, second, somden, axon, sad
+
+dendritic = new SectionList()
+forsec "den" dendritic.append()
+
+somatic = new SectionList()
+soma somatic.append
+hillock somatic.append
+
+tuft = new SectionList()
+forsec "tuftden" tuft.append
+
+second = new SectionList()
+forsec "secden" second.append
+
+somden = new SectionList()
+forsec somatic somden.append()
+forsec dendritic somden.append()
+
+axon = new SectionList()
+forsec "node" axon.append()
+initialseg[0] somden.append()
+initialseg[1] axon.append()
+
+sad = new SectionList()
+forsec somden sad.append()
+forsec axon sad.append()
+
+access soma
+
+proc topol() {local i
+	connect secden[0](0), soma(.5)
+	connect secden[1](0), soma(.5)
+	connect priden[0](0), soma(1)
+	connect priden[1](0), priden[0](1) // this junction for electrode
+	for i=0, 1 connect tuftden[i](0), priden[1](1)
+
+	connect hillock(0), soma(0)
+	connect initialseg[0](0), hillock(1)
+	connect initialseg[1](0), initialseg[0](1) // for cut
+	connect myelin[0](0), initialseg[1](1)
+	for i=0, nmyelin-1 {
+		connect node[i](0), myelin[i](1)
+		if (i == nmyelin-1) break
+		connect myelin[i+1](0), node[i](1)
+	}
+}
+
+proc segments() {local i
+	soma.nseg= 1
+	priden[0].nseg = 8
+	priden[1].nseg = 2
+	forsec "tuft" nseg = 3
+	forsec "secden" nseg = 5
+	initialseg[0].nseg = 1
+	initialseg[1].nseg = 5
+	hillock.nseg = 1
+	forsec "myelin" nseg=3
+}
+
+proc geometry() {local i
+	soma { L = 25  diam = 20 }
+	priden[0] { L = .8*370  diam=3.5 }
+	priden[1] { L = .2*370  diam=3.5 }
+	forsec "tuftden" { L=350  diam=2.1 }
+	forsec "secden" { L=500  diam=3.4 }
+	initialseg[0] { L=.01*20  diam=1.5 }
+	initialseg[1] { L=.99*20  diam=1.5 }
+	hillock { L=5  diam(0:1) = soma.diam(0) : initialseg.diam(0) }
+	forsec "node" { L=1 diam=1 }
+	forsec "myelin" { L=1000  diam=1.5 }
+	define_shape()
+}
+	
+topol()
+segments()
+geometry()
+

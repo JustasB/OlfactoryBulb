@@ -1,0 +1,54 @@
+// experiment_ddi_baseline.hoc
+// Olfactory bulb network model: experiment file
+//   for dendrodendritic inhibition.
+// Andrew Davison, The Babraham Institute, 2000.
+
+// *** Set inputs and connections
+set_no_input()
+glomshock(20,2,5)
+randomise_NMDA(NMDAweight,(0.5*NMDAweight)^2)
+
+// *** Voltage clamp mitral cell
+mit[3][3].GABAA.e = 0 // mV
+objref vclamp
+mit[3][3].soma vclamp = new SEClamp(0.5)
+vclamp.rs = 2 // Mohm
+vclamp.dur1 = 1
+vclamp.amp1 = -65
+vclamp.dur2 = 4000
+vclamp.amp2 = -70
+vclamp.dur3 = 0
+vclamp.amp3 = -65
+
+// *** Set-up recording
+objref igabaa, tvec, vgran, vmit, iclamp
+record_step = 0.1
+record_vec_size = int(tstop/record_step)+1
+igabaa = new Vector(record_vec_size)
+tvec = new Vector(record_vec_size)
+vgran = new Vector(record_vec_size)
+vmit = new Vector(record_vec_size)
+iclamp = new Vector(record_vec_size)
+record_step = 0.1
+igabaa.record(&mit[3][3].GABAA.i,record_step)
+tvec.record(&t,record_step)
+vgran.record(&gran[0][6].periph.v(0.5),record_step)
+vmit.record(&mit[0][0].dend.v(0.5),record_step)
+iclamp.record(&vclamp.i,record_step)
+
+// *** Process data and print out results
+proc print_results() {
+  xopen("calcisilag.hoc")
+  print_raster(fileroot)
+  print_gran_raster(fileroot)
+  print_gran_hist(1,fileroot)
+  sprint(filename,"%s.curvs",fileroot)
+  outfile.wopen(filename)
+  for i = 0, tvec.size()-1 {
+    outfile.printf("%8.3g %8.3g %8.3g %8.3g %8.3g \n",tvec.x[i],igabaa.x[i],vmit.x[i],vgran.x[i],iclamp.x[i])
+  }
+  outfile.close()
+  print "Results printed to files"
+}
+
+xopen("ddi_baseline.ses")

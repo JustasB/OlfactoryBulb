@@ -1,0 +1,154 @@
+
+proc connect_cells() {local i, j  localobj cvec
+	for j=0, num_granule-1 {
+		// g2m_connections require previously specified distribution
+		// parameters
+		cvec = g2m_connections(j)
+		for i=0, cvec.size-1 {
+			mgconnect(cvec.x[i], j, 0)
+		}
+	}
+}
+
+// connect mitral $1 to granule $2 based on mitral position and granule
+// position. Only connect if secden long enough to reach granule
+proc mgconnect() {local mp, gp, delta, x, gpdarc  localobj mgrs
+	mp = mitral_x.x[$1]
+	gp = granule_x.x[$2]
+	delta = gp - mp
+            if (ring) {
+                if (delta > secdenlen) {
+                    delta -= net_spatial_len
+                } else if (delta < -secdenlen) {
+                    delta += net_spatial_len
+                }
+            }
+	if (abs(delta) > secdenlen) { return }
+	x = delta/secdenlen
+	gpdarc = g2m_priden_position($1, $2, x)
+	if (delta >= 0) { // use secden[0]
+		mgrs = mk_mgrs($1, "secden[0]", x, $2, "priden2[0]", gpdarc, $3)
+	}else{ // use secden[1]
+		mgrs = mk_mgrs($1, "secden[1]", -x, $2, "priden2[0]", gpdarc, $3)
+	}
+	// store position and relation info in synapse to aid in
+	// selection and movie making
+	if (object_id(mgrs)) {
+		if (object_id(mgrs.fi)) {
+			mgrs.fi.x = gp
+		}
+		if (object_id(mgrs.ampanmda)) {
+			mgrs.ampanmda.x = gp
+		}
+	}
+}
+
+// given a granule cell index, return a vector of mitral cell indices which
+// specify the existence of a mgrs.
+// The primary distribution parameter is the fractional connectivity, g2m_mean
+// Other aspects of the distribution are coded in the implementation.
+// In particular, in the distribution below, a specified number of mitral
+// indices are chosen randomly from the set of possible mitral indices. The
+// number chosen is specified from a uniform random distribution
+// ranging from (g2m_mean +- g2m_var)*num_mitral but of course bounded by
+// 1 and the possible number (num_mitral-1 if the secondary dendrites span
+// the domain).
+// Note that with this algorithm, the distribution of number of granules
+// per mitral cell is unknown. Possibly gaussian with some variance.
+// It is possible some mitrals may have a lot of granule connections and
+// some mitrals may have only a few. I would think that since there are
+// many more granules than mitrals, the number of granules per mitral would
+// be narrowly distributed about the mean of g2m_mean*num_granule
+// Note that g2m_connections may be called several times with the same
+// granule index and it will return the same "random" mitral index vector.
+// This allows computation of load balance prior to construction of the
+// network as well as simulation independence with respect to cpu location
+// of cells.  For a statistically independent connectivity matrix, choose
+// a different value for g2m_ranseed.
+
+/* see param.hoc
+default_var("g2m_mean", 0.2)
+default_var("g2m_var" , 0.1)
+default_var("g2m_ranseed", 1)
+*/
+
+obfunc g2m_connections() {local i, j, xm, xg, saveseed, n, nmin, nmax \
+ localobj r, set, c
+	saveseed = mcell_ran4_init(g2m_ranseed)
+	nmin = (g2m_mean - g2m_var)*num_mitral
+	nmax = (g2m_mean + g2m_var)*num_mitral
+	if (nmin < 1) nmin = 1
+	if (nmax > num_mitral) nmax = num_mitral
+	r = new Random()
+	r.MCellRan4($1*1000 + 1)
+	if (nmin == nmax) {
+		n = nmin
+	}else{
+		n = r.discunif(nmin, nmax)
+	}
+
+	// what is the set of mitrals with a secden domain that overlaps
+	// the granule? Usually it is all of them but check to make sure
+	set = new Vector(num_mitral) set.resize(0)
+	xg = granule_x.x[$1]
+	for i=0, num_mitral-1 {
+		xm = mitral_x.x[i]
+		if (abs(xm - xg) < secdenlen) {
+			set.append(i)
+		}
+                        if (ring) {
+                            // mitral on far right looping to beginning
+                            if ((net_spatial_len - xm + xg) < secdenlen) {
+                                set.append(i)
+                            }
+                            // mitral at beginning looking left
+                            if ((net_spatial_len - xg + xm) < secdenlen) {
+                                set.append(i)
+                            }
+                        }
+	}
+
+	// now pick n integers from at set without replacement
+	// there are several ways which are better or worse depending on
+	// n relative to num_mitral
+	c = new Vector(n)
+	for i=0, n-1 {
+		j = r.discunif(i, set.size-1)
+		c.x[i] = set.x[j]
+		set.x[j] = set.x[i]
+		set.x[i] = c.x[i]
+	}
+	mcell_ran4_init(saveseed)
+	return c
+}
+
+// return a sparse matrix specifying the mitral,granule connections
+// space expensive but need for load balance of mitral pieces
+objref sparse_connection_matrix_
+proc sparse_connections() {local g, i  localobj c, sm
+	sm = new Matrix(num_mitral, num_granule, 2)
+	for g = 0, num_granule-1 {
+		c = g2m_connections(g)
+		for i=0, c.size-1 {
+			sm.x[c.x[i]][g] = 1
+		}
+	}
+	sparse_connection_matrix_ = sm
+}
+
+// return arc position on priden2[0] of granule cell for m=$1 and g=$2
+// and secondary dendrite arc position $3
+// following implementation is all at 0.5 or random 0-1 independent of distance
+// see param.hoc
+//default_var("g2m_priden_seed_offset", 0) // 0 means all at 0.5
+func g2m_priden_position() {local saveseed, x  localobj r
+	if (g2m_priden_seed_offset == 0) {
+		return 0.5
+	}
+	saveseed = mcell_ran4_init(g2m_priden_seed_offset + g2m_ranseed)
+	r = new Random()
+	r.MCellRan4(1 + $1 + $2*1000)
+	x = r.uniform(0,1)
+	mcell_ran4_init(saveseed)
+	return x
+}
