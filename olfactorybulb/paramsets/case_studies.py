@@ -188,3 +188,9 @@ class GammaSignature_DifferentOdorConc(GammaSignature):
         1800: {"name": "Apple", "rel_conc": 0.45},
     }
 
+
+# For Build Testing
+
+class OneMsTest(GammaSignature):
+    description = "Test of the simulation"
+    tstop = 1

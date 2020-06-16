@@ -1,0 +1,8 @@
+language: python
+python:
+  - "3.5"
+install:
+  - cd docker/obmodel
+  - docker build -t obmodel:latest .
+script:
+  - docker run obmodel:latest mpiexec -np 2 python initslice.py -paramset OneMsTest -mpi

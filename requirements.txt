@@ -6,7 +6,6 @@ jsonpickle==0.9.6
 matplotlib==2.2.2
 mpi4py==3.0.0
 neo==0.6.1
-NEURON==7.8.0.127
 git+git://github.com/scidash/sciunit@4b1915afdc4eedd030982b81486a0344e6ed3985#egg=sciunit
 git+git://github.com/scidash/neuronunit@b668559ee273c8836a24f2f47fc72dcfbe393234#egg=neuronunit
 numpy==1.14.3

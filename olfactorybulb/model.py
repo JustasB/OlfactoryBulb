@@ -303,8 +303,7 @@ class OlfactoryBulb:
         t = self.electrode.times
         lfp = self.electrode.values
 
-        import cPickle
-        with open(os.path.join(self.results_dir, 'lfp.pkl'), 'w') as f:
+        with open(os.path.join(self.results_dir, 'lfp.pkl'), 'wb') as f:
             cPickle.dump((t, lfp), f)
 
         return t, lfp
