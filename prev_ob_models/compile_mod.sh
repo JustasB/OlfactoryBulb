@@ -4,7 +4,7 @@
 set -e
 
 # Remove existing .mod file compilations
-find . -name x86_64 -exec sudo rm -rif {} \;
+find . -name x86_64 -exec sudo rm -rif {} || true \;
 
 # Recompile mod files of all previous models
 cd BhallaBower1993/; nrnivmodl; cd ..;

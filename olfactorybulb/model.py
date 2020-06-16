@@ -8,7 +8,7 @@ import numpy as np
 import json
 from prev_ob_models.Birgiolas2020.isolated_cells import *
 from blenderneuron.nrn.neuronnode import NeuronNode
-from database import Odor, OdorGlom, CellModel, database
+from olfactorybulb.database import Odor, OdorGlom, CellModel, database
 from math import pow
 from LFPsimpy import LfpElectrode
 import sys
@@ -214,7 +214,7 @@ class OlfactoryBulb:
         :return: The hash code as an integer
         """
 
-        return int(sha1(source).hexdigest(), 16) % (10 ** digits)
+        return int(sha1(source.encode()).hexdigest(), 16) % (10 ** digits)
 
     def run(self, tstop):
         """
@@ -468,7 +468,7 @@ class OlfactoryBulb:
                 seg_address = 'h.' + rank_cell + '.' + input_seg
 
                 single_rank_address = 'h.' + cell + '.' + input_seg
-                single_rank_gid = int(sha1(single_rank_address).hexdigest(), 16) % (10 ** 9)
+                single_rank_gid = int(sha1(single_rank_address.encode()).hexdigest(), 16) % (10 ** 9)
 
                 input_segs.append((seg_address, single_rank_gid, single_rank_address))
 
@@ -596,7 +596,7 @@ class OlfactoryBulb:
                 for cell, v_vec in rank_v_vecs.items():
                     result.append((cell, t, v_vec.to_python()))
 
-            with open(os.path.join(self.results_dir, 'soma_vs.pkl'), 'w') as f:
+            with open(os.path.join(self.results_dir, 'soma_vs.pkl'), 'wb') as f:
                 cPickle.dump(result, f)
 
         # Gather input event time vectors
@@ -608,7 +608,7 @@ class OlfactoryBulb:
                 for seg_name, t_vec in rank_input_vecs:
                     result.append((seg_name, t_vec.to_python()))
 
-            with open(os.path.join(self.results_dir, 'input_times.pkl'), 'w') as f:
+            with open(os.path.join(self.results_dir, 'input_times.pkl'), 'wb') as f:
                 cPickle.dump(result, f)
 
     def get_nseg_count(self, root_dict):
