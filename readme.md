@@ -1,60 +1,103 @@
-# Getting Started
+# Run Network Model & Reproduce Experiments
 
-The following steps will run the simulations showing the gamma signature
-and the results of experiments that elucidate the mechanisms underlying it.
- 
-This requires NEURON+Python+MPI. See this [tutorial to install NEURON+Python+MPI](https://neurojustas.com/2018/03/27/tutorial-installing-neuron-simulator-with-python-on-ubuntu-linux/).
- 
- 1. Clone the repository and install required packages
- ```
- git clone https://github.com/justasb/olfactorybulb
- cd olfactorybulb
- pip install -r requirements.txt
- ```
- 
- 2. Compile the .mod files
- ```
- cd olfactorybulb/prev_ob_models
- ./compile_mod.sh
- cd ..
- ```
- 
- 3. Edit the [repo]/runbatch.py file, replacing 16 on the 
- last line with the number of CPU cores on your machine.
- 
- 4. Start Jupyter Notebook
- ```
- jupyter lab "notebooks/LFP Wavelet Analysis.ipynb"
- ```
- Run all cells of notebook to run the simulations and see the analysis plots
- 
- 
-# To run a single simulation of a parameter set
- 
- Select the name of a parameter set class from a .py file under
- [repo]/olfactorybulb/paramsets/ (e.g. 'GammaSignature' from case_studies.py)
- 
- Then run the simulation of the parameter set with:
- ```
- mpiexec -np 16 python initslice.py -paramset GammaSignature -mpi
- ```
- 
- Should see output like:
- ```
- numprocs=16
- Rank Complexity min: 551, mean: 662.625, max: 791
- Starting simulation...
- Time: 13.0 ms
- ```
- 
- When finished, the results are stored under [repo]/results/[parameter set class]
+The easiest way to run the model is to use [Docker](https://www.docker.com) 
+(a kind of virtualization software). After installing Docker, you will download the model's Docker image
+hosted on DockerHub, and run the image. The image contains everything needed to run the model 
+(NEURON, Python, MPI, all required OS and Python packages). The image will open a Jupyter Lab environment
+which you can use to interact with the model.
 
- Then run the following command in the above Jupyter notebook:
- ```
- show_plots('GammaSignature', sniff_count=8)
- ``` 
+## Install Docker
+
+Follow the [steps for your OS to install Docker](https://www.docker.com/products/docker-desktop) 
+on your machine.
+
+## Download the Olfactory Bulb Model Image
+In your OS terminal, run the following command to download the model image from DockerHub:
+```
+docker pull jbirgio/olfactory-bulb:latest
+```
+
+## Run the Image and Open Jupyter Lab
+Once the image is downloaded, run the image with the following command:
+```
+docker run -p 8888:8888 jbirgio/olfactory-bulb:latest
+```
+
+The Docker container will start and load the image. The image is programmed to start
+a Jupyter Lab environment. In the terminal output, you should see a URL that looks something like:
+
+
+```
+http://127.0.0.1:8888/?token=6e7edee...0e02142
+```
+
+Copy and paste the URL into your browser to open the Jupyter Lab environment that is running inside
+the model's Docker container.
+
+## Run the Notebook with Experiments
+On the right panel of Jupyter Lab, find the `notebooks` folder and open the `LFP Wavelet Analysis` notebook.
+Then run all the cells of the notebook.
+
+Once the simulation starts, you should see something like this:
+
+```
+Starting paramset: GammaSignature (1/5)...
+numprocs=16
+Rank Complexity min: 551, mean: 662.625, max: 791
+Starting simulation...
+Time: 10.0 ms
+```
+
+After the simulations finish, running the next cell will plot the simulation output:
+
+![gamma-fingerprint-simulation-output.png](media/gamma-fingerprint-simulation-output.png)
+
+ - The first row contains the odor input spikes to the glomerular tufts of mitral (blue) and tufted (red) cells.
+ - Next are the somatic voltage traces of tufted (red) and mitral (blue) cells
+ - The next trace is the raw LFP signal
+ - Then the LFP signal band-pass filtered to include frequencies between 30-120 Hz 
+ - Then a wavelett spectrogram of the filtered LFP signal
+ - Finally, the average LFP spectrogram across all the sniffs, containing the two-cluster gamma fingerprint 
  
+The remaining cells demonstrate how the gamma fingerprint is disturbed when one of the key network mechanisms is disabled.
+
+# Adjusting Parameters
+The `show_plots` function takes the name of a parameter set Python class. 
+
+To change the simulation parameters, 
+use the right panel in Jupyter Lab to open the `[repo]/olfactorybulb/paramsets/case_studies.py` file. 
+
+After modifying e.g. the `GammaFingerprint` class, rerun the simulation with the new parameter values 
+with this notebook command:
+
+```
+!cd ..; mpiexec -np 16 python initslice.py -paramset GammaSignature -mpi
+```
+Replace `16` with the number of cores in your machine.
+
+After simulation completes, re-run the `show_plots` function to see the updated results:
+
+```
+show_plots('GammaSignature', sniff_count=8)
+```
+
+# Model Documentation
  
+ Take a look the [Model Documentation](https://docs.olfactorybulb.org) to learn more about how the model was built and to make further modifications.
+
+# Citation
+
+If you use this model or parts of it in your project, please cite the model as follows:
+
+```
+@phdthesis{birgiolas2019towards,
+  title={Towards Brains in the Cloud: A Biophysically Realistic Computational Model of Olfactory Bulb},
+  author={Birgiolas, Justas},
+  year={2019},
+  school={Arizona State University}
+}
+```
+
 # Folders
 
 **Folders needed to run the network model**

@@ -8,10 +8,10 @@ EXPOSE 5920
 ENV DISPLAY=:20
 
 # Run simple window manager on startup
-RUN echo 'openbox-session 2> /dev/null & || true' >> /root/.bashrc
+RUN echo 'openbox-session 2> /dev/null || true &' >> /root/.bashrc
 
 ADD https://api.github.com/repos/justasb/OlfactoryBulb/git/refs/heads/master version.json
-RUN git clone https://github.com/justasb/OlfactoryBulb
+RUN git clone https://github.com/justasb/OlfactoryBulb; rm -rf /OlfactoryBulb/.git
 WORKDIR "/OlfactoryBulb"
 
 RUN conda install pandas=1.0.3 -y
