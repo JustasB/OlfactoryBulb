@@ -6,6 +6,11 @@ from neo import AnalogSignal
 import olfactorybulb
 from olfactorybulb.neuronunit.tests.utilities import get_zero_crossings_neg2pos
 
+# MOCKS for autodoc
+import quantities as pq
+if pq.__module__ == 'sphinx.ext.autodoc.mock':
+    pq.nA = pq.mV = pq.ms = pq.Hz = 1
+# END MOCKS
 
 class NeuronCellModel(sciunit.Model,
                       sciunit.capabilities.Runnable,

@@ -1,8 +1,9 @@
 # MOCKS for autodoc
 import quantities as pq
-if pq.nA.__class__.__module__ == 'sphinx.ext.autodoc.importer':
-    pq.mV = pq.ms = pq.Hz = pq.nA = pq.pA = 1
+if pq.__module__ == 'sphinx.ext.autodoc.mock':
+    pq.pA = pq.nA = pq.mV = pq.ms = pq.Hz = 1
 # END MOCKS
+
 
 
 class BasePublication:

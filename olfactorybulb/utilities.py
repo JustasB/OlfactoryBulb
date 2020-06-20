@@ -1,6 +1,6 @@
 import numpy as np
 
-from database import *
+from olfactorybulb.database import *
 
 np.random.seed(31457)
 

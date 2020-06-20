@@ -56,7 +56,8 @@ source_suffix = ['.rst']
 
 autodoc_mock_imports = [
     'numpy', 'bpy', 'scipy', 'pandas', 'quantity', 'neo', 'sciunit', 'mathutils',
-    'blenderneuron', 'matplotlib', 'elephant', 'neuronunit', 'quantities']
+    'blenderneuron', 'matplotlib', 'elephant', 'neuronunit', 'quantities', 'peewee', 'neuronunit',
+    'olfactorybulb.database', 'LFPsimpy']
 
 # The master toctree document.
 master_doc = 'index'

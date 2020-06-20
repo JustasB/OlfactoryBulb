@@ -189,8 +189,6 @@ class GammaSignature_DifferentOdorConc(GammaSignature):
     }
 
 
-# For Build Testing
-
 class OneMsTest(GammaSignature):
-    description = "Test of the simulation"
+    description = "Test of the simulation, for build testing only"
     tstop = 1

@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,9 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="next" title="Introduction" href="introduction.html" /> 
+    <link rel="next" title="Getting Started" href="gettingstarted.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +50,7 @@
           
 
           
-            <a href="#" class="icon icon-home"> Olfactory Bulb
+            <a href="#" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
           
 
           
@@ -76,6 +77,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -84,14 +86,17 @@
             
             
               <ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -130,7 +135,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="#">Docs</a> &raquo;</li>
+      <li><a href="#" class="icon icon-home"></a> &raquo;</li>
         
       <li>Olfactory Bulb Model Documentation</li>
     
@@ -154,29 +159,40 @@
   <div class="section" id="olfactory-bulb-model-documentation">
 <h1>Olfactory Bulb Model Documentation<a class="headerlink" href="#olfactory-bulb-model-documentation" title="Permalink to this headline">¶</a></h1>
 <img alt="_images/logo.png" src="_images/logo.png" />
-<p>Welcome to Olfactory Bulb model documentation. To get started, please follow the sections below.</p>
+<p>This is the documentation site for the <a class="reference external" href="https://olfactorybulb.org/">olfactory bulb model</a> developed by <a class="reference external" href="https://www.linkedin.com/in/justasbirgiolas">Justas Birgiolas Ph.D.</a></p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Model Website: <a class="reference external" href="https://olfactorybulb.org/">https://olfactorybulb.org/</a></p></li>
+<li><p>Documentation (this site): <a class="reference external" href="https://docs.olfactorybulb.org/">https://docs.olfactorybulb.org/</a></p></li>
+<li><p>Source Code Repository: <a class="reference external" href="https://github.com/justasb/olfactorybulb">https://github.com/justasb/olfactorybulb</a></p></li>
+<li><p>Pre-built Docker Images: <a class="reference external" href="https://hub.docker.com/repository/docker/jbirgio/olfactory-bulb">https://hub.docker.com/repository/docker/jbirgio/olfactory-bulb</a></p></li>
+</ul>
+</div></blockquote>
+<p>The model and the related <a class="reference external" href="https://blenderneuron.org/">BlenderNEURON model editing tool</a> were developed by  as part of Justas Birgiolas’ Ph.D. thesis (“<a class="reference external" href="https://repository.asu.edu/attachments/223567/content/Birgiolas_asu_0010E_19503.pdf">Towards Brains in the Cloud:
+A Biophysically Realistic Computational Model of Olfactory Bulb</a>”) in collaboration with <a class="reference external" href="https://iconlab.asu.edu/">researchers at the ICON Lab at Arizona State University</a>.</p>
+</div>
+<div class="section" id="citation">
+<h1>Citation<a class="headerlink" href="#citation" title="Permalink to this headline">¶</a></h1>
+<p>If you use this model or parts of it in your project, please cite the
+model as follows:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="nd">@phdthesis</span><span class="p">{</span><span class="n">birgiolas2019towards</span><span class="p">,</span>
+  <span class="n">title</span><span class="o">=</span><span class="p">{</span><span class="n">Towards</span> <span class="n">Brains</span> <span class="ow">in</span> <span class="n">the</span> <span class="n">Cloud</span><span class="p">:</span> <span class="n">A</span> <span class="n">Biophysically</span> <span class="n">Realistic</span> <span class="n">Computational</span> <span class="n">Model</span> <span class="n">of</span> <span class="n">Olfactory</span> <span class="n">Bulb</span><span class="p">},</span>
+  <span class="n">author</span><span class="o">=</span><span class="p">{</span><span class="n">Birgiolas</span><span class="p">,</span> <span class="n">Justas</span><span class="p">},</span>
+  <span class="n">year</span><span class="o">=</span><span class="p">{</span><span class="mi">2019</span><span class="p">},</span>
+  <span class="n">school</span><span class="o">=</span><span class="p">{</span><span class="n">Arizona</span> <span class="n">State</span> <span class="n">University</span><span class="p">}</span>
+<span class="p">}</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="table-of-contents">
+<h1>Table of Contents<a class="headerlink" href="#table-of-contents" title="Permalink to this headline">¶</a></h1>
 <div class="toctree-wrapper compound">
 <ul>
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#overview">Overview</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#architecture">Architecture</a></li>
-<li class="toctree-l2"><a class="reference internal" href="introduction.html#getting-started">Getting Started</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#hoc-gui-installation">HOC GUI Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#python-library-installation-optional">Python Library Installation (Optional)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#blender-addon-installation">Blender Addon Installation</a></li>
-<li class="toctree-l2"><a class="reference internal" href="installation.html#test-neuron-blender-connectivity">Test NEURON-Blender Connectivity</a></li>
-</ul>
-</li>
-<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#downloading-the-model">Downloading the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#running-the-model">Running the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#visualizing-the-model">Visualizing the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="gettingstarted.html#recreating-the-model">Recreating the Model</a></li>
-</ul>
-</li>
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a></li>
 </ul>
 </div>
 </div>
@@ -197,7 +213,7 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
-        <a href="introduction.html" class="btn btn-neutral float-right" title="Introduction" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+        <a href="gettingstarted.html" class="btn btn-neutral float-right" title="Getting Started" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
       
     </div>
@@ -207,11 +223,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Justas Birgiolas
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -222,7 +246,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

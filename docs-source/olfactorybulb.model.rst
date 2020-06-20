@@ -10,7 +10,7 @@ command will build and run the network model using the
 `GammaSignature parameter set <olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature>`_
 using 16 cores::
 
-    # From repo root, run this shell command:
+    # From repo root, run this shell command (replace 16 with the number of cores you would like to use):
     mpiexec -np 16 python initslice.py -paramset GammaSignature -mpi
 
 Simulation results will be stored under `[repo]/olfactorybulb/results/GammaSignature`. The last folder in the path uses

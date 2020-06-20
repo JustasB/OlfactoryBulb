@@ -1,8 +1,7 @@
 
 
 <!DOCTYPE html>
-<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
-<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<html class="writer-html5" lang="en" >
 <head>
   <meta charset="utf-8">
   
@@ -12,12 +11,18 @@
   
 
   
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
   
   
   
 
   
-  <script type="text/javascript" src="_static/js/modernizr.min.js"></script>
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
   
     
       <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
@@ -29,13 +34,10 @@
     <script type="text/javascript" src="_static/js/theme.js"></script>
 
     
-
-  
-  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
-  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
     <link rel="index" title="Index" href="genindex.html" />
     <link rel="search" title="Search" href="search.html" />
-    <link rel="prev" title="Installation" href="installation.html" /> 
+    <link rel="next" title="Visualizing the Model" href="visualizing.html" />
+    <link rel="prev" title="Olfactory Bulb Model Documentation" href="index.html" /> 
 </head>
 
 <body class="wy-body-for-nav">
@@ -49,7 +51,7 @@
           
 
           
-            <a href="index.html" class="icon icon-home"> Olfactory Bulb
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
           
 
           
@@ -76,6 +78,7 @@
           
         </div>
 
+        
         <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
           
             
@@ -84,20 +87,28 @@
             
             
               <ul class="current">
-<li class="toctree-l1"><a class="reference internal" href="introduction.html">Introduction</a></li>
-<li class="toctree-l1"><a class="reference internal" href="installation.html">Installation</a></li>
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Getting Started</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#downloading-the-model">Downloading the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#running-the-model">Running the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#visualizing-the-model">Visualizing the Model</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#recreating-the-model">Recreating the Model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#running-dockerized-model">Running Dockerized Model</a><ul>
+<li class="toctree-l3"><a class="reference internal" href="#install-docker">Install Docker</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#download-the-olfactory-bulb-model-image">Download the Olfactory Bulb Model Image</a></li>
+<li class="toctree-l3"><a class="reference internal" href="#run-the-image-and-open-jupyter-lab">Run the Image and Open Jupyter Lab</a></li>
 </ul>
 </li>
+<li class="toctree-l2"><a class="reference internal" href="#run-the-notebook-with-experiments">Run the Notebook with Experiments</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#adjusting-parameters">Adjusting Parameters</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#building-and-running-the-model-locally-without-docker">Building and Running the Model Locally (without Docker)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a></li>
 </ul>
 
             
           
         </div>
+        
       </div>
     </nav>
 
@@ -136,7 +147,7 @@
 
   <ul class="wy-breadcrumbs">
     
-      <li><a href="index.html">Docs</a> &raquo;</li>
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
         
       <li>Getting Started</li>
     
@@ -159,122 +170,117 @@
             
   <div class="section" id="getting-started">
 <h1>Getting Started<a class="headerlink" href="#getting-started" title="Permalink to this headline">¶</a></h1>
-<div class="section" id="downloading-the-model">
-<h2>Downloading the Model<a class="headerlink" href="#downloading-the-model" title="Permalink to this headline">¶</a></h2>
+<p><strong>The easiest way to run the model is to use Docker</strong> (a kind of virtualization software).
+After installing Docker, you will download the model’s Docker image
+hosted on DockerHub, and run the image. The image contains everything
+needed to run the model (NEURON, Python, MPI, all required OS and Python
+packages). The image will open a Jupyter Lab environment which you can
+use to interact with the model.</p>
+<p>Alternatively, if you have NEURON 7.7+Python installed, you can download the model source code, install required packages, and run
+the model locally.</p>
+<div class="section" id="running-dockerized-model">
+<h2>Running Dockerized Model<a class="headerlink" href="#running-dockerized-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="install-docker">
+<h3>Install Docker<a class="headerlink" href="#install-docker" title="Permalink to this headline">¶</a></h3>
+<p>Follow the <a class="reference external" href="https://www.docker.com/products/docker-desktop">steps for your OS to install
+Docker</a> on your
+machine.</p>
 </div>
-<div class="section" id="running-the-model">
-<h2>Running the Model<a class="headerlink" href="#running-the-model" title="Permalink to this headline">¶</a></h2>
+<div class="section" id="download-the-olfactory-bulb-model-image">
+<h3>Download the Olfactory Bulb Model Image<a class="headerlink" href="#download-the-olfactory-bulb-model-image" title="Permalink to this headline">¶</a></h3>
+<p>In your OS terminal, run the following command to download the latest model
+image from DockerHub:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">pull</span> <span class="n">jbirgio</span><span class="o">/</span><span class="n">olfactory</span><span class="o">-</span><span class="n">bulb</span><span class="p">:</span><span class="n">latest</span>
+</pre></div>
 </div>
-<div class="section" id="visualizing-the-model">
-<h2>Visualizing the Model<a class="headerlink" href="#visualizing-the-model" title="Permalink to this headline">¶</a></h2>
 </div>
-<div class="section" id="recreating-the-model">
-<h2>Recreating the Model<a class="headerlink" href="#recreating-the-model" title="Permalink to this headline">¶</a></h2>
-<p>Building Large-Scale Biophysically Realistic Computational Neuroscience Models with NEURON and BlenderNEURON</p>
+<div class="section" id="run-the-image-and-open-jupyter-lab">
+<h3>Run the Image and Open Jupyter Lab<a class="headerlink" href="#run-the-image-and-open-jupyter-lab" title="Permalink to this headline">¶</a></h3>
+<p>Once the image is downloaded, run the image with the following command:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">docker</span> <span class="n">run</span> <span class="o">-</span><span class="n">p</span> <span class="mi">8888</span><span class="p">:</span><span class="mi">8888</span> <span class="n">jbirgio</span><span class="o">/</span><span class="n">olfactory</span><span class="o">-</span><span class="n">bulb</span><span class="p">:</span><span class="n">latest</span>
+</pre></div>
+</div>
+<p>The Docker container will start and load the image. The image is
+programmed to start a Jupyter Lab environment. In the terminal output,
+you should see a URL that looks something like:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>http://127.0.0.1:8888/?token=6e7edee...0e02142
+</pre></div>
+</div>
+<p>Copy and paste the URL into your browser to open the Jupyter Lab
+environment that is running inside the model’s Docker container.</p>
+</div>
+</div>
+<div class="section" id="run-the-notebook-with-experiments">
+<h2>Run the Notebook with Experiments<a class="headerlink" href="#run-the-notebook-with-experiments" title="Permalink to this headline">¶</a></h2>
+<p>On the right panel of Jupyter Lab, find the <code class="docutils literal notranslate"><span class="pre">notebooks</span></code> folder and
+open the <code class="docutils literal notranslate"><span class="pre">LFP</span> <span class="pre">Wavelet</span> <span class="pre">Analysis</span></code> notebook. Then run all the cells of
+the notebook.</p>
+<p>Once the simulation starts, you should see something like this (OK to ignore any ‘Mechanism imported…’ NEURON warnings):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">Starting</span> <span class="n">paramset</span><span class="p">:</span> <span class="n">GammaSignature</span> <span class="p">(</span><span class="mi">1</span><span class="o">/</span><span class="mi">5</span><span class="p">)</span><span class="o">...</span>
+<span class="n">numprocs</span><span class="o">=</span><span class="mi">16</span>
+<span class="n">Rank</span> <span class="n">Complexity</span> <span class="nb">min</span><span class="p">:</span> <span class="mi">551</span><span class="p">,</span> <span class="n">mean</span><span class="p">:</span> <span class="mf">662.625</span><span class="p">,</span> <span class="nb">max</span><span class="p">:</span> <span class="mi">791</span>
+<span class="n">Starting</span> <span class="n">simulation</span><span class="o">...</span>
+<span class="n">Time</span><span class="p">:</span> <span class="mf">10.0</span> <span class="n">ms</span>
+</pre></div>
+</div>
+<p>After the simulations finish, running the next cell will plot the
+simulation output:</p>
+<div class="figure align-default" id="id1">
+<img alt="gamma-fingerprint-simulation-output.png" src="_images/gamma-fingerprint-simulation-output.png" />
+<p class="caption"><span class="caption-text">Olfactory bulb model exhibiting the two-cluster gamma frequency oscillations (bottom left)</span><a class="headerlink" href="#id1" title="Permalink to this image">¶</a></p>
+</div>
+<ul class="simple">
+<li><p>The first row contains the odor input spikes to the glomerular tufts
+of mitral (blue) and tufted (red) cells.</p></li>
+<li><p>Next are the somatic voltage traces of tufted (red) and mitral (blue)
+cells</p></li>
+<li><p>The next trace is the raw LFP signal</p></li>
+<li><p>Then the LFP signal band-pass filtered to include frequencies between
+30-120 Hz</p></li>
+<li><p>Then a wavelett spectrogram of the filtered LFP signal</p></li>
+<li><p>Finally, the average LFP spectrogram across all the sniffs,
+containing the two-cluster gamma fingerprint</p></li>
+</ul>
+<p>The remaining cells demonstrate how the gamma fingerprint is disturbed
+when one of the key network mechanisms is disabled.</p>
+</div>
+<div class="section" id="adjusting-parameters">
+<h2>Adjusting Parameters<a class="headerlink" href="#adjusting-parameters" title="Permalink to this headline">¶</a></h2>
+<p>The <code class="docutils literal notranslate"><span class="pre">show_plots</span></code> function takes the name of a parameter set Python
+class.</p>
+<p>To change the simulation parameters, use the right panel in Jupyter Lab
+to open the <code class="docutils literal notranslate"><span class="pre">[repo]/olfactorybulb/paramsets/case_studies.py</span></code> file.</p>
+<p>After modifying e.g. the <code class="docutils literal notranslate"><span class="pre">GammaFingerprint</span></code> class, rerun the
+simulation with the new parameter values with this notebook command (replace
+<code class="docutils literal notranslate"><span class="pre">16</span></code> with the number of cores in your machine):</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span>!cd ..; mpiexec -np 16 python initslice.py -paramset GammaSignature -mpi
+</pre></div>
+</div>
+<p>After simulation completes, re-run the <code class="docutils literal notranslate"><span class="pre">show_plots</span></code> function to see
+the updated results:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="n">show_plots</span><span class="p">(</span><span class="s1">&#39;GammaSignature&#39;</span><span class="p">,</span> <span class="n">sniff_count</span><span class="o">=</span><span class="mi">8</span><span class="p">)</span>
+</pre></div>
+</div>
+</div>
+<div class="section" id="building-and-running-the-model-locally-without-docker">
+<h2>Building and Running the Model Locally (without Docker)<a class="headerlink" href="#building-and-running-the-model-locally-without-docker" title="Permalink to this headline">¶</a></h2>
+<p>Assumes:</p>
+<blockquote>
+<div><ul>
+<li><p>Running Ubuntu 16.04 LTS</p></li>
+<li><p>NEURON 7.7+Python+MPI is working (e.g. can run <code class="docutils literal notranslate"><span class="pre">python</span> <span class="pre">-c</span> <span class="pre">'import</span> <span class="pre">neuron'</span></code>).</p>
 <blockquote>
 <div><ul class="simple">
-<li><dl class="simple">
-<dt>cells</dt><dd><ul>
-<li><dl class="simple">
-<dt>morphology</dt><dd><ul>
-<li><p>SWC archives</p></li>
-<li><p>quality / cleaning</p></li>
-<li><p>morphology selection</p></li>
-<li><p>validation</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p>electrophysiology properties and database</p></li>
-<li><p>ion channels</p></li>
-<li><p>electrophysiology property tests</p></li>
-<li><p>fitting</p></li>
-<li><p>comparison to other models</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>layers</dt><dd><ul>
-<li><p>reconstruction</p></li>
-<li><p>mesh simplification</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>cell placement</dt><dd><ul>
-<li><p>placement within layers</p></li>
-<li><p>orientation</p></li>
-<li><p>dendritic alignment</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>synapses</dt><dd><ul>
-<li><dl class="simple">
-<dt>M/TC &lt;-&gt; GC Reciprocal Synapses</dt><dd><ul>
-<li><p>AMPA/NMDA</p></li>
-<li><p>GABA</p></li>
-<li><p>spines</p></li>
-<li><p>dendritic proximity rule</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><p>M/TC Gap Junctions</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>odor input</dt><dd><ul>
-<li><p>Migliore14 glomerular activation maps</p></li>
-<li><p>Glomerular registration</p></li>
-<li><p>Glomerular intensity to spikes model</p></li>
-<li><p>Input connections</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>simulation</dt><dd><ul>
-<li><p>single thread</p></li>
-<li><dl class="simple">
-<dt>mpi</dt><dd><ul>
-<li><p>cell rank assignment</p></li>
-<li><p>gap junction considerations</p></li>
-<li><p>synaptic connections</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>recordings</dt><dd><ul>
-<li><p>somatic</p></li>
-<li><p>extracellular lfp</p></li>
-<li><p>wavelet analysis</p></li>
-</ul>
-</dd>
-</dl>
-</li>
-<li><dl class="simple">
-<dt>experiments</dt><dd><ul>
-<li><p>silent network</p></li>
-<li><p>Only MCs or TCs</p></li>
-<li><p>Added GCs</p></li>
-<li><p>Added Gap Junctions</p></li>
-</ul>
-</dd>
-</dl>
-</li>
+<li><p>Note: NEURON must be v7.7. As of this writing, 7.8 results in NEURON seg faults.</p></li>
 </ul>
 </div></blockquote>
+</li>
+<li><p>Anaconda (miniconda ok) is installed</p></li>
+</ul>
+</div></blockquote>
+<p>Summary:</p>
+<p>Follow the steps in the <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/docker/obmodel/Dockerfile">Docker file</a>
+to build locally.</p>
 </div>
 </div>
 
@@ -286,8 +292,10 @@
   
     <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
       
+        <a href="visualizing.html" class="btn btn-neutral float-right" title="Visualizing the Model" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
       
-        <a href="installation.html" class="btn btn-neutral float-left" title="Installation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+        <a href="index.html" class="btn btn-neutral float-left" title="Olfactory Bulb Model Documentation" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
       
     </div>
   
@@ -296,11 +304,19 @@
 
   <div role="contentinfo">
     <p>
+        
         &copy; Copyright 2020, Justas Birgiolas
 
     </p>
   </div>
-  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
 
 </footer>
 
@@ -311,7 +327,6 @@
 
   </div>
   
-
 
   <script type="text/javascript">
       jQuery(function () {

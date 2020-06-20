@@ -1,4 +1,4 @@
-olfactorybulb Python Package
+Model Python Class Reference
 =========================================
 
 .. toctree::

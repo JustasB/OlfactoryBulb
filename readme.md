@@ -20,7 +20,7 @@ docker pull jbirgio/olfactory-bulb:latest
 ## Run the Image and Open Jupyter Lab
 Once the image is downloaded, run the image with the following command:
 ```
-docker run -p 8888:8888 jbirgio/olfactory-bulb:latest
+docker run -it -p 8888:8888 jbirgio/olfactory-bulb:latest
 ```
 
 The Docker container will start and load the image. The image is programmed to start
@@ -33,6 +33,11 @@ http://127.0.0.1:8888/?token=6e7edee...0e02142
 
 Copy and paste the URL into your browser to open the Jupyter Lab environment that is running inside
 the model's Docker container.
+
+**To stop the container**, press `CTRL+C` (possibly twice).
+
+**To cleanup Docker image/container cache** use `docker system prune`. Add `--filter "until=72h"` to limit the 
+cleanup to older resources. See [Docker pruning](https://docs.docker.com/config/pruning/) for more details.
 
 ## Run the Notebook with Experiments
 On the right panel of Jupyter Lab, find the `notebooks` folder and open the `LFP Wavelet Analysis` notebook.
