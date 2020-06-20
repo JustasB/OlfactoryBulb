@@ -1,3 +1,9 @@
+![Travis (.com)](https://img.shields.io/travis/com/JustasB/OlfactoryBulb) &nbsp;
+![Docker Cloud Build Status](https://img.shields.io/docker/cloud/build/jbirgio/olfactory-bulb) &nbsp;
+![GitHub](https://img.shields.io/github/license/justasb/OlfactoryBulb) &nbsp;
+![GitHub repo size](https://img.shields.io/github/repo-size/justasb/olfactorybulb)
+
+
 # Run Network Model & Reproduce Experiments
 
 The easiest way to run the model is to use [Docker](https://www.docker.com) 
