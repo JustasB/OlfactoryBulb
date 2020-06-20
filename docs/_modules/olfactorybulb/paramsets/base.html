@@ -1,0 +1,295 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.paramsets.base &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.paramsets.base</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.paramsets.base</h1><div class="highlight"><pre>
+<span></span><span class="kn">import</span> <span class="nn">os</span>
+
+<div class="viewcode-block" id="SilentNetwork"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.base.SilentNetwork">[docs]</a><span class="k">class</span> <span class="nc">SilentNetwork</span><span class="p">:</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;A base, silent network with mild odor input and all synapses blocked&quot;</span>
+
+    <span class="nd">@property</span>
+    <span class="k">def</span> <span class="nf">name</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span>
+
+    <span class="n">rnd_seed</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">slice_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;olfactorybulb&#39;</span><span class="p">,</span> <span class="s1">&#39;slices&#39;</span><span class="p">)</span>
+    <span class="n">slice_name</span> <span class="o">=</span> <span class="s2">&quot;DorsalColumnSlice&quot;</span>
+
+    <span class="n">sim_dt</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">10.0</span>
+
+    <span class="n">recording_period</span> <span class="o">=</span> <span class="mi">1</span> <span class="o">/</span> <span class="mf">10.0</span>  <span class="c1"># ms</span>
+
+    <span class="n">tstop</span> <span class="o">=</span> <span class="mf">800.1</span>  <span class="c1"># ms</span>
+
+    <span class="c1"># GJs disabled</span>
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;MC&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s2">&quot;TC&quot;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Disable excitatory and inhibitory syns</span>
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;AmpaNmdaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;GabaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">100</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span>
+
+    <span class="c1"># Mild odor input spikes</span>
+    <span class="n">input_odors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span>   <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+        <span class="mi">200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1000</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+    <span class="p">}</span>
+
+    <span class="c1"># From Manabe &amp; Mori (2013) fast: 100-150ms, slow: 150 ms</span>
+    <span class="n">inhale_duration</span> <span class="o">=</span> <span class="mi">125</span>  <span class="c1"># ms</span>
+
+    <span class="c1"># ORN firing rate</span>
+    <span class="n">max_firing_rate</span> <span class="o">=</span> <span class="mi">150</span>  <span class="c1"># Hz from Duchamp-Viret et. al. (2000)</span>
+
+    <span class="c1"># Gilra Bhalla (2016)</span>
+    <span class="n">input_syn_tau1</span> <span class="o">=</span> <span class="mi">6</span>
+    <span class="n">input_syn_tau2</span> <span class="o">=</span> <span class="mi">12</span>
+
+    <span class="c1"># MC input disabled</span>
+    <span class="n">mc_input_delay</span> <span class="o">=</span> <span class="mi">50</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># TC input disabled</span>
+    <span class="n">tc_input_delay</span> <span class="o">=</span> <span class="mi">0</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="c1"># LFP electrode</span>
+    <span class="c1"># Inside dorsal Granule Layer</span>
+    <span class="c1"># Approximaly to where it was located in Manabe &amp; Mori (2013)</span>
+    <span class="c1"># In adult male Long-Evans rat:</span>
+    <span class="c1"># 8.0 mm anterior to the bregma</span>
+    <span class="c1"># 1.3 mm lateral to the midline</span>
+    <span class="c1"># 2.5 mm from the skull surface</span>
+    <span class="n">lfp_electrode_location</span> <span class="o">=</span> <span class="p">[</span><span class="mi">116</span><span class="p">,</span> <span class="mi">1078</span><span class="p">,</span> <span class="o">-</span><span class="mi">61</span><span class="p">]</span>
+
+    <span class="n">record_from_somas</span> <span class="o">=</span> <span class="p">[</span><span class="s1">&#39;MC&#39;</span><span class="p">,</span> <span class="s1">&#39;TC&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">]</span></div>
+
+<div class="viewcode-block" id="ParameterSetBase"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.base.ParameterSetBase">[docs]</a><span class="k">class</span> <span class="nc">ParameterSetBase</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+    <span class="k">pass</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

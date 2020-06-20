@@ -1,0 +1,845 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.model &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../" src="../../_static/documentation_options.js"></script>
+        <script src="../../_static/jquery.js"></script>
+        <script src="../../_static/underscore.js"></script>
+        <script src="../../_static/doctools.js"></script>
+        <script src="../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../genindex.html" />
+    <link rel="search" title="Search" href="../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.model</h1><div class="highlight"><pre>
+<span></span><span class="k">try</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">cPickle</span> <span class="c1"># Python 2</span>
+<span class="k">except</span><span class="p">:</span>
+    <span class="kn">import</span> <span class="nn">pickle</span> <span class="k">as</span> <span class="nn">cPickle</span> <span class="c1"># Python 3</span>
+
+<span class="kn">import</span> <span class="nn">os</span>
+<span class="kn">import</span> <span class="nn">numpy</span> <span class="k">as</span> <span class="nn">np</span>
+<span class="kn">import</span> <span class="nn">json</span>
+<span class="kn">from</span> <span class="nn">prev_ob_models.Birgiolas2020.isolated_cells</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">blenderneuron.nrn.neuronnode</span> <span class="kn">import</span> <span class="n">NeuronNode</span>
+<span class="kn">from</span> <span class="nn">olfactorybulb.database</span> <span class="kn">import</span> <span class="n">Odor</span><span class="p">,</span> <span class="n">OdorGlom</span><span class="p">,</span> <span class="n">CellModel</span><span class="p">,</span> <span class="n">database</span>
+<span class="kn">from</span> <span class="nn">math</span> <span class="kn">import</span> <span class="nb">pow</span>
+<span class="kn">from</span> <span class="nn">LFPsimpy</span> <span class="kn">import</span> <span class="n">LfpElectrode</span>
+<span class="kn">import</span> <span class="nn">sys</span>
+<span class="kn">from</span> <span class="nn">heapq</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">matplotlib</span> <span class="kn">import</span> <span class="n">pyplot</span> <span class="k">as</span> <span class="n">plt</span>
+<span class="kn">from</span> <span class="nn">hashlib</span> <span class="kn">import</span> <span class="n">sha1</span>
+<span class="kn">from</span> <span class="nn">random</span> <span class="kn">import</span> <span class="n">random</span><span class="p">,</span> <span class="n">seed</span>
+
+<span class="kn">from</span> <span class="nn">olfactorybulb.paramsets.base</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">olfactorybulb.paramsets.case_studies</span> <span class="kn">import</span> <span class="o">*</span>
+<span class="kn">from</span> <span class="nn">olfactorybulb.paramsets.sensitivity</span> <span class="kn">import</span> <span class="o">*</span>
+
+
+<div class="viewcode-block" id="OlfactoryBulb"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb">[docs]</a><span class="k">class</span> <span class="nc">OlfactoryBulb</span><span class="p">:</span>
+    <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">    The main class used to build and simulate the olfactory bulb network model.</span>
+<span class="sd">    &quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="OlfactoryBulb.__init__"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">params</span><span class="o">=</span><span class="s2">&quot;ParameterSetBase&quot;</span><span class="p">,</span> <span class="n">autorun</span><span class="o">=</span><span class="kc">True</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        :param params: The name of the class defined in olfactorybulb.paramsets that defines the network parameters</span>
+<span class="sd">        :param autorun: When true, after the network model is built, starts the simulation</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="nb">type</span><span class="p">(</span><span class="n">params</span><span class="p">)</span> <span class="o">==</span> <span class="nb">str</span><span class="p">:</span>
+            <span class="n">params</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">params</span><span class="p">)()</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">params</span> <span class="o">=</span> <span class="n">params</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">rnd_seed</span> <span class="o">=</span> <span class="n">params</span><span class="o">.</span><span class="n">rnd_seed</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">slice_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">abspath</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">slice_dir</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">slice_name</span><span class="p">))</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">gj_source_gids</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gjs</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="c1"># Just use the BlenderNEURON package functions (e.g. no server/client)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span> <span class="o">=</span> <span class="n">NeuronNode</span><span class="p">(</span><span class="n">server_end</span><span class="o">=</span><span class="s1">&#39;Package&#39;</span><span class="p">)</span>
+
+        <span class="kn">from</span> <span class="nn">neuron</span> <span class="kn">import</span> <span class="n">h</span><span class="p">,</span> <span class="n">load_mechanisms</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">h</span> <span class="o">=</span> <span class="n">h</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">ParallelContext</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mpimap</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">nranks</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">nhost</span><span class="p">())</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">id</span><span class="p">()</span>
+
+        <span class="c1"># Keep track of rank complexities with a min-heap</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">rank_complexities</span> <span class="o">=</span> <span class="p">[(</span><span class="mi">0</span><span class="p">,</span> <span class="n">r</span><span class="p">)</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nranks</span><span class="p">)]</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_vec</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">t_vec</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">_ref_t</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">recording_period</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">v_vectors</span> <span class="o">=</span> <span class="p">{}</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">input_vectors</span> <span class="o">=</span> <span class="p">[]</span>
+
+        <span class="k">for</span> <span class="n">cell_type</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;MC&#39;</span><span class="p">,</span> <span class="s1">&#39;GC&#39;</span><span class="p">,</span> <span class="s1">&#39;TC&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_cells</span><span class="p">(</span><span class="n">cell_type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">complexities</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">array</span><span class="p">([</span><span class="n">c</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span> <span class="k">for</span> <span class="n">c</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">rank_complexities</span><span class="p">])</span>
+            <span class="nb">min</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">min</span><span class="p">(</span><span class="n">complexities</span><span class="p">)</span>
+            <span class="nb">max</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">max</span><span class="p">(</span><span class="n">complexities</span><span class="p">)</span>
+            <span class="n">mean</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">mean</span><span class="p">(</span><span class="n">complexities</span><span class="p">)</span>
+
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Rank Complexity min: </span><span class="si">%s</span><span class="s1">, mean: </span><span class="si">%s</span><span class="s1">, max: </span><span class="si">%s</span><span class="s1">&#39;</span> <span class="o">%</span> <span class="p">(</span><span class="nb">min</span><span class="p">,</span> <span class="n">mean</span><span class="p">,</span> <span class="nb">max</span><span class="p">))</span>
+
+        <span class="k">for</span> <span class="n">synapse_set</span> <span class="ow">in</span> <span class="p">[</span><span class="s1">&#39;GCs__MCs&#39;</span><span class="p">,</span> <span class="s1">&#39;GCs__TCs&#39;</span><span class="p">]:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">load_synapse_set</span><span class="p">(</span><span class="n">synapse_set</span><span class="p">)</span>
+
+        <span class="c1"># Load glom-&gt;cell links</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">load_glom_cells</span><span class="p">()</span>
+
+        <span class="c1"># Create gap junctions between MC and TC tufts</span>
+        <span class="k">for</span> <span class="n">cell_type</span><span class="p">,</span> <span class="n">g_gap</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">gap_juction_gmax</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_gap_junctions</span><span class="p">(</span><span class="n">cell_type</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">)</span>
+
+        <span class="c1"># Set synapse parameters</span>
+        <span class="k">for</span> <span class="n">syn_mech</span><span class="p">,</span> <span class="n">syn_values</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">synapse_properties</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">syn_mech</span><span class="p">):</span>
+                <span class="k">for</span> <span class="n">syn_attrib</span><span class="p">,</span> <span class="n">attrib_value</span> <span class="ow">in</span> <span class="n">syn_values</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="p">[</span><span class="nb">setattr</span><span class="p">(</span><span class="n">s</span><span class="p">,</span> <span class="n">syn_attrib</span><span class="p">,</span> <span class="n">attrib_value</span><span class="p">)</span> <span class="k">for</span> <span class="n">s</span> <span class="ow">in</span> <span class="nb">getattr</span><span class="p">(</span><span class="n">h</span><span class="p">,</span> <span class="n">syn_mech</span><span class="p">)]</span>
+
+        <span class="c1"># Add glomerular inputs</span>
+        <span class="k">for</span> <span class="n">time</span><span class="p">,</span> <span class="n">odor_info</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">input_odors</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">add_inputs</span><span class="p">(</span><span class="n">odor</span><span class="o">=</span><span class="n">odor_info</span><span class="p">[</span><span class="s2">&quot;name&quot;</span><span class="p">],</span> <span class="n">t</span><span class="o">=</span><span class="n">time</span><span class="p">,</span> <span class="n">rel_conc</span><span class="o">=</span><span class="n">odor_info</span><span class="p">[</span><span class="s2">&quot;rel_conc&quot;</span><span class="p">])</span>
+
+        <span class="c1"># LFP</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">electrode</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">create_lfp_electrode</span><span class="p">(</span><span class="o">*</span><span class="n">params</span><span class="o">.</span><span class="n">lfp_electrode_location</span><span class="p">,</span>
+                                                   <span class="n">sampling_period</span><span class="o">=</span><span class="n">params</span><span class="o">.</span><span class="n">recording_period</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">setup_status_reporter</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">cell_type</span> <span class="ow">in</span> <span class="n">params</span><span class="o">.</span><span class="n">record_from_somas</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">record_from_somas</span><span class="p">(</span><span class="n">cell_type</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span> <span class="ow">and</span> <span class="bp">self</span><span class="o">.</span><span class="n">nranks</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="kn">from</span> <span class="nn">neuron</span> <span class="kn">import</span> <span class="n">gui</span>
+            <span class="c1"># h.load_file(&#39;1x1x1-testbed.ses&#39;)</span>
+
+            <span class="n">h</span><span class="o">.</span><span class="n">newPlotI</span><span class="p">()</span>
+            <span class="p">[</span><span class="n">g</span> <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">h</span><span class="o">.</span><span class="n">Graph</span><span class="p">][</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span><span class="o">.</span><span class="n">addvar</span><span class="p">(</span><span class="s1">&#39;LfpElectrode[0].value&#39;</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">autorun</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">run</span><span class="p">(</span><span class="n">params</span><span class="o">.</span><span class="n">tstop</span><span class="p">)</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="s1">&#39;results&#39;</span><span class="p">,</span> <span class="n">params</span><span class="o">.</span><span class="n">name</span><span class="p">)</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">exists</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">):</span>
+                    <span class="n">os</span><span class="o">.</span><span class="n">makedirs</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">save_recorded_vectors</span><span class="p">()</span>
+
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">t</span><span class="p">,</span> <span class="n">lfp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_lfp</span><span class="p">()</span>
+
+            <span class="c1"># Cleanup on MPI</span>
+            <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nranks</span> <span class="o">&gt;</span> <span class="mi">1</span><span class="p">:</span>
+                <span class="n">database</span><span class="o">.</span><span class="n">close</span><span class="p">()</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">quit</span><span class="p">()</span></div>
+
+
+<div class="viewcode-block" id="OlfactoryBulb.stim_glom_segments"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.stim_glom_segments">[docs]</a>    <span class="k">def</span> <span class="nf">stim_glom_segments</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">input_segs</span><span class="p">,</span> <span class="n">intensity</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds input synapses onto glomerular tufts at specified start time and intensity</span>
+
+<span class="sd">        The inhalation part of a sniff cycle is modeled as a gaussian probability that is centered at</span>
+<span class="sd">        the midpoint of the inhalation onset and end. The probability is translated into spikes. The spikes</span>
+<span class="sd">        then trigger the excitatory synapses placed at the mitral/tufted cell tufts.</span>
+
+<span class="sd">        Intensity regulates how many spikes to pick from the gaussian.</span>
+
+<span class="sd">        :param time: the inhalation onset time in ms</span>
+
+<span class="sd">        :param input_segs: a list containing tuples of:</span>
+<span class="sd">            a) The name of the segment to stimulate as it appears on the current MPI rank</span>
+<span class="sd">            b) segment gid</span>
+<span class="sd">            c) segment name as it appears when there is only one rank. If not using MPI a) and c) are same.</span>
+<span class="sd">        :param intensity: 0-1 representing odor intensity</span>
+
+<span class="sd">        :return: None</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+        <span class="n">inhale_duration</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">inhale_duration</span>
+
+        <span class="c1"># ORN firing rate</span>
+        <span class="n">max_firing_rate</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">max_firing_rate</span>
+
+        <span class="c1"># Translate intensity to number of spikes per inhalation</span>
+        <span class="n">spike_count</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="nb">round</span><span class="p">(</span><span class="n">max_firing_rate</span> <span class="o">*</span> <span class="n">intensity</span> <span class="o">*</span> <span class="p">(</span><span class="n">inhale_duration</span> <span class="o">/</span> <span class="mf">1000.0</span><span class="p">)))</span>
+
+        <span class="k">for</span> <span class="n">seg_name</span><span class="p">,</span> <span class="n">seg_gid</span><span class="p">,</span> <span class="n">single_rank_seg_name</span> <span class="ow">in</span> <span class="n">input_segs</span><span class="p">:</span>
+            <span class="c1"># Randomize spikes to each tufted segment</span>
+            <span class="n">seed_source</span> <span class="o">=</span> <span class="s2">&quot;</span><span class="si">%s</span><span class="s2">|</span><span class="si">%s</span><span class="s2">|</span><span class="si">%s</span><span class="s2">|</span><span class="si">%s</span><span class="s2">&quot;</span> <span class="o">%</span> <span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rnd_seed</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">single_rank_seg_name</span><span class="p">,</span> <span class="n">intensity</span><span class="p">)</span>
+            <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">seed</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">stable_hash</span><span class="p">(</span><span class="n">seed_source</span><span class="p">))</span>
+
+            <span class="c1"># Odor is modeled as a gaussian spike train representing OSN spikes during inhalation</span>
+            <span class="c1"># exhalation is assumed to not generate OSN spikes</span>
+            <span class="n">spike_times</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_gaussian_spike_train</span><span class="p">(</span><span class="n">spike_count</span><span class="p">,</span> <span class="n">time</span><span class="p">,</span> <span class="n">inhale_duration</span><span class="p">)</span>
+
+            <span class="c1"># Create synapse point process</span>
+            <span class="n">seg</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">seg_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(1)&#39;</span><span class="p">,</span> <span class="s1">&#39;(.999)&#39;</span><span class="p">))</span>
+            <span class="n">syn</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Exp2Syn</span><span class="p">(</span><span class="n">seg</span><span class="p">)</span>
+            <span class="n">syn</span><span class="o">.</span><span class="n">tau1</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">input_syn_tau1</span>
+            <span class="n">syn</span><span class="o">.</span><span class="n">tau2</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">input_syn_tau2</span>
+
+            <span class="k">if</span> <span class="s2">&quot;MC&quot;</span> <span class="ow">in</span> <span class="n">seg_name</span><span class="p">:</span>  <span class="c1"># MCs</span>
+                <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">mc_input_delay</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">mc_input_weight</span>
+
+            <span class="k">else</span><span class="p">:</span>  <span class="c1"># &quot;TC&quot;</span>
+                <span class="n">delay</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">tc_input_delay</span>
+                <span class="n">weight</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">tc_input_weight</span>
+
+            <span class="c1"># VecStim will deliver events to synapse at vector times</span>
+            <span class="n">ns</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">VecStim</span><span class="p">()</span>
+            <span class="n">ns</span><span class="o">.</span><span class="n">play</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">(</span><span class="n">spike_times</span> <span class="o">+</span> <span class="n">delay</span><span class="p">))</span>
+
+            <span class="c1"># Netcon to trigger the synapse</span>
+            <span class="n">netcon</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span>
+                <span class="n">ns</span><span class="p">,</span>
+                <span class="n">syn</span><span class="p">,</span>
+                <span class="mi">0</span><span class="p">,</span>  <span class="c1"># thresh</span>
+                <span class="mi">0</span><span class="p">,</span>  <span class="c1"># delay</span>
+                <span class="n">weight</span>  <span class="c1"># weight uS</span>
+            <span class="p">)</span>
+
+            <span class="c1"># Record odor input events</span>
+            <span class="n">input_vec</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+            <span class="n">netcon</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">input_vec</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">input_vectors</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">single_rank_seg_name</span><span class="p">,</span> <span class="n">input_vec</span><span class="p">))</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">inputs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">syn</span><span class="p">,</span> <span class="n">ns</span><span class="p">,</span> <span class="n">netcon</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.stable_hash"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.stable_hash">[docs]</a>    <span class="k">def</span> <span class="nf">stable_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">source</span><span class="p">,</span> <span class="n">digits</span><span class="o">=</span><span class="mi">9</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a hash code of digits long that is stable across different machines.</span>
+
+<span class="sd">        :param source: The string to hash, in this case a section name</span>
+<span class="sd">        :param digits: The number of digits to keep of the hash</span>
+<span class="sd">        :return: The hash code as an integer</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="nb">int</span><span class="p">(</span><span class="n">sha1</span><span class="p">(</span><span class="n">source</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="n">digits</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.run"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.run">[docs]</a>    <span class="k">def</span> <span class="nf">run</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tstop</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Runs the NEURON simulation untill the specified stop time</span>
+
+<span class="sd">        :param tstop: Simulation stop time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;Starting simulation...&#39;</span><span class="p">)</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">dt</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">sim_dt</span>
+        <span class="n">h</span><span class="o">.</span><span class="n">tstop</span> <span class="o">=</span> <span class="n">tstop</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">nranks</span> <span class="o">==</span> <span class="mi">1</span><span class="p">:</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">cvode_active</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">cvode</span><span class="o">.</span><span class="n">cache_efficient</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">run</span><span class="p">()</span>
+
+        <span class="k">else</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">setup_transfer</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">timeout</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="c1"># h.cvode.cache_efficient(0) # This line causes gap junction Seg Faults</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">cvode_active</span><span class="p">(</span><span class="mi">0</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">set_maxstep</span><span class="p">(</span><span class="mi">1</span><span class="p">)</span>
+            <span class="n">h</span><span class="o">.</span><span class="n">stdinit</span><span class="p">()</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">psolve</span><span class="p">(</span><span class="n">h</span><span class="o">.</span><span class="n">tstop</span><span class="p">)</span>
+
+        <span class="c1"># Clear status updater line</span>
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="nb">print</span><span class="p">(</span><span class="s1">&#39;&#39;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.print_status"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.print_status">[docs]</a>    <span class="k">def</span> <span class="nf">print_status</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Prints the current simulation time on the same line (no new line)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">write</span><span class="p">(</span><span class="s2">&quot;</span><span class="se">\r</span><span class="s2">Time: </span><span class="si">%s</span><span class="s2"> ms&quot;</span> <span class="o">%</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span><span class="o">.</span><span class="n">t</span><span class="p">)</span>
+        <span class="n">sys</span><span class="o">.</span><span class="n">stdout</span><span class="o">.</span><span class="n">flush</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.setup_status_reporter"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.setup_status_reporter">[docs]</a>    <span class="k">def</span> <span class="nf">setup_status_reporter</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Sets up the NEURON simulation to report the simulation time</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span> <span class="o">==</span> <span class="mi">0</span><span class="p">:</span>
+            <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+            <span class="n">collector_stim</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetStim</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span>
+            <span class="n">collector_stim</span><span class="o">.</span><span class="n">start</span> <span class="o">=</span> <span class="mi">0</span>
+            <span class="n">collector_stim</span><span class="o">.</span><span class="n">interval</span> <span class="o">=</span> <span class="mi">1</span>
+            <span class="n">collector_stim</span><span class="o">.</span><span class="n">number</span> <span class="o">=</span> <span class="mf">1e9</span>
+            <span class="n">collector_stim</span><span class="o">.</span><span class="n">noise</span> <span class="o">=</span> <span class="mi">0</span>
+
+            <span class="n">collector_con</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">NetCon</span><span class="p">(</span><span class="n">collector_stim</span><span class="p">,</span> <span class="kc">None</span><span class="p">)</span>
+            <span class="n">collector_con</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">print_status</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">collector_stim</span> <span class="o">=</span> <span class="n">collector_stim</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">collector_con</span> <span class="o">=</span> <span class="n">collector_con</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.create_lfp_electrode"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.create_lfp_electrode">[docs]</a>    <span class="k">def</span> <span class="nf">create_lfp_electrode</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sampling_period</span><span class="p">,</span> <span class="n">method</span><span class="o">=</span><span class="s1">&#39;Line&#39;</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses the LFPsimpy package to add an LFP electrode at the specified x,y,z location</span>
+
+<span class="sd">        See `LFPsimpy package &lt;https://github.com/justasb/LFPsimpy&gt;`_.</span>
+
+<span class="sd">        :param x: y, z coordinates in um</span>
+<span class="sd">        :param sampling_period: How often to compute the LFP signal in ms</span>
+<span class="sd">        :param method: One of &#39;Line&#39;, &#39;Point&#39;, or &#39;RC&#39;.</span>
+<span class="sd">        :return: an LFPsimpy LfpElectrode object</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">return</span> <span class="n">LfpElectrode</span><span class="p">(</span><span class="n">x</span><span class="p">,</span> <span class="n">y</span><span class="p">,</span> <span class="n">z</span><span class="p">,</span> <span class="n">sampling_period</span><span class="p">,</span> <span class="n">method</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.get_lfp"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.get_lfp">[docs]</a>    <span class="k">def</span> <span class="nf">get_lfp</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Returns the LFP signal in nV</span>
+
+<span class="sd">        :return: a tuple of LFP times, and voltages (nV)</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">if</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrode</span> <span class="ow">is</span> <span class="kc">None</span> <span class="ow">or</span> <span class="ow">not</span> <span class="nb">any</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">electrode</span><span class="o">.</span><span class="n">times</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s1">&#39;Run simulation first to get the LFP&#39;</span><span class="p">)</span>
+
+        <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrode</span><span class="o">.</span><span class="n">times</span>
+        <span class="n">lfp</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">electrode</span><span class="o">.</span><span class="n">values</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">,</span> <span class="s1">&#39;lfp.pkl&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">((</span><span class="n">t</span><span class="p">,</span> <span class="n">lfp</span><span class="p">),</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">t</span><span class="p">,</span> <span class="n">lfp</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.get_model_inputsegs"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.get_model_inputsegs">[docs]</a>    <span class="k">def</span> <span class="nf">get_model_inputsegs</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Queries the model database to get the &#39;root&#39; segments of the tufted dendrites</span>
+<span class="sd">        of the mitral and tufted cells</span>
+
+<span class="sd">        :return: A dict that maps the cell model&#39;s class name to the name of the root tufted dendrite section</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Get all the different cell models used in the slice</span>
+        <span class="n">input_models</span> <span class="o">=</span> <span class="nb">set</span><span class="p">()</span>
+        <span class="k">for</span> <span class="n">cells</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">glom_cells</span><span class="o">.</span><span class="n">values</span><span class="p">():</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                <span class="n">input_models</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">cell</span><span class="p">[:</span><span class="n">cell</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)])</span>
+
+        <span class="c1"># Get each model&#39;s input segments (in the tuft)</span>
+        <span class="n">model_inputsegs</span> <span class="o">=</span> <span class="p">{</span><span class="n">m</span><span class="o">.</span><span class="n">class_name</span><span class="p">:</span> <span class="n">m</span><span class="o">.</span><span class="n">tufted_dend_root</span>
+                           <span class="k">for</span> <span class="n">m</span> <span class="ow">in</span> <span class="n">CellModel</span> \
+                               <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">CellModel</span><span class="o">.</span><span class="n">class_name</span><span class="p">,</span> <span class="n">CellModel</span><span class="o">.</span><span class="n">tufted_dend_root</span><span class="p">)</span> \
+                               <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">CellModel</span><span class="o">.</span><span class="n">class_name</span><span class="o">.</span><span class="n">in_</span><span class="p">(</span><span class="nb">list</span><span class="p">(</span><span class="n">input_models</span><span class="p">)))}</span>
+
+        <span class="k">return</span> <span class="n">model_inputsegs</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.add_gap_junctions"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.add_gap_junctions">[docs]</a>    <span class="k">def</span> <span class="nf">add_gap_junctions</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">in_name</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds gap junctions between tufted dendrites of specified cells</span>
+
+<span class="sd">        :param in_name: A part of a cell class name (e.g. &#39;Mitral&#39;) used to select a cell to which the GJ is added</span>
+<span class="sd">        :param g_gap: The conductance of the gap junctions</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">model_inputsegs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_inputsegs</span><span class="p">()</span>
+
+        <span class="k">for</span> <span class="n">glom_id</span><span class="p">,</span> <span class="n">cells</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">glom_cells</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+
+            <span class="n">input_segs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                <span class="k">if</span> <span class="n">in_name</span> <span class="ow">not</span> <span class="ow">in</span> <span class="n">cell</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">model_class</span> <span class="o">=</span> <span class="n">cell</span><span class="p">[:</span><span class="n">cell</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)]</span>
+                <span class="n">input_seg</span> <span class="o">=</span> <span class="n">model_inputsegs</span><span class="p">[</span><span class="n">model_class</span><span class="p">]</span>
+
+                <span class="n">single_rank_address</span> <span class="o">=</span> <span class="s1">&#39;h.&#39;</span> <span class="o">+</span> <span class="n">cell</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">input_seg</span>
+                <span class="n">single_rank_gid</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">stable_hash</span><span class="p">(</span><span class="n">single_rank_address</span><span class="p">)</span>
+
+                <span class="n">rank_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">rank_section_name</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+
+                <span class="k">if</span> <span class="n">rank_cell</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="n">seg_address</span> <span class="o">=</span> <span class="s1">&#39;h.&#39;</span> <span class="o">+</span> <span class="n">rank_cell</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">input_seg</span>
+                <span class="k">else</span><span class="p">:</span>
+                    <span class="n">seg_address</span> <span class="o">=</span> <span class="kc">None</span>
+
+                <span class="n">input_segs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seg_address</span><span class="p">,</span> <span class="n">single_rank_gid</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_segs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_gap_junctions_between</span><span class="p">(</span><span class="n">input_segs</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">setup_transfer</span><span class="p">()</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.create_gap_junctions_between"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.create_gap_junctions_between">[docs]</a>    <span class="k">def</span> <span class="nf">create_gap_junctions_between</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">input_segs</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates gap junctions between a list of specified segments. GJs are connected in a chain</span>
+<span class="sd">        (e.g. Seg1 &lt;-GJ1-&gt; Seg2 &lt;-GC2-&gt; Seg3)</span>
+
+<span class="sd">        :param input_segs: List of segments to connect by gap junctions</span>
+<span class="sd">        :param g_gap: Gap junction conductance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">count</span> <span class="o">=</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_segs</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&lt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">return</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+        <span class="n">first_seg</span> <span class="o">=</span> <span class="n">input_segs</span><span class="p">[</span><span class="mi">0</span><span class="p">]</span>
+        <span class="n">last_seg</span> <span class="o">=</span> <span class="n">input_segs</span><span class="p">[</span><span class="o">-</span><span class="mi">1</span><span class="p">]</span>
+
+        <span class="k">if</span> <span class="n">count</span> <span class="o">&gt;</span> <span class="mi">2</span><span class="p">:</span>
+            <span class="k">for</span> <span class="n">i</span><span class="p">,</span> <span class="n">seg</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">input_segs</span><span class="p">[:</span><span class="o">-</span><span class="mi">1</span><span class="p">]):</span>
+                <span class="n">next_seg</span> <span class="o">=</span> <span class="n">input_segs</span><span class="p">[</span><span class="n">i</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]</span>
+
+                <span class="bp">self</span><span class="o">.</span><span class="n">create_gap_junction</span><span class="p">(</span><span class="n">seg</span><span class="p">,</span> <span class="n">next_seg</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">create_gap_junction</span><span class="p">(</span><span class="n">first_seg</span><span class="p">,</span> <span class="n">last_seg</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.create_gap_junction"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.create_gap_junction">[docs]</a>    <span class="k">def</span> <span class="nf">create_gap_junction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">seg_1_info</span><span class="p">,</span> <span class="n">seg_2_info</span><span class="p">,</span> <span class="n">g_gap</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Creates a gap junction between two segments</span>
+
+<span class="sd">        :param seg_1_info: Tuple of the name and gid of the first segment</span>
+<span class="sd">        :param seg_2_info: Tuple of the name and gid of the second segment</span>
+<span class="sd">        :param g_gap: Gap junction conductance</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+        <span class="n">seg_1_name</span><span class="p">,</span> <span class="n">seg_1_gid</span> <span class="o">=</span> <span class="n">seg_1_info</span>
+        <span class="n">seg_2_name</span><span class="p">,</span> <span class="n">seg_2_gid</span> <span class="o">=</span> <span class="n">seg_2_info</span>
+
+        <span class="k">if</span> <span class="n">seg_1_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seg1</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">seg_1_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(1)&#39;</span><span class="p">,</span> <span class="s1">&#39;(.999)&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">seg_1_gid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gj_source_gids</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">source_var</span><span class="p">(</span><span class="n">seg1</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="n">seg_1_gid</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">seg1</span><span class="o">.</span><span class="n">sec</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gj_source_gids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">seg_1_gid</span><span class="p">)</span>
+
+            <span class="n">gap1</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">GapJunction</span><span class="p">(</span><span class="n">seg1</span><span class="o">.</span><span class="n">x</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">seg1</span><span class="o">.</span><span class="n">sec</span><span class="p">)</span>
+            <span class="n">gap1</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g_gap</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">target_var</span><span class="p">(</span><span class="n">gap1</span><span class="o">.</span><span class="n">_ref_v_other</span><span class="p">,</span> <span class="n">seg_2_gid</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gjs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gap1</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">seg_2_name</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">seg2</span> <span class="o">=</span> <span class="nb">eval</span><span class="p">(</span><span class="n">seg_2_name</span><span class="o">.</span><span class="n">replace</span><span class="p">(</span><span class="s1">&#39;(1)&#39;</span><span class="p">,</span> <span class="s1">&#39;(.999)&#39;</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="n">seg_2_gid</span> <span class="ow">not</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">gj_source_gids</span><span class="p">:</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">source_var</span><span class="p">(</span><span class="n">seg2</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="n">seg_2_gid</span><span class="p">,</span> <span class="n">sec</span><span class="o">=</span><span class="n">seg2</span><span class="o">.</span><span class="n">sec</span><span class="p">)</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">gj_source_gids</span><span class="o">.</span><span class="n">add</span><span class="p">(</span><span class="n">seg_2_gid</span><span class="p">)</span>
+
+            <span class="n">gap2</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">GapJunction</span><span class="p">(</span><span class="n">seg2</span><span class="p">)</span>
+            <span class="n">gap2</span><span class="o">.</span><span class="n">g</span> <span class="o">=</span> <span class="n">g_gap</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">target_var</span><span class="p">(</span><span class="n">gap2</span><span class="o">.</span><span class="n">_ref_v_other</span><span class="p">,</span> <span class="n">seg_1_gid</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">gjs</span><span class="o">.</span><span class="n">append</span><span class="p">(</span><span class="n">gap2</span><span class="p">)</span></div>
+
+
+<div class="viewcode-block" id="OlfactoryBulb.add_inputs"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.add_inputs">[docs]</a>    <span class="k">def</span> <span class="nf">add_inputs</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">odor</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">rel_conc</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Add odor stimulation to the tufts of the principal cells</span>
+
+<span class="sd">        :param odor: The name of the odor</span>
+<span class="sd">        :param t: Onset time</span>
+<span class="sd">        :param rel_conc: Relative concentration 0-1</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">model_inputsegs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_model_inputsegs</span><span class="p">()</span>
+
+        <span class="c1"># Get input odor glomeruli</span>
+        <span class="n">glom_intensities</span> <span class="o">=</span> <span class="p">{</span><span class="n">g</span><span class="o">.</span><span class="n">glom_id</span><span class="p">:</span> <span class="n">g</span><span class="o">.</span><span class="n">intensity</span>
+                            <span class="k">for</span> <span class="n">g</span> <span class="ow">in</span> <span class="n">OdorGlom</span>
+                                <span class="o">.</span><span class="n">select</span><span class="p">(</span><span class="n">OdorGlom</span><span class="o">.</span><span class="n">glom_id</span><span class="p">,</span> <span class="n">OdorGlom</span><span class="o">.</span><span class="n">intensity</span><span class="p">)</span>
+                                <span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="n">Odor</span><span class="p">)</span>
+                                <span class="o">.</span><span class="n">where</span><span class="p">(</span><span class="n">Odor</span><span class="o">.</span><span class="n">name</span> <span class="o">==</span> <span class="n">odor</span><span class="p">)}</span>
+
+        <span class="k">for</span> <span class="n">glom_id</span><span class="p">,</span> <span class="n">cells</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">glom_cells</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">glom_id</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">glom_id</span><span class="p">)</span>
+
+            <span class="n">input_segs</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">cell</span> <span class="ow">in</span> <span class="n">cells</span><span class="p">:</span>
+                <span class="n">rank_cell</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">rank_section_name</span><span class="p">(</span><span class="n">cell</span><span class="p">)</span>
+
+                <span class="c1"># Add inputs only to cells that are on this rank</span>
+                <span class="k">if</span> <span class="n">rank_cell</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+                    <span class="k">continue</span>
+
+                <span class="n">model_class</span> <span class="o">=</span> <span class="n">rank_cell</span><span class="p">[:</span><span class="n">rank_cell</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)]</span>
+                <span class="n">input_seg</span> <span class="o">=</span> <span class="n">model_inputsegs</span><span class="p">[</span><span class="n">model_class</span><span class="p">]</span>
+                <span class="n">seg_address</span> <span class="o">=</span> <span class="s1">&#39;h.&#39;</span> <span class="o">+</span> <span class="n">rank_cell</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">input_seg</span>
+
+                <span class="n">single_rank_address</span> <span class="o">=</span> <span class="s1">&#39;h.&#39;</span> <span class="o">+</span> <span class="n">cell</span> <span class="o">+</span> <span class="s1">&#39;.&#39;</span> <span class="o">+</span> <span class="n">input_seg</span>
+                <span class="n">single_rank_gid</span> <span class="o">=</span> <span class="nb">int</span><span class="p">(</span><span class="n">sha1</span><span class="p">(</span><span class="n">single_rank_address</span><span class="o">.</span><span class="n">encode</span><span class="p">())</span><span class="o">.</span><span class="n">hexdigest</span><span class="p">(),</span> <span class="mi">16</span><span class="p">)</span> <span class="o">%</span> <span class="p">(</span><span class="mi">10</span> <span class="o">**</span> <span class="mi">9</span><span class="p">)</span>
+
+                <span class="n">input_segs</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seg_address</span><span class="p">,</span> <span class="n">single_rank_gid</span><span class="p">,</span> <span class="n">single_rank_address</span><span class="p">))</span>
+
+            <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">input_segs</span><span class="p">)</span> <span class="o">&gt;</span> <span class="mi">0</span><span class="p">:</span>
+                <span class="n">glom_intensity</span> <span class="o">=</span> <span class="n">glom_intensities</span><span class="p">[</span><span class="n">glom_id</span><span class="p">]</span> <span class="o">*</span> <span class="n">rel_conc</span>
+                <span class="bp">self</span><span class="o">.</span><span class="n">stim_glom_segments</span><span class="p">(</span><span class="n">t</span><span class="p">,</span> <span class="n">input_segs</span><span class="p">,</span> <span class="n">glom_intensity</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.load_glom_cells"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.load_glom_cells">[docs]</a>    <span class="k">def</span> <span class="nf">load_glom_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Loads a dict that maps glomeruli ids to cells that are attached to each glomerulus</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_dir</span><span class="p">,</span> <span class="s1">&#39;glom_cells.json&#39;</span><span class="p">))</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">glom_cells</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.get_gaussian_spike_train"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.get_gaussian_spike_train">[docs]</a>    <span class="k">def</span> <span class="nf">get_gaussian_spike_train</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">spikes</span><span class="o">=</span><span class="mi">50</span><span class="p">,</span> <span class="n">start_time</span><span class="o">=</span><span class="mi">100</span><span class="p">,</span> <span class="n">duration</span><span class="o">=</span><span class="mi">10</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Gets a spike train from a gaussian probability distribution whose 99% range starts</span>
+<span class="sd">        at the specified time and lasts for the specified duration.</span>
+
+<span class="sd">        :param spikes: The number of spikes to generate</span>
+<span class="sd">        :param start_time: The onset time of the gaussian</span>
+<span class="sd">        :param duration: The duration of the gaussian</span>
+<span class="sd">        :return: A numpy array of spike times in chronological order</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Create a gaussian whose 99% range starts at start_time</span>
+        <span class="c1"># and ends at start_time + duration</span>
+        <span class="n">normal_stdev</span> <span class="o">=</span> <span class="n">duration</span> <span class="o">/</span> <span class="p">(</span><span class="mf">2.576</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span>
+
+        <span class="n">times</span> <span class="o">=</span> <span class="n">np</span><span class="o">.</span><span class="n">random</span><span class="o">.</span><span class="n">normal</span><span class="p">(</span><span class="n">start_time</span> <span class="o">+</span> <span class="p">(</span><span class="n">duration</span> <span class="o">/</span> <span class="mf">2.0</span><span class="p">),</span> <span class="n">normal_stdev</span><span class="p">,</span> <span class="n">spikes</span><span class="p">)</span>
+
+        <span class="c1"># Remove any spikes outside this range</span>
+        <span class="n">times</span> <span class="o">=</span> <span class="n">times</span><span class="p">[</span><span class="n">np</span><span class="o">.</span><span class="n">where</span><span class="p">((</span><span class="n">times</span> <span class="o">&gt;</span> <span class="n">start_time</span><span class="p">)</span> <span class="o">&amp;</span> <span class="p">(</span><span class="n">times</span> <span class="o">&lt;</span> <span class="n">start_time</span> <span class="o">+</span> <span class="n">duration</span><span class="p">))]</span>
+        <span class="n">times</span><span class="o">.</span><span class="n">sort</span><span class="p">()</span>
+
+        <span class="k">return</span> <span class="n">times</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.load_cells"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.load_cells">[docs]</a>    <span class="k">def</span> <span class="nf">load_cells</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Load the cells of the specified type onto least busy MPI ranks.</span>
+
+<span class="sd">        &#39;Busyness&#39; of a rank is the sum of all cell complexities on that rank, as measured by the number</span>
+<span class="sd">        of segments of each cell.</span>
+
+<span class="sd">        :param cell_type: One of &#39;MC&#39;, &#39;GC&#39;, &#39;TC&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Load the cell json file</span>
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_dir</span><span class="p">,</span> <span class="n">cell_type</span> <span class="o">+</span> <span class="s1">&#39;s.json&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">group_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Count how many of each cell model will be on each rank</span>
+        <span class="n">rank_cell_counts</span> <span class="o">=</span> <span class="p">{</span><span class="n">r</span><span class="p">:</span> <span class="p">{}</span> <span class="k">for</span> <span class="n">r</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">nranks</span><span class="p">)}</span>
+
+        <span class="k">for</span> <span class="n">ri</span><span class="p">,</span> <span class="n">root</span> <span class="ow">in</span> <span class="nb">enumerate</span><span class="p">(</span><span class="n">group_dict</span><span class="p">[</span><span class="s1">&#39;roots&#39;</span><span class="p">]):</span>
+            <span class="c1"># Get the least loaded rank</span>
+            <span class="n">min_complexity</span><span class="p">,</span> <span class="n">min_complexity_rank</span> <span class="o">=</span> <span class="n">heappop</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_complexities</span><span class="p">)</span>
+
+            <span class="c1"># Cell nseg count is used as a proxy for complexity</span>
+            <span class="n">nsegs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nseg_count</span><span class="p">(</span><span class="n">root</span><span class="p">)</span>
+
+            <span class="c1"># Add to rank complexity and push back onto the heap</span>
+            <span class="n">heappush</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">rank_complexities</span><span class="p">,</span> <span class="p">(</span><span class="n">min_complexity</span> <span class="o">+</span> <span class="n">nsegs</span><span class="p">,</span> <span class="n">min_complexity_rank</span><span class="p">))</span>
+
+            <span class="c1"># Assign cell to least busy rank</span>
+            <span class="n">cell_rank</span> <span class="o">=</span> <span class="n">min_complexity_rank</span>
+
+            <span class="n">name</span> <span class="o">=</span> <span class="n">root</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span>
+            <span class="n">name</span> <span class="o">=</span> <span class="n">name</span><span class="p">[</span><span class="mi">0</span><span class="p">:</span><span class="n">name</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;[&#39;</span><span class="p">)]</span>
+
+            <span class="n">count</span> <span class="o">=</span> <span class="n">rank_cell_counts</span><span class="p">[</span><span class="n">cell_rank</span><span class="p">]</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="n">name</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+            <span class="bp">self</span><span class="o">.</span><span class="n">mpimap</span><span class="p">[</span><span class="n">root</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">][:</span><span class="n">root</span><span class="p">[</span><span class="s1">&#39;name&#39;</span><span class="p">]</span><span class="o">.</span><span class="n">find</span><span class="p">(</span><span class="s1">&#39;]&#39;</span><span class="p">)</span> <span class="o">+</span> <span class="mi">1</span><span class="p">]]</span> <span class="o">=</span> <span class="p">{</span>
+                <span class="s1">&#39;name&#39;</span><span class="p">:</span> <span class="n">name</span> <span class="o">+</span> <span class="s1">&#39;[&#39;</span> <span class="o">+</span> <span class="nb">str</span><span class="p">(</span><span class="n">count</span> <span class="o">*</span> <span class="mi">2</span><span class="p">)</span> <span class="o">+</span> <span class="s1">&#39;]&#39;</span><span class="p">,</span>
+                <span class="s1">&#39;rank&#39;</span><span class="p">:</span> <span class="n">cell_rank</span>
+            <span class="p">}</span>
+
+            <span class="n">count</span> <span class="o">+=</span> <span class="mi">1</span>
+            <span class="n">rank_cell_counts</span><span class="p">[</span><span class="n">cell_rank</span><span class="p">][</span><span class="n">name</span><span class="p">]</span> <span class="o">=</span> <span class="n">count</span>
+
+        <span class="c1"># Load that many base instances of each model</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">cell_type</span><span class="p">]</span> <span class="o">=</span> <span class="p">[]</span>
+        <span class="k">for</span> <span class="n">cell_model_name</span><span class="p">,</span> <span class="n">count</span> <span class="ow">in</span> <span class="n">rank_cell_counts</span><span class="p">[</span><span class="bp">self</span><span class="o">.</span><span class="n">mpirank</span><span class="p">]</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+            <span class="n">cell_models</span> <span class="o">=</span> <span class="p">[</span><span class="nb">eval</span><span class="p">(</span><span class="n">cell_model_name</span> <span class="o">+</span> <span class="s1">&#39;()&#39;</span><span class="p">)</span> <span class="k">for</span> <span class="n">_</span> <span class="ow">in</span> <span class="nb">range</span><span class="p">(</span><span class="n">count</span><span class="p">)]</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">cell_type</span><span class="p">]</span><span class="o">.</span><span class="n">extend</span><span class="p">(</span><span class="n">cell_models</span><span class="p">)</span>
+
+        <span class="c1"># Update section index with the new cells</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">update_section_index</span><span class="p">()</span>
+
+        <span class="c1"># Apply the cell json file onto the base instances</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">init_mpi</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">mpimap</span><span class="p">)</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">update_groups</span><span class="p">([</span><span class="n">group_dict</span><span class="p">])</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.record_from_somas"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.record_from_somas">[docs]</a>    <span class="k">def</span> <span class="nf">record_from_somas</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">cell_type</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Adds NEURON vector recorders to the somas of the specified cell types</span>
+
+<span class="sd">        :param cell_type: One of &#39;MC&#39;, &#39;GC&#39;, &#39;TC&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">h</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">h</span>
+
+        <span class="k">for</span> <span class="n">cell_model</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">cells</span><span class="p">[</span><span class="n">cell_type</span><span class="p">]:</span>
+            <span class="n">v_vec</span> <span class="o">=</span> <span class="n">h</span><span class="o">.</span><span class="n">Vector</span><span class="p">()</span>
+            <span class="n">v_vec</span><span class="o">.</span><span class="n">record</span><span class="p">(</span><span class="n">cell_model</span><span class="o">.</span><span class="n">soma</span><span class="p">(</span><span class="mf">0.5</span><span class="p">)</span><span class="o">.</span><span class="n">_ref_v</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">params</span><span class="o">.</span><span class="n">recording_period</span><span class="p">)</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">v_vectors</span><span class="p">[</span><span class="nb">str</span><span class="p">(</span><span class="n">cell_model</span><span class="o">.</span><span class="n">soma</span><span class="p">)]</span> <span class="o">=</span> <span class="n">v_vec</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.save_recorded_vectors"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.save_recorded_vectors">[docs]</a>    <span class="k">def</span> <span class="nf">save_recorded_vectors</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Saves soma voltage traces and odor input spike times to Pickle files for later processing</span>
+
+<span class="sd">        Saves to the results directory as &#39;soma_vs.pkl&#39; and &#39;input_times.pkl&#39;</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="c1"># Gather cell voltage vectors</span>
+        <span class="n">all_v_vecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">py_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">v_vectors</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">all_v_vecs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">t</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">t_vec</span><span class="o">.</span><span class="n">to_python</span><span class="p">()</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rank_v_vecs</span> <span class="ow">in</span> <span class="n">all_v_vecs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">cell</span><span class="p">,</span> <span class="n">v_vec</span> <span class="ow">in</span> <span class="n">rank_v_vecs</span><span class="o">.</span><span class="n">items</span><span class="p">():</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">cell</span><span class="p">,</span> <span class="n">t</span><span class="p">,</span> <span class="n">v_vec</span><span class="o">.</span><span class="n">to_python</span><span class="p">()))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">,</span> <span class="s1">&#39;soma_vs.pkl&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span>
+
+        <span class="c1"># Gather input event time vectors</span>
+        <span class="n">all_input_vecs</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">pc</span><span class="o">.</span><span class="n">py_gather</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">input_vectors</span><span class="p">,</span> <span class="mi">0</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">all_input_vecs</span> <span class="ow">is</span> <span class="ow">not</span> <span class="kc">None</span><span class="p">:</span>
+            <span class="n">result</span> <span class="o">=</span> <span class="p">[]</span>
+            <span class="k">for</span> <span class="n">rank_input_vecs</span> <span class="ow">in</span> <span class="n">all_input_vecs</span><span class="p">:</span>
+                <span class="k">for</span> <span class="n">seg_name</span><span class="p">,</span> <span class="n">t_vec</span> <span class="ow">in</span> <span class="n">rank_input_vecs</span><span class="p">:</span>
+                    <span class="n">result</span><span class="o">.</span><span class="n">append</span><span class="p">((</span><span class="n">seg_name</span><span class="p">,</span> <span class="n">t_vec</span><span class="o">.</span><span class="n">to_python</span><span class="p">()))</span>
+
+            <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">results_dir</span><span class="p">,</span> <span class="s1">&#39;input_times.pkl&#39;</span><span class="p">),</span> <span class="s1">&#39;wb&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+                <span class="n">cPickle</span><span class="o">.</span><span class="n">dump</span><span class="p">(</span><span class="n">result</span><span class="p">,</span> <span class="n">f</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.get_nseg_count"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.get_nseg_count">[docs]</a>    <span class="k">def</span> <span class="nf">get_nseg_count</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">root_dict</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Recursively counts the number of segments of a cell provided its BlenderNEURON root segment dict</span>
+
+<span class="sd">        :param root_dict: The root segment dict of a cell as saved by BlenderNEURON</span>
+<span class="sd">        :return: The total number of segments of the cell</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">count</span> <span class="o">=</span> <span class="n">root_dict</span><span class="p">[</span><span class="s2">&quot;nseg&quot;</span><span class="p">]</span>
+
+        <span class="k">for</span> <span class="n">child_dict</span> <span class="ow">in</span> <span class="n">root_dict</span><span class="p">[</span><span class="s1">&#39;children&#39;</span><span class="p">]:</span>
+            <span class="n">count</span> <span class="o">+=</span> <span class="bp">self</span><span class="o">.</span><span class="n">get_nseg_count</span><span class="p">(</span><span class="n">child_dict</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">count</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulb.load_synapse_set"><a class="viewcode-back" href="../../olfactorybulb.model.html#olfactorybulb.model.OlfactoryBulb.load_synapse_set">[docs]</a>    <span class="k">def</span> <span class="nf">load_synapse_set</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">synapse_set</span><span class="p">):</span>
+        <span class="sd">&quot;&quot;&quot;</span>
+<span class="sd">        Uses BlenderNEURON to load a previously saved set of synapses between a population of cells</span>
+
+<span class="sd">        :param synapse_set: One of &#39;GCs__MCs&#39; or &#39;GCs__TCs&#39; as seen in the olfactorybulb.slices.DorsalColumnSlice folder.</span>
+<span class="sd">        &quot;&quot;&quot;</span>
+
+        <span class="n">path</span> <span class="o">=</span> <span class="n">os</span><span class="o">.</span><span class="n">path</span><span class="o">.</span><span class="n">join</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">slice_dir</span><span class="p">,</span> <span class="n">synapse_set</span> <span class="o">+</span> <span class="s1">&#39;.json&#39;</span><span class="p">)</span>
+
+        <span class="k">with</span> <span class="nb">open</span><span class="p">(</span><span class="n">path</span><span class="p">,</span> <span class="s1">&#39;r&#39;</span><span class="p">)</span> <span class="k">as</span> <span class="n">f</span><span class="p">:</span>
+            <span class="n">synapse_set_dict</span> <span class="o">=</span> <span class="n">json</span><span class="o">.</span><span class="n">load</span><span class="p">(</span><span class="n">f</span><span class="p">)</span>
+
+        <span class="bp">self</span><span class="o">.</span><span class="n">bn_server</span><span class="o">.</span><span class="n">create_synapses</span><span class="p">(</span><span class="n">synapse_set_dict</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

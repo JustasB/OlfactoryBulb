@@ -1,0 +1,252 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.neuronunit.capabilities &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.neuronunit.capabilities</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.neuronunit.capabilities</h1><div class="highlight"><pre>
+<span></span><span class="c1"># MOCKS for autodoc</span>
+<span class="kn">import</span> <span class="nn">quantities</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="k">if</span> <span class="n">pq</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s1">&#39;sphinx.ext.autodoc.mock&#39;</span><span class="p">:</span>
+    <span class="n">pq</span><span class="o">.</span><span class="n">mV</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># END MOCKS</span>
+
+<span class="kn">import</span> <span class="nn">quantities</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="kn">import</span> <span class="nn">sciunit</span>
+
+<div class="viewcode-block" id="SupportsVoltageClamp"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsVoltageClamp">[docs]</a><span class="k">class</span> <span class="nc">SupportsVoltageClamp</span><span class="p">(</span><span class="n">sciunit</span><span class="o">.</span><span class="n">Capability</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates that the model can be held at three levels of voltages using a voltage clamp&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SupportsVoltageClamp.clamp_voltage"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsVoltageClamp.clamp_voltage">[docs]</a>    <span class="k">def</span> <span class="nf">clamp_voltage</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltages</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">,</span> <span class="n">durations</span><span class="o">=</span><span class="p">[</span><span class="mi">0</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">ms</span><span class="p">]</span><span class="o">*</span><span class="mi">3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Maintains the model membrane potential for the specified durations at the specified voltages</span>
+
+<span class="sd">        :param voltages: a 3-element array of voltages to clamp to</span>
+<span class="sd">        :param durations: a 3-element array of durations to maintain the corresponding voltage levels</span>
+<span class="sd">        :return: neo.core.AnalogSignal of the current required to keep the model at the specified voltages</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="SupportsSettingTemperature"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsSettingTemperature">[docs]</a><span class="k">class</span> <span class="nc">SupportsSettingTemperature</span><span class="p">(</span><span class="n">sciunit</span><span class="o">.</span><span class="n">Capability</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates that the model can be executed using a specific temperature in Celsius&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SupportsSettingTemperature.set_temperature"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsSettingTemperature.set_temperature">[docs]</a>    <span class="k">def</span> <span class="nf">set_temperature</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">temperature</span><span class="o">=</span><span class="mf">6.3</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Specifies the simulator temperature</span>
+
+<span class="sd">        :param temperature: the simulator temperature in degrees Celsius</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+
+
+<div class="viewcode-block" id="SupportsSettingStopTime"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsSettingStopTime">[docs]</a><span class="k">class</span> <span class="nc">SupportsSettingStopTime</span><span class="p">(</span><span class="n">sciunit</span><span class="o">.</span><span class="n">Capability</span><span class="p">):</span>
+    <span class="sd">&quot;&quot;&quot;Indicates that the model&#39;s simulation stop time can be specified&quot;&quot;&quot;</span>
+
+<div class="viewcode-block" id="SupportsSettingStopTime.set_stop_time"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.capabilities.SupportsSettingStopTime.set_stop_time">[docs]</a>    <span class="k">def</span> <span class="nf">set_stop_time</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">tstop</span><span class="p">):</span>
+        <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">        Specifies the simulator stop time</span>
+
+<span class="sd">        :param temperature: the simulator stop time in ms</span>
+<span class="sd">        :return: Nothing</span>
+<span class="sd">        &#39;&#39;&#39;</span>
+        <span class="k">raise</span> <span class="ne">NotImplementedError</span><span class="p">()</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

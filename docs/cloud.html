@@ -1,0 +1,239 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Running Simulations in the Cloud (AWS) &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="Model Python Class Reference" href="olfactorybulb.html" />
+    <link rel="prev" title="Recreating the Model" href="recreating.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Running Simulations in the Cloud (AWS)</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#private-cloud-mpi-clusters">Private Cloud MPI Clusters</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+      <li>Running Simulations in the Cloud (AWS)</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/cloud.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="running-simulations-in-the-cloud-aws">
+<h1>Running Simulations in the Cloud (AWS)<a class="headerlink" href="#running-simulations-in-the-cloud-aws" title="Permalink to this headline">¶</a></h1>
+<p>To accelerate simulations, the model can be executed on cloud virtual machines. For example, as of this writing,
+a 96 Core machine (<code class="docutils literal notranslate"><span class="pre">c5.24xlarge</span></code>) can be rented from Amazon Web Services for ~$1.5/hr (spot price). The basic usage cycle involves the
+following steps:</p>
+<blockquote>
+<div><ul class="simple">
+<li><p>Request a ‘spot’ instance from AWS (spot instances are ~70% less expensive)</p></li>
+<li><p>SSH into the instance, download the model docker image, run the simulation</p></li>
+<li><p>Upload simulation results for later analysis</p></li>
+<li><p>Shut down instance (per-second billing)</p></li>
+</ul>
+</div></blockquote>
+<p>A similar process can be followed with other cloud providers (GCP, Azure, etc…).</p>
+<div class="section" id="private-cloud-mpi-clusters">
+<h2>Private Cloud MPI Clusters<a class="headerlink" href="#private-cloud-mpi-clusters" title="Permalink to this headline">¶</a></h2>
+<p>Similarly, multiple instances could be started to form a private MPI cluster, and the simulation could be distributed across multiple instances. See <a class="reference external" href="https://docs.aws.amazon.com/parallelcluster/latest/ug/what-is-aws-parallelcluster.html">AWS ParallelCluster</a>.</p>
+</div>
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="olfactorybulb.html" class="btn btn-neutral float-right" title="Model Python Class Reference" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="recreating.html" class="btn btn-neutral float-left" title="Recreating the Model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

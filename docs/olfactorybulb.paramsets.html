@@ -1,0 +1,1075 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.paramsets &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="olfactorybulb.slicebuilder" href="olfactorybulb.slicebuilder.html" />
+    <link rel="prev" title="olfactorybulb.model" href="olfactorybulb.model.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a><ul class="current">
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.model.html">olfactorybulb.model</a></li>
+<li class="toctree-l2 current"><a class="current reference internal" href="#">olfactorybulb.paramsets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.slicebuilder.html">olfactorybulb.slicebuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.neuronunit.html">olfactorybulb.neuronunit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.database.html">olfactorybulb.database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.utilities.html">olfactorybulb.utilities</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="olfactorybulb.html">Model Python Class Reference</a> &raquo;</li>
+        
+      <li>olfactorybulb.paramsets</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/olfactorybulb.paramsets.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="module-olfactorybulb.paramsets.base">
+<span id="olfactorybulb-paramsets"></span><h1>olfactorybulb.paramsets<a class="headerlink" href="#module-olfactorybulb.paramsets.base" title="Permalink to this headline">¶</a></h1>
+<dl class="class">
+<dt id="olfactorybulb.paramsets.base.ParameterSetBase">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.base.</code><code class="sig-name descname">ParameterSetBase</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/base.html#ParameterSetBase"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.base.ParameterSetBase" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.base.</code><code class="sig-name descname">SilentNetwork</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/base.html#SilentNetwork"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.description">
+<code class="sig-name descname">description</code><em class="property"> = 'A base, silent network with mild odor input and all synapses blocked'</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 0, 'TC': 0}</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.inhale_duration">
+<code class="sig-name descname">inhale_duration</code><em class="property"> = 125</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.inhale_duration" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.input_odors">
+<code class="sig-name descname">input_odors</code><em class="property"> = {0: {'name': 'Apple', 'rel_conc': 0.1}, 200: {'name': 'Apple', 'rel_conc': 0.2}, 400: {'name': 'Apple', 'rel_conc': 0.2}, 600: {'name': 'Apple', 'rel_conc': 0.2}, 800: {'name': 'Apple', 'rel_conc': 0.2}, 1000: {'name': 'Apple', 'rel_conc': 0.2}, 1200: {'name': 'Apple', 'rel_conc': 0.2}, 1400: {'name': 'Apple', 'rel_conc': 0.2}, 1600: {'name': 'Apple', 'rel_conc': 0.2}, 1800: {'name': 'Apple', 'rel_conc': 0.2}}</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.input_odors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.input_syn_tau1">
+<code class="sig-name descname">input_syn_tau1</code><em class="property"> = 6</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.input_syn_tau1" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.input_syn_tau2">
+<code class="sig-name descname">input_syn_tau2</code><em class="property"> = 12</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.input_syn_tau2" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.lfp_electrode_location">
+<code class="sig-name descname">lfp_electrode_location</code><em class="property"> = [116, 1078, -61]</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.lfp_electrode_location" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.max_firing_rate">
+<code class="sig-name descname">max_firing_rate</code><em class="property"> = 150</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.max_firing_rate" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.mc_input_delay">
+<code class="sig-name descname">mc_input_delay</code><em class="property"> = 50</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.mc_input_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.name">
+<em class="property">property </em><code class="sig-name descname">name</code><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.record_from_somas">
+<code class="sig-name descname">record_from_somas</code><em class="property"> = ['MC', 'TC', 'GC']</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.record_from_somas" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.recording_period">
+<code class="sig-name descname">recording_period</code><em class="property"> = 0.1</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.recording_period" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.rnd_seed">
+<code class="sig-name descname">rnd_seed</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.rnd_seed" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.sim_dt">
+<code class="sig-name descname">sim_dt</code><em class="property"> = 0.1</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.sim_dt" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.slice_dir">
+<code class="sig-name descname">slice_dir</code><em class="property"> = 'olfactorybulb/slices'</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.slice_dir" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.slice_name">
+<code class="sig-name descname">slice_name</code><em class="property"> = 'DorsalColumnSlice'</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.slice_name" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 0, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 0, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 100}}</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.tc_input_delay">
+<code class="sig-name descname">tc_input_delay</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.tc_input_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.base.SilentNetwork.tstop">
+<code class="sig-name descname">tstop</code><em class="property"> = 800.1</em><a class="headerlink" href="#olfactorybulb.paramsets.base.SilentNetwork.tstop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-olfactorybulb.paramsets.case_studies"></span><dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base" title="olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.mc_input_delay">
+<code class="sig-name descname">mc_input_delay</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.mc_input_delay" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.2</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.sniffs">
+<code class="sig-name descname">sniffs</code><em class="property"> = 8</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.sniffs" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.8</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature.tstop">
+<code class="sig-name descname">tstop</code><em class="property"> = 1800</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature.tstop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdor">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_DifferentOdor</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_DifferentOdor"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdor" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdor.input_odors">
+<code class="sig-name descname">input_odors</code><em class="property"> = {0: {'name': 'Apple', 'rel_conc': 0.1}, 200: {'name': 'Coffee', 'rel_conc': 0.2}, 400: {'name': 'Mint', 'rel_conc': 0.2}, 600: {'name': 'Apple', 'rel_conc': 0.2}, 800: {'name': 'Mint', 'rel_conc': 0.2}, 1000: {'name': 'Coffee', 'rel_conc': 0.2}, 1200: {'name': 'Apple', 'rel_conc': 0.2}, 1400: {'name': 'Mint', 'rel_conc': 0.2}, 1600: {'name': 'Mint', 'rel_conc': 0.2}, 1800: {'name': 'Apple', 'rel_conc': 0.2}}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdor.input_odors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdorConc">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_DifferentOdorConc</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_DifferentOdorConc"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdorConc" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdorConc.input_odors">
+<code class="sig-name descname">input_odors</code><em class="property"> = {0: {'name': 'Apple', 'rel_conc': 0.1}, 200: {'name': 'Apple', 'rel_conc': 0.05}, 400: {'name': 'Apple', 'rel_conc': 0.1}, 600: {'name': 'Apple', 'rel_conc': 0.15}, 800: {'name': 'Apple', 'rel_conc': 0.2}, 1000: {'name': 'Apple', 'rel_conc': 0.25}, 1200: {'name': 'Apple', 'rel_conc': 0.3}, 1400: {'name': 'Apple', 'rel_conc': 0.35}, 1600: {'name': 'Apple', 'rel_conc': 0.4}, 1800: {'name': 'Apple', 'rel_conc': 0.45}}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdorConc.input_odors" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_EqualTCMCInputs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_EqualTCMCInputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Increasing MC input weight to match TCs should advance MC first spike times'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.8</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.8</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_NoInhibition</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoInhibition"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="method">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoInhibition.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Disabling inhibition should advance MC first spike times'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_NoMCGJs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoMCGJs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="method">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoMCGJs.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Disabling MC GJs should abolish synchronized late MC firing'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">GammaSignature_NoTCGJs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoTCGJs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="method">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#GammaSignature_NoTCGJs.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><p>Initialize self.  See help(type(self)) for accurate signature.</p>
+</dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Disabling TC GJs should abolish synchronized early TC firing'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">MC_TC_Combined_Base</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#MC_TC_Combined_Base"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs" title="olfactorybulb.paramsets.case_studies.TCsWithGJsGCs"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.TCsWithGJsGCs</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 32, 'TC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.MCsWithGJsGCs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">MCsWithGJsGCs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#MCsWithGJsGCs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 16}}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.tstop">
+<code class="sig-name descname">tstop</code><em class="property"> = 400</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs.tstop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.OneMsTest">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">OneMsTest</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#OneMsTest"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.OneMsTest" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.OneMsTest.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Test of the simulation, for build testing only'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.OneMsTest.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.OneMsTest.tstop">
+<code class="sig-name descname">tstop</code><em class="property"> = 1</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.OneMsTest.tstop" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">PureMCs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#PureMCs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Pure MC input'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCs.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCs.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCsWithGJs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">PureMCsWithGJs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#PureMCsWithGJs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCsWithGJs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCsWithGJs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Pure MC input and enabled gap junctions'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCsWithGJs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCsWithGJs.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCsWithGJs.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureMCsWithGJs.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureMCsWithGJs.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">PureTCs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#PureTCs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Pure TC input'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCs.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCs.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCsWithGJs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">PureTCsWithGJs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#PureTCsWithGJs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCsWithGJs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCsWithGJs.description">
+<code class="sig-name descname">description</code><em class="property"> = 'Pure TC input and enabled gap junctions'</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCsWithGJs.description" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCsWithGJs.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'TC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCsWithGJs.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.PureTCsWithGJs.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.PureTCsWithGJs.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.case_studies.TCsWithGJsGCs">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.case_studies.</code><code class="sig-name descname">TCsWithGJsGCs</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/case_studies.html#TCsWithGJsGCs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.base.SilentNetwork" title="olfactorybulb.paramsets.base.SilentNetwork"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.base.SilentNetwork</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'TC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 16}}</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 1.0</em><a class="headerlink" href="#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<span class="target" id="module-olfactorybulb.paramsets.sensitivity"></span><dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_0">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_0</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_0.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 0, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_0.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_1">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_1</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_1.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 1, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_1.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_128">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_128</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_128" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_128.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 128, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_128.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_16">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_16</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_16" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_16.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 16, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_16.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_2">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_2</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_2.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_2.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_256">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_256</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_256"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_256" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_256.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 256, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_256.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_32">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_32</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_32.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 32, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_32.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_4">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_4</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_4.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 4, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_4.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_64">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_64</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_64" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_64.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_64.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_8">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_AMPANMDA_8</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_AMPANMDA_8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_8" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_8.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 8, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_8.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_0">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GABA_0</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GABA_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_0.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 0, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_0.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_1">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GABA_1</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GABA_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_1.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 1, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_1.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_2">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GABA_2</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GABA_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_2.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 2, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_2.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_4">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GABA_4</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GABA_4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_4.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 4, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_4.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_8">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GABA_8</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GABA_8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_8" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_8.synapse_properties">
+<code class="sig-name descname">synapse_properties</code><em class="property"> = {'AmpaNmdaSyn': {'gmax': 64, 'ltdinvl': 0, 'ltpinvl': 0}, 'GabaSyn': {'gmax': 8, 'ltdinvl': 0, 'ltpinvl': 0, 'tau2': 36}}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_8.synapse_properties" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_0">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_0</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_0"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_0" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_0.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 0, 'TC': 0}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_0.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_1">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_1</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_1"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_1" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_1.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 1, 'TC': 1}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_1.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_128">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_128</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_128"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_128" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_128.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 128, 'TC': 128}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_128.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_16">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_16</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_16"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_16" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_16.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 16, 'TC': 16}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_16.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_2">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_2</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_2"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_2" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_2.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 2, 'TC': 2}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_2.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_32">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_32</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_32"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_32" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_32.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 32, 'TC': 32}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_32.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_4">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_4</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_4"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_4" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_4.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 4, 'TC': 4}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_4.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_64">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_64</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_64"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_64" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_64.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 64, 'TC': 64}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_64.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_8">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_GJ_8</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_GJ_8"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_8" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_8.gap_juction_gmax">
+<code class="sig-name descname">gap_juction_gmax</code><em class="property"> = {'MC': 8, 'TC': 8}</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_8.gap_juction_gmax" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_00">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_00</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_00"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_00" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_00.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_00.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_01">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_01</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_01"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_01" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_01.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.1</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_01.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_015">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_015</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_015"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_015" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_015.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.15</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_015.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_02">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_02</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_02"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_02" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_02.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.2</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_02.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_025">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_025</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_025"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_025" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_025.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.25</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_025.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_03">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_03</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_03"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_03" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_03.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.3</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_03.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_04">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_04</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_04"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_04" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_04.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.4</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_04.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_06">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_06</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_06"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_06" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_06.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.6</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_06.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_08">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_08</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_08" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_08.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 0.8</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_08.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_10">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_MCWGHT_10</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_MCWGHT_10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_10.mc_input_weight">
+<code class="sig-name descname">mc_input_weight</code><em class="property"> = 1</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_10.mc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_00">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_00</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_00"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_00" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_00.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_00.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_02">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_02</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_02"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_02" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_02.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.2</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_02.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_04">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_04</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_04"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_04" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_04.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.4</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_04.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_06">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_06</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_06"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_06" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_06.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.6</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_06.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_08">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_08</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_08"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_08" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_08.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 0.8</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_08.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+<dl class="class">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_10">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.paramsets.sensitivity.</code><code class="sig-name descname">GammaSignature_TCWGHT_10</code><a class="reference internal" href="_modules/olfactorybulb/paramsets/sensitivity.html#GammaSignature_TCWGHT_10"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_10" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <a class="reference internal" href="#olfactorybulb.paramsets.case_studies.GammaSignature" title="olfactorybulb.paramsets.case_studies.GammaSignature"><code class="xref py py-class docutils literal notranslate"><span class="pre">olfactorybulb.paramsets.case_studies.GammaSignature</span></code></a></p>
+<dl class="attribute">
+<dt id="olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_10.tc_input_weight">
+<code class="sig-name descname">tc_input_weight</code><em class="property"> = 1</em><a class="headerlink" href="#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_10.tc_input_weight" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="olfactorybulb.slicebuilder.html" class="btn btn-neutral float-right" title="olfactorybulb.slicebuilder" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="olfactorybulb.model.html" class="btn btn-neutral float-left" title="olfactorybulb.model" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

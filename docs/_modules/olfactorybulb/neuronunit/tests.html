@@ -1,0 +1,328 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.neuronunit.tests &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.neuronunit.tests</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.neuronunit.tests</h1><div class="highlight"><pre>
+<span></span><span class="c1"># MOCKS for autodoc</span>
+<span class="kn">import</span> <span class="nn">quantities</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="k">if</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s1">&#39;sphinx.ext.autodoc.importer&#39;</span><span class="p">:</span>
+    <span class="n">pq</span><span class="o">.</span><span class="n">mV</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">nA</span> <span class="o">=</span> <span class="mf">1.0</span>
+<span class="c1"># END MOCKS</span>
+
+<span class="kn">from</span> <span class="nn">abc</span> <span class="kn">import</span> <span class="n">abstractmethod</span>
+
+<span class="kn">from</span> <span class="nn">neuronunit</span> <span class="kn">import</span> <span class="n">capabilities</span> <span class="k">as</span> <span class="n">ncap</span>
+<span class="kn">from</span> <span class="nn">neuronunit.tests.base</span> <span class="kn">import</span> <span class="n">VmTest</span>
+<span class="kn">from</span> <span class="nn">olfactorybulb.neuronunit.tests.utilities</span> <span class="kn">import</span> <span class="n">get_APs</span><span class="p">,</span> <span class="n">cache</span>
+<span class="kn">from</span> <span class="nn">sciunit</span> <span class="kn">import</span> <span class="n">capabilities</span> <span class="k">as</span> <span class="n">scap</span>
+
+<span class="kn">from</span> <span class="nn">olfactorybulb.neuronunit</span> <span class="kn">import</span> <span class="n">capabilities</span> <span class="k">as</span> <span class="n">obncap</span>
+<span class="kn">from</span> <span class="nn">olfactorybulb.neuronunit.tests</span> <span class="kn">import</span> <span class="n">publications</span>
+
+<span class="n">SHOW_ERRORS</span> <span class="o">=</span> <span class="kc">False</span>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest">[docs]</a><span class="k">class</span> <span class="nc">OlfactoryBulbCellTest</span><span class="p">(</span><span class="n">VmTest</span><span class="p">):</span>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.generate_prediction_nocache"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.generate_prediction_nocache">[docs]</a>    <span class="nd">@abstractmethod</span>
+    <span class="k">def</span> <span class="nf">generate_prediction_nocache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">pass</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.generate_prediction"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.generate_prediction">[docs]</a>    <span class="k">def</span> <span class="nf">generate_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># import pydevd</span>
+        <span class="c1"># pydevd.settrace(&#39;192.168.0.100&#39;, port=4200, suspend=False)</span>
+
+        <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">fetch_cached</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+
+        <span class="k">if</span> <span class="n">result</span> <span class="ow">is</span> <span class="kc">None</span><span class="p">:</span>
+
+            <span class="c1"># Check that self has all the required properties</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">check_required_properties</span><span class="p">()</span>
+
+            <span class="c1"># Perform the uncached test</span>
+            <span class="k">try</span><span class="p">:</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="n">generate_prediction_nocache</span><span class="p">(</span><span class="n">model</span><span class="p">)</span>
+            <span class="k">except</span><span class="p">:</span>
+                <span class="kn">import</span> <span class="nn">traceback</span>
+                <span class="n">result</span> <span class="o">=</span> <span class="n">traceback</span><span class="o">.</span><span class="n">format_exc</span><span class="p">()</span>
+
+                <span class="k">if</span> <span class="n">SHOW_ERRORS</span><span class="p">:</span>
+                    <span class="nb">print</span><span class="p">(</span><span class="n">result</span><span class="p">)</span>
+
+            <span class="c1"># Store result in cache</span>
+            <span class="bp">self</span><span class="o">.</span><span class="n">store_in_cache</span><span class="p">(</span><span class="n">model</span><span class="p">,</span> <span class="n">result</span><span class="p">)</span>
+
+        <span class="k">return</span> <span class="n">result</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.check_required_properties"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.check_required_properties">[docs]</a>    <span class="k">def</span> <span class="nf">check_required_properties</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">if</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="s2">&quot;required_properties&quot;</span><span class="p">):</span>
+            <span class="k">for</span> <span class="n">prop</span> <span class="ow">in</span> <span class="bp">self</span><span class="o">.</span><span class="n">required_properties</span><span class="p">:</span>
+                <span class="k">if</span> <span class="ow">not</span> <span class="nb">hasattr</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">prop</span><span class="p">):</span>
+                    <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;Property &#39;&quot;</span> <span class="o">+</span> <span class="n">prop</span> <span class="o">+</span> <span class="s2">&quot;&#39; not found. Make sure the property is declared either in the&quot;</span>
+                                                         <span class="s2">&quot; generic test class or in the publication class.&quot;</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.fetch_cached"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.fetch_cached">[docs]</a>    <span class="k">def</span> <span class="nf">fetch_cached</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">cache</span><span class="o">.</span><span class="n">get</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">model</span><span class="p">))</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.store_in_cache"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.store_in_cache">[docs]</a>    <span class="k">def</span> <span class="nf">store_in_cache</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">,</span> <span class="n">result</span><span class="p">):</span>
+        <span class="n">cache</span><span class="o">.</span><span class="n">store</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="n">get_hash</span><span class="p">(</span><span class="n">model</span><span class="p">),</span> <span class="n">result</span><span class="p">)</span></div>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.get_hash"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.get_hash">[docs]</a>    <span class="k">def</span> <span class="nf">get_hash</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+        <span class="c1"># The cache key is a hash of the model and the test - we want to store the model-test_result combination</span>
+        <span class="n">model_hash</span> <span class="o">=</span> <span class="n">model</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+        <span class="n">self_hash</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="fm">__hash__</span><span class="p">()</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">((</span><span class="n">model_hash</span><span class="p">,</span> <span class="n">self_hash</span><span class="p">))</span></div>
+
+    <span class="k">def</span> <span class="fm">__hash__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="k">return</span> <span class="nb">hash</span><span class="p">(</span><span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OlfactoryBulbCellTest.get_dependent_prediction"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellTest.get_dependent_prediction">[docs]</a>    <span class="k">def</span> <span class="nf">get_dependent_prediction</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">dependent_test_class_generic</span><span class="p">,</span> <span class="n">model</span><span class="p">):</span>
+
+        <span class="c1"># import pydevd</span>
+        <span class="c1"># pydevd.settrace(&#39;192.168.0.100&#39;, port=4200)</span>
+
+        <span class="n">mro</span> <span class="o">=</span> <span class="bp">self</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="n">mro</span><span class="p">()</span>
+
+        <span class="k">if</span> <span class="nb">len</span><span class="p">(</span><span class="n">mro</span><span class="p">)</span> <span class="o">&lt;</span> <span class="mi">4</span><span class="p">:</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The test should be a class that inherits from an publications class&quot;</span>
+                            <span class="s2">&quot;AND from a generic tests class, in that order. E.g. &quot;</span>
+                            <span class="s2">&quot;&#39;class MyTest(UrbanBurton2014, InputResistanceTest):&#39;&quot;</span><span class="p">)</span>
+
+        <span class="c1"># Create a temp class that inherits from the generic test and from the specific publication</span>
+        <span class="c1"># Aways first parent class (by convention and to preserve inheritance)</span>
+        <span class="n">publication_class</span> <span class="o">=</span> <span class="n">mro</span><span class="p">[</span><span class="mi">1</span><span class="p">]</span>
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">publication_class</span><span class="p">,</span> <span class="n">publications</span><span class="o">.</span><span class="n">BasePublication</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The first parent class &#39;&quot;</span><span class="o">+</span><span class="nb">str</span><span class="p">(</span><span class="n">publication_class</span><span class="p">)</span><span class="o">+</span><span class="s2">&quot;&#39; of the test should be a publication class. E.g. &#39;class MyTest(UrbanBurton2014, InputResistanceTest):&#39;&quot;</span><span class="p">)</span>
+
+
+        <span class="k">if</span> <span class="ow">not</span> <span class="nb">issubclass</span><span class="p">(</span><span class="n">dependent_test_class_generic</span><span class="p">,</span> <span class="n">OlfactoryBulbCellTest</span><span class="p">):</span>
+            <span class="k">raise</span> <span class="ne">Exception</span><span class="p">(</span><span class="s2">&quot;The second parent class &#39;&quot;</span><span class="o">+</span><span class="n">dependent_test_class_generic</span><span class="o">.</span><span class="vm">__class__</span><span class="o">.</span><span class="vm">__name__</span><span class="o">+</span><span class="s2">&quot;&#39; of the test should be a class that inherits from OlfactoryBulbCellTest. E.g. &#39;class MyTest(UrbanBurton2014, InputResistanceTest):&#39;&quot;</span><span class="p">)</span>
+
+
+        <span class="c1"># Use SomeTestSomeAuthor1984 class name form - as descibed in BasePublication</span>
+        <span class="n">dependent_test_class_name</span> <span class="o">=</span> <span class="n">dependent_test_class_generic</span><span class="o">.</span><span class="vm">__name__</span> <span class="o">+</span> <span class="n">publication_class</span><span class="o">.</span><span class="vm">__name__</span>
+
+        <span class="c1"># Create the type dynamically</span>
+        <span class="n">dependent_test_class</span> <span class="o">=</span> <span class="nb">type</span><span class="p">(</span><span class="n">dependent_test_class_name</span><span class="p">,</span>
+                                    <span class="p">(</span><span class="n">publication_class</span><span class="p">,</span> <span class="n">dependent_test_class_generic</span><span class="p">),</span>
+                                    <span class="p">{})</span>
+
+        <span class="c1"># Instantiate the dynamic class</span>
+        <span class="n">dependent_test</span> <span class="o">=</span> <span class="n">dependent_test_class</span><span class="p">()</span>
+
+        <span class="c1"># Get the prediction (from cache if there)</span>
+        <span class="k">return</span> <span class="n">dependent_test</span><span class="o">.</span><span class="n">generate_prediction</span><span class="p">(</span><span class="n">model</span><span class="p">)</span></div></div>
+
+
+
+<div class="viewcode-block" id="OlfactoryBulbCellSpikeTest"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellSpikeTest">[docs]</a><span class="k">class</span> <span class="nc">OlfactoryBulbCellSpikeTest</span><span class="p">(</span><span class="n">OlfactoryBulbCellTest</span><span class="p">):</span>
+
+    <span class="n">required_capabilities</span> <span class="o">=</span> <span class="p">(</span><span class="n">ncap</span><span class="o">.</span><span class="n">ReceivesSquareCurrent</span><span class="p">,</span>
+                             <span class="n">ncap</span><span class="o">.</span><span class="n">ProducesMembranePotential</span><span class="p">,</span>
+                             <span class="n">scap</span><span class="o">.</span><span class="n">Runnable</span><span class="p">,</span>
+                             <span class="n">obncap</span><span class="o">.</span><span class="n">SupportsSettingTemperature</span><span class="p">,</span>
+                             <span class="n">obncap</span><span class="o">.</span><span class="n">SupportsSettingStopTime</span><span class="p">)</span>
+
+<div class="viewcode-block" id="OlfactoryBulbCellSpikeTest.get_aps"><a class="viewcode-back" href="../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.OlfactoryBulbCellSpikeTest.get_aps">[docs]</a>    <span class="k">def</span> <span class="nf">get_aps</span><span class="p">(</span><span class="bp">self</span><span class="p">,</span> <span class="n">voltage</span><span class="p">):</span>
+        <span class="k">return</span> <span class="n">get_APs</span><span class="p">(</span><span class="n">voltage</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">ss_delay</span><span class="p">,</span> <span class="bp">self</span><span class="o">.</span><span class="n">threshold_method</span><span class="p">)</span></div></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

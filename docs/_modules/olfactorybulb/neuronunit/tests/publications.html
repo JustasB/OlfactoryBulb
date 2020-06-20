@@ -1,0 +1,314 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.neuronunit.tests.publications &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../../" src="../../../../_static/documentation_options.js"></script>
+        <script src="../../../../_static/jquery.js"></script>
+        <script src="../../../../_static/underscore.js"></script>
+        <script src="../../../../_static/doctools.js"></script>
+        <script src="../../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../../index.html">Module code</a> &raquo;</li>
+        
+          <li><a href="../tests.html">olfactorybulb.neuronunit.tests</a> &raquo;</li>
+        
+      <li>olfactorybulb.neuronunit.tests.publications</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.neuronunit.tests.publications</h1><div class="highlight"><pre>
+<span></span><span class="c1"># MOCKS for autodoc</span>
+<span class="kn">import</span> <span class="nn">quantities</span> <span class="k">as</span> <span class="nn">pq</span>
+<span class="k">if</span> <span class="n">pq</span><span class="o">.</span><span class="vm">__module__</span> <span class="o">==</span> <span class="s1">&#39;sphinx.ext.autodoc.mock&#39;</span><span class="p">:</span>
+    <span class="n">pq</span><span class="o">.</span><span class="n">pA</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">nA</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span> <span class="o">=</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span> <span class="o">=</span> <span class="mi">1</span>
+<span class="c1"># END MOCKS</span>
+
+
+
+<div class="viewcode-block" id="BasePublication"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.BasePublication">[docs]</a><span class="k">class</span> <span class="nc">BasePublication</span><span class="p">:</span>
+    <span class="sd">&#39;&#39;&#39;</span>
+<span class="sd">    A base class with common parameters. Subclasses of this class are used as mix-in classes to set the</span>
+<span class="sd">    parameters of generic tests. E.g. A generic InputResistanceTest is combined with the publication Yu2015 by</span>
+<span class="sd">    creating a specific &quot;class InputResistanceTestYu2015(Yu2015, InputResistanceTest)&quot;</span>
+<span class="sd">    &#39;&#39;&#39;</span>
+
+    <span class="n">ss_delay</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>             <span class="c1"># Delay before stimulus</span>
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>     <span class="c1"># Current injection time</span>
+    <span class="n">sag_window</span> <span class="o">=</span> <span class="mi">100</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>            <span class="c1"># The value of membrane potential at this time after stimulus to use, if the voltage never drops below sag_testing_voltage</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">35</span>                    <span class="c1"># The temperature at which measurements were performed in the paper</span>
+    <span class="n">threshold_method</span> <span class="o">=</span> <span class="s1">&#39;dv/dt=20&#39;</span>       <span class="c1"># The definition of AP threshold &#39;dv/dt=20&#39; or &#39;d3v/dt3&#39;</span>
+    <span class="n">sag_testing_voltage</span> <span class="o">=</span> <span class="o">-</span><span class="mi">90</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>   <span class="c1"># The level from which sag voltage is measured</span>
+    <span class="n">rebound_rest_time</span> <span class="o">=</span> <span class="mi">1000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>    <span class="c1"># The amount of time to wait after stopping inhibitory current</span>
+    <span class="n">rebound_ap_method</span> <span class="o">=</span> <span class="s2">&quot;sag&quot;</span>           <span class="c1"># Method to test for rebound spikes &quot;sag&quot; or &quot;-300pA&quot;</span>
+    <span class="n">spike_train_method</span> <span class="o">=</span> <span class="s2">&quot;target_freq&quot;</span>  <span class="c1"># The method used to generate spike trains &quot;target_freq&quot; or &quot;constant&quot;</span>
+
+    <span class="n">required_capabilities</span> <span class="o">=</span> <span class="p">()</span>          <span class="c1"># To meet interface requirements</span></div>
+
+<div class="viewcode-block" id="Angelo2012"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Angelo2012">[docs]</a><span class="k">class</span> <span class="nc">Angelo2012</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Angelo et. al. (2012) A biophysical signature of network affiliation and sensory processing in mitral cells &#39;&#39;&#39;</span>
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">1500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">36</span>
+    <span class="n">sag_testing_voltage</span> <span class="o">=</span> <span class="o">-</span><span class="mf">103.5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>  <span class="c1"># LJP is not reported. Assuming uncorrected for 13.5mV, so cell was at 103.5mV</span></div>
+
+<div class="viewcode-block" id="BurtonUrban2014"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.BurtonUrban2014">[docs]</a><span class="k">class</span> <span class="nc">BurtonUrban2014</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Burton and Urban (2014) Greater excitability and firing irregularity of tufted cells underlies distinct afferent-evoked activity of olfactory bulb mitral and tufted cells &#39;&#39;&#39;</span>
+
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">2000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">37</span>
+    <span class="n">sag_testing_voltage</span> <span class="o">=</span> <span class="o">-</span><span class="mi">103</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>  <span class="c1"># Paper used -90mV but with unccorected 13mV LJP so cell was at -103 mV</span>
+    <span class="n">ahp_time_method</span> <span class="o">=</span> <span class="s1">&#39;threshold2amplitude50%&#39;</span>
+    <span class="n">ahp_amplitude_method</span> <span class="o">=</span> <span class="s1">&#39;threshold2minWithin10ms&#39;</span>
+    <span class="n">rebound_ap_method</span> <span class="o">=</span> <span class="s2">&quot;sag&quot;</span>
+    <span class="n">spike_train_target_freq</span> <span class="o">=</span> <span class="mi">20</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">Hz</span></div>
+
+<div class="viewcode-block" id="BurtonUrban2015"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.BurtonUrban2015">[docs]</a><span class="k">class</span> <span class="nc">BurtonUrban2015</span><span class="p">(</span><span class="n">BurtonUrban2014</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Burton &amp; Urban (2015) Rapid Feedforward Inhibition and Asynchronous Excitation Regulate Granule Cell Activity in the Mammalian Main Olfactory Bulb&#39;&#39;&#39;</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">32</span></div>
+
+
+<div class="viewcode-block" id="Yu2015"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Yu2015">[docs]</a><span class="k">class</span> <span class="nc">Yu2015</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Yu et. al. (2015) Postnatal development attunes olfactory bulb mitral cells to high-frequency signaling &#39;&#39;&#39;</span>
+
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">2000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>  <span class="c1"># Current injection time</span>
+    <span class="n">sag_testing_voltage</span> <span class="o">=</span> <span class="o">-</span><span class="mf">103.5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>  <span class="c1"># LJP is not corrected. Assuming 13.5mV, so cell was at 103.5mV</span>
+    <span class="n">sag_window</span> <span class="o">=</span> <span class="mi">120</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">threshold_method</span> <span class="o">=</span> <span class="s1">&#39;d3v/dt3&#39;</span>
+    <span class="n">ahp_time_method</span> <span class="o">=</span> <span class="s1">&#39;threshold2min&#39;</span>
+    <span class="n">ahp_amplitude_method</span> <span class="o">=</span> <span class="s1">&#39;threshold2min&#39;</span>
+    <span class="n">spike_train_target_freq</span> <span class="o">=</span> <span class="mi">30</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">Hz</span></div>
+
+
+<div class="viewcode-block" id="Hu2016"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Hu2016">[docs]</a><span class="k">class</span> <span class="nc">Hu2016</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Hu et. al. (2016) Hyperpolarization-Activated Currents and Subthreshold Resonance in Granule Cells of the Olfactory Bulb &#39;&#39;&#39;</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">32</span>
+    <span class="n">sag_testing_voltage</span> <span class="o">=</span> <span class="o">-</span><span class="mf">103.5</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">mV</span>  <span class="c1"># LJP is not corrected. Assuming 13.5mV, so cell was at 103.5mV</span></div>
+
+<div class="viewcode-block" id="JohnsonDelaney2010"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.JohnsonDelaney2010">[docs]</a><span class="k">class</span> <span class="nc">JohnsonDelaney2010</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Johnson and Delaney (2010)	Synaptic Activation of T-Type Ca2+ Channels Via mGluR Activation in the Primary Dendrite of Mitral Cells &#39;&#39;&#39;</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">35</span>
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">4000</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">rebound_ap_method</span> <span class="o">=</span> <span class="s2">&quot;-300pA&quot;</span></div>
+
+<div class="viewcode-block" id="Zibman2011"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Zibman2011">[docs]</a><span class="k">class</span> <span class="nc">Zibman2011</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Zibman et. al. (2011)	DISTINCT INTRINSIC MEMBRANE PROPERTIES DETERMINE DIFFERENTIAL INFORMATION PROCESSING BETWEEN MAIN AND ACCESSORY OLFACTORY BULB MITRAL CELLS &#39;&#39;&#39;</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">22</span>
+    <span class="n">current_duration</span> <span class="o">=</span> <span class="mi">500</span> <span class="o">*</span> <span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">spike_train_method</span> <span class="o">=</span> <span class="s2">&quot;constant_current&quot;</span>
+    <span class="n">spike_train_current</span> <span class="o">=</span> <span class="mf">0.100</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">nA</span></div>
+
+
+<div class="viewcode-block" id="Stroh2012"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Stroh2012">[docs]</a><span class="k">class</span> <span class="nc">Stroh2012</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="sd">&#39;&#39;&#39; Stroh et. al. (2012)	NMDA Receptor-Dependent Synaptic Activation of TRPC Channels in Olfactory Bulb Granule Cells &#39;&#39;&#39;</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">21</span>
+    <span class="n">adp_current_duration</span> <span class="o">=</span> <span class="mi">1</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">ms</span>
+    <span class="n">adp_current_amplitude</span> <span class="o">=</span> <span class="mi">1000</span><span class="o">*</span><span class="n">pq</span><span class="o">.</span><span class="n">pA</span></div>
+
+
+<div class="viewcode-block" id="Abraham2010"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Abraham2010">[docs]</a><span class="k">class</span> <span class="nc">Abraham2010</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mf">24.5</span></div>
+
+
+<div class="viewcode-block" id="Hovis2010"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Hovis2010">[docs]</a><span class="k">class</span> <span class="nc">Hovis2010</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">35</span></div>
+
+
+<div class="viewcode-block" id="Shpak2012"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Shpak2012">[docs]</a><span class="k">class</span> <span class="nc">Shpak2012</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">22</span></div>
+
+
+<div class="viewcode-block" id="Christie2005"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Christie2005">[docs]</a><span class="k">class</span> <span class="nc">Christie2005</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mf">33.5</span></div>
+
+
+<div class="viewcode-block" id="Fukunaga2012"><a class="viewcode-back" href="../../../../olfactorybulb.neuronunit.html#olfactorybulb.neuronunit.tests.publications.Fukunaga2012">[docs]</a><span class="k">class</span> <span class="nc">Fukunaga2012</span><span class="p">(</span><span class="n">BasePublication</span><span class="p">):</span>
+    <span class="n">temperature</span> <span class="o">=</span> <span class="mi">36</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

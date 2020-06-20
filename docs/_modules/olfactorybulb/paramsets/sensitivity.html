@@ -1,0 +1,672 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.paramsets.sensitivity &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.paramsets.sensitivity</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.paramsets.sensitivity</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">olfactorybulb.paramsets.case_studies</span> <span class="kn">import</span> <span class="n">GammaSignature</span>
+
+<span class="c1"># class GammaSignature(GammaSignature):</span>
+<span class="c1">#</span>
+<span class="c1">#     sniffs = 8</span>
+<span class="c1">#     tstop = (1+sniffs) * 200</span>
+<span class="c1">#</span>
+<span class="c1">#     tc_input_weight = 0.8</span>
+<span class="c1">#     mc_input_weight = 0.2</span>
+<span class="c1">#     mc_input_delay = 0</span>
+<span class="c1">#</span>
+<span class="c1">#     synapse_properties = {</span>
+<span class="c1">#         &quot;AmpaNmdaSyn&quot;: {</span>
+<span class="c1">#             &#39;gmax&#39;: 64,</span>
+<span class="c1">#</span>
+<span class="c1">#             &#39;ltpinvl&#39;: 0,  # Disable plasticity</span>
+<span class="c1">#             &#39;ltdinvl&#39;: 0</span>
+<span class="c1">#         },</span>
+<span class="c1">#</span>
+<span class="c1">#         &quot;GabaSyn&quot;: {</span>
+<span class="c1">#             &#39;gmax&#39;: 2,</span>
+<span class="c1">#             &#39;tau2&#39;: 36,</span>
+<span class="c1">#</span>
+<span class="c1">#             &#39;ltpinvl&#39;: 0,  # Disable plasticity</span>
+<span class="c1">#             &#39;ltdinvl&#39;: 0</span>
+<span class="c1">#         }</span>
+<span class="c1">#     }</span>
+
+
+<div class="viewcode-block" id="GammaSignature_GJ_0"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_0">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_0</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_1"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_1">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_1</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_2"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_2">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_2</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_4"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_4">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_4</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_8"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_8">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_8</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_16"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_16">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_16</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_32"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_32">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_32</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_64"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_64">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_64</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+    <span class="p">}</span></div>
+<div class="viewcode-block" id="GammaSignature_GJ_128"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GJ_128">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GJ_128</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;MC&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+        <span class="s1">&#39;TC&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+    <span class="p">}</span></div>
+    
+    
+<span class="c1"># ------------------------------------------ #</span>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_0"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_0">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_0</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_1"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_1">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_1</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_2"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_2">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_2</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_4"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_4">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_4</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_8"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_8">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_8</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_16"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_16">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_16</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_32"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_32">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_32</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_64"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_64">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_64</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_128"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_128">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_128</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">128</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="GammaSignature_AMPANMDA_256"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_AMPANMDA_256">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_AMPANMDA_256</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">256</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<span class="c1"># --------------------------------------------- #</span>
+
+<div class="viewcode-block" id="GammaSignature_GABA_0"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_0">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GABA_0</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GammaSignature_GABA_1"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_1">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GABA_1</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">1</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GammaSignature_GABA_2"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_2">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GABA_2</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GammaSignature_GABA_4"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_4">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GABA_4</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">4</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GammaSignature_GABA_8"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_GABA_8">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_GABA_8</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s1">&#39;AmpaNmdaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s1">&#39;GabaSyn&#39;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">8</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+
+
+
+<span class="c1"># --------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_00"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_00">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_00</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_02"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_02">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_02</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.2</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_04"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_04">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_04</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.4</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_06"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_06">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_06</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.6</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_08"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_08">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_08</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.8</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_TCWGHT_10"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_TCWGHT_10">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_TCWGHT_10</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+<span class="c1"># --------------------------------------------- #</span>
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_00"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_00">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_00</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mi">0</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_01"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_01">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_01</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.1</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_015"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_015">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_015</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.15</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_02"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_02">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_02</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.2</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_025"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_025">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_025</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.25</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_03"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_03">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_03</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.3</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_04"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_04">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_04</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.4</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_06"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_06">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_06</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.6</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_08"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_08">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_08</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.8</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_MCWGHT_10"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.sensitivity.GammaSignature_MCWGHT_10">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_MCWGHT_10</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mi">1</span></div>
+
+
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

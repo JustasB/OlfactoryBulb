@@ -1,0 +1,518 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.model &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="./" src="_static/documentation_options.js"></script>
+        <script src="_static/jquery.js"></script>
+        <script src="_static/underscore.js"></script>
+        <script src="_static/doctools.js"></script>
+        <script src="_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="genindex.html" />
+    <link rel="search" title="Search" href="search.html" />
+    <link rel="next" title="olfactorybulb.paramsets" href="olfactorybulb.paramsets.html" />
+    <link rel="prev" title="Model Python Class Reference" href="olfactorybulb.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1 current"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a><ul class="current">
+<li class="toctree-l2 current"><a class="current reference internal" href="#">olfactorybulb.model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.paramsets.html">olfactorybulb.paramsets</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.slicebuilder.html">olfactorybulb.slicebuilder</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.neuronunit.html">olfactorybulb.neuronunit</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.database.html">olfactorybulb.database</a></li>
+<li class="toctree-l2"><a class="reference internal" href="olfactorybulb.utilities.html">olfactorybulb.utilities</a></li>
+</ul>
+</li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="olfactorybulb.html">Model Python Class Reference</a> &raquo;</li>
+        
+      <li>olfactorybulb.model</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+            
+            <a href="_sources/olfactorybulb.model.rst.txt" rel="nofollow"> View page source</a>
+          
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <div class="section" id="olfactorybulb-model">
+<h1>olfactorybulb.model<a class="headerlink" href="#olfactorybulb-model" title="Permalink to this headline">¶</a></h1>
+<p>The main class to build and run the network model. The class constructor builds the model using one of the
+specified <a class="reference external" href="olfactorybulb.paramsets.html">parameter classes</a>. If <cite>autorun==True</cite>, the model will be simulated
+after building. Otherwise, the <a class="reference external" href="#olfactorybulb.model.OlfactoryBulb.run">run(tstop)</a> is used to run the simulation.</p>
+<p>MPI/multi-core simulations can be performed using <cite>initslice.py</cite> found in the repo root. For example, the following
+command will build and run the network model using the
+<a class="reference external" href="olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature">GammaSignature parameter set</a>
+using 16 cores:</p>
+<div class="highlight-default notranslate"><div class="highlight"><pre><span></span><span class="c1"># From repo root, run this shell command (replace 16 with the number of cores you would like to use):</span>
+<span class="n">mpiexec</span> <span class="o">-</span><span class="n">np</span> <span class="mi">16</span> <span class="n">python</span> <span class="n">initslice</span><span class="o">.</span><span class="n">py</span> <span class="o">-</span><span class="n">paramset</span> <span class="n">GammaSignature</span> <span class="o">-</span><span class="n">mpi</span>
+</pre></div>
+</div>
+<p>Simulation results will be stored under <cite>[repo]/olfactorybulb/results/GammaSignature</cite>. The last folder in the path uses
+the name of the parameter class.</p>
+<p>See the
+<a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/LFP%20Wavelet%20Analysis.ipynb">LFP Wavelet Analysis.ipynb</a>
+notebook for examples of how the results are analyzed.</p>
+<span class="target" id="module-olfactorybulb.model"></span><dl class="class">
+<dt id="olfactorybulb.model.OlfactoryBulb">
+<em class="property">class </em><code class="sig-prename descclassname">olfactorybulb.model.</code><code class="sig-name descname">OlfactoryBulb</code><span class="sig-paren">(</span><em class="sig-param">params='ParameterSetBase'</em>, <em class="sig-param">autorun=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb" title="Permalink to this definition">¶</a></dt>
+<dd><p>Bases: <code class="xref py py-class docutils literal notranslate"><span class="pre">object</span></code></p>
+<p>The main class used to build and simulate the olfactory bulb network model.</p>
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.__init__">
+<code class="sig-name descname">__init__</code><span class="sig-paren">(</span><em class="sig-param">params='ParameterSetBase'</em>, <em class="sig-param">autorun=True</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.__init__"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.__init__" title="Permalink to this definition">¶</a></dt>
+<dd><dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>params</strong> – The name of the class defined in olfactorybulb.paramsets that defines the network parameters</p></li>
+<li><p><strong>autorun</strong> – When true, after the network model is built, starts the simulation</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.add_gap_junctions">
+<code class="sig-name descname">add_gap_junctions</code><span class="sig-paren">(</span><em class="sig-param">in_name</em>, <em class="sig-param">g_gap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.add_gap_junctions"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.add_gap_junctions" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds gap junctions between tufted dendrites of specified cells</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>in_name</strong> – A part of a cell class name (e.g. ‘Mitral’) used to select a cell to which the GJ is added</p></li>
+<li><p><strong>g_gap</strong> – The conductance of the gap junctions</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.add_inputs">
+<code class="sig-name descname">add_inputs</code><span class="sig-paren">(</span><em class="sig-param">odor</em>, <em class="sig-param">t</em>, <em class="sig-param">rel_conc</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.add_inputs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.add_inputs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Add odor stimulation to the tufts of the principal cells</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>odor</strong> – The name of the odor</p></li>
+<li><p><strong>t</strong> – Onset time</p></li>
+<li><p><strong>rel_conc</strong> – Relative concentration 0-1</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.create_gap_junction">
+<code class="sig-name descname">create_gap_junction</code><span class="sig-paren">(</span><em class="sig-param">seg_1_info</em>, <em class="sig-param">seg_2_info</em>, <em class="sig-param">g_gap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.create_gap_junction"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.create_gap_junction" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a gap junction between two segments</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>seg_1_info</strong> – Tuple of the name and gid of the first segment</p></li>
+<li><p><strong>seg_2_info</strong> – Tuple of the name and gid of the second segment</p></li>
+<li><p><strong>g_gap</strong> – Gap junction conductance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.create_gap_junctions_between">
+<code class="sig-name descname">create_gap_junctions_between</code><span class="sig-paren">(</span><em class="sig-param">input_segs</em>, <em class="sig-param">g_gap</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.create_gap_junctions_between"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.create_gap_junctions_between" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates gap junctions between a list of specified segments. GJs are connected in a chain
+(e.g. Seg1 &lt;-GJ1-&gt; Seg2 &lt;-GC2-&gt; Seg3)</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>input_segs</strong> – List of segments to connect by gap junctions</p></li>
+<li><p><strong>g_gap</strong> – Gap junction conductance</p></li>
+</ul>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.create_lfp_electrode">
+<code class="sig-name descname">create_lfp_electrode</code><span class="sig-paren">(</span><em class="sig-param">x</em>, <em class="sig-param">y</em>, <em class="sig-param">z</em>, <em class="sig-param">sampling_period</em>, <em class="sig-param">method='Line'</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.create_lfp_electrode"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.create_lfp_electrode" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses the LFPsimpy package to add an LFP electrode at the specified x,y,z location</p>
+<p>See <a class="reference external" href="https://github.com/justasb/LFPsimpy">LFPsimpy package</a>.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>x</strong> – y, z coordinates in um</p></li>
+<li><p><strong>sampling_period</strong> – How often to compute the LFP signal in ms</p></li>
+<li><p><strong>method</strong> – One of ‘Line’, ‘Point’, or ‘RC’.</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>an LFPsimpy LfpElectrode object</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.get_gaussian_spike_train">
+<code class="sig-name descname">get_gaussian_spike_train</code><span class="sig-paren">(</span><em class="sig-param">spikes=50</em>, <em class="sig-param">start_time=100</em>, <em class="sig-param">duration=10</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.get_gaussian_spike_train"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.get_gaussian_spike_train" title="Permalink to this definition">¶</a></dt>
+<dd><p>Gets a spike train from a gaussian probability distribution whose 99% range starts
+at the specified time and lasts for the specified duration.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>spikes</strong> – The number of spikes to generate</p></li>
+<li><p><strong>start_time</strong> – The onset time of the gaussian</p></li>
+<li><p><strong>duration</strong> – The duration of the gaussian</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>A numpy array of spike times in chronological order</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.get_lfp">
+<code class="sig-name descname">get_lfp</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.get_lfp"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.get_lfp" title="Permalink to this definition">¶</a></dt>
+<dd><p>Returns the LFP signal in nV</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>a tuple of LFP times, and voltages (nV)</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.get_model_inputsegs">
+<code class="sig-name descname">get_model_inputsegs</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.get_model_inputsegs"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.get_model_inputsegs" title="Permalink to this definition">¶</a></dt>
+<dd><p>Queries the model database to get the ‘root’ segments of the tufted dendrites
+of the mitral and tufted cells</p>
+<dl class="field-list simple">
+<dt class="field-odd">Returns</dt>
+<dd class="field-odd"><p>A dict that maps the cell model’s class name to the name of the root tufted dendrite section</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.get_nseg_count">
+<code class="sig-name descname">get_nseg_count</code><span class="sig-paren">(</span><em class="sig-param">root_dict</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.get_nseg_count"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.get_nseg_count" title="Permalink to this definition">¶</a></dt>
+<dd><p>Recursively counts the number of segments of a cell provided its BlenderNEURON root segment dict</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>root_dict</strong> – The root segment dict of a cell as saved by BlenderNEURON</p>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The total number of segments of the cell</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.load_cells">
+<code class="sig-name descname">load_cells</code><span class="sig-paren">(</span><em class="sig-param">cell_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.load_cells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.load_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Load the cells of the specified type onto least busy MPI ranks.</p>
+<p>‘Busyness’ of a rank is the sum of all cell complexities on that rank, as measured by the number
+of segments of each cell.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_type</strong> – One of ‘MC’, ‘GC’, ‘TC’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.load_glom_cells">
+<code class="sig-name descname">load_glom_cells</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.load_glom_cells"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.load_glom_cells" title="Permalink to this definition">¶</a></dt>
+<dd><p>Loads a dict that maps glomeruli ids to cells that are attached to each glomerulus</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.load_synapse_set">
+<code class="sig-name descname">load_synapse_set</code><span class="sig-paren">(</span><em class="sig-param">synapse_set</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.load_synapse_set"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.load_synapse_set" title="Permalink to this definition">¶</a></dt>
+<dd><p>Uses BlenderNEURON to load a previously saved set of synapses between a population of cells</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>synapse_set</strong> – One of ‘GCs__MCs’ or ‘GCs__TCs’ as seen in the olfactorybulb.slices.DorsalColumnSlice folder.</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.print_status">
+<code class="sig-name descname">print_status</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.print_status"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.print_status" title="Permalink to this definition">¶</a></dt>
+<dd><p>Prints the current simulation time on the same line (no new line)</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.record_from_somas">
+<code class="sig-name descname">record_from_somas</code><span class="sig-paren">(</span><em class="sig-param">cell_type</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.record_from_somas"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.record_from_somas" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds NEURON vector recorders to the somas of the specified cell types</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>cell_type</strong> – One of ‘MC’, ‘GC’, ‘TC’</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.run">
+<code class="sig-name descname">run</code><span class="sig-paren">(</span><em class="sig-param">tstop</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.run"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.run" title="Permalink to this definition">¶</a></dt>
+<dd><p>Runs the NEURON simulation untill the specified stop time</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><p><strong>tstop</strong> – Simulation stop time</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.save_recorded_vectors">
+<code class="sig-name descname">save_recorded_vectors</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.save_recorded_vectors"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.save_recorded_vectors" title="Permalink to this definition">¶</a></dt>
+<dd><p>Saves soma voltage traces and odor input spike times to Pickle files for later processing</p>
+<p>Saves to the results directory as ‘soma_vs.pkl’ and ‘input_times.pkl’</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.setup_status_reporter">
+<code class="sig-name descname">setup_status_reporter</code><span class="sig-paren">(</span><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.setup_status_reporter"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.setup_status_reporter" title="Permalink to this definition">¶</a></dt>
+<dd><p>Sets up the NEURON simulation to report the simulation time</p>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.stable_hash">
+<code class="sig-name descname">stable_hash</code><span class="sig-paren">(</span><em class="sig-param">source</em>, <em class="sig-param">digits=9</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.stable_hash"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.stable_hash" title="Permalink to this definition">¶</a></dt>
+<dd><p>Creates a hash code of digits long that is stable across different machines.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>source</strong> – The string to hash, in this case a section name</p></li>
+<li><p><strong>digits</strong> – The number of digits to keep of the hash</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>The hash code as an integer</p>
+</dd>
+</dl>
+</dd></dl>
+
+<dl class="method">
+<dt id="olfactorybulb.model.OlfactoryBulb.stim_glom_segments">
+<code class="sig-name descname">stim_glom_segments</code><span class="sig-paren">(</span><em class="sig-param">time</em>, <em class="sig-param">input_segs</em>, <em class="sig-param">intensity</em><span class="sig-paren">)</span><a class="reference internal" href="_modules/olfactorybulb/model.html#OlfactoryBulb.stim_glom_segments"><span class="viewcode-link">[source]</span></a><a class="headerlink" href="#olfactorybulb.model.OlfactoryBulb.stim_glom_segments" title="Permalink to this definition">¶</a></dt>
+<dd><p>Adds input synapses onto glomerular tufts at specified start time and intensity</p>
+<p>The inhalation part of a sniff cycle is modeled as a gaussian probability that is centered at
+the midpoint of the inhalation onset and end. The probability is translated into spikes. The spikes
+then trigger the excitatory synapses placed at the mitral/tufted cell tufts.</p>
+<p>Intensity regulates how many spikes to pick from the gaussian.</p>
+<dl class="field-list simple">
+<dt class="field-odd">Parameters</dt>
+<dd class="field-odd"><ul class="simple">
+<li><p><strong>time</strong> – the inhalation onset time in ms</p></li>
+<li><p><strong>input_segs</strong> – a list containing tuples of:
+a) The name of the segment to stimulate as it appears on the current MPI rank
+b) segment gid
+c) segment name as it appears when there is only one rank. If not using MPI a) and c) are same.</p></li>
+<li><p><strong>intensity</strong> – 0-1 representing odor intensity</p></li>
+</ul>
+</dd>
+<dt class="field-even">Returns</dt>
+<dd class="field-even"><p>None</p>
+</dd>
+</dl>
+</dd></dl>
+
+</dd></dl>
+
+<dl class="function">
+<dt id="olfactorybulb.model.random">
+<code class="sig-prename descclassname">olfactorybulb.model.</code><code class="sig-name descname">random</code><span class="sig-paren">(</span><span class="sig-paren">)</span> &#x2192; x in the interval [0, 1).<a class="headerlink" href="#olfactorybulb.model.random" title="Permalink to this definition">¶</a></dt>
+<dd></dd></dl>
+
+</div>
+
+
+           </div>
+           
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+        <a href="olfactorybulb.paramsets.html" class="btn btn-neutral float-right" title="olfactorybulb.paramsets" accesskey="n" rel="next">Next <span class="fa fa-arrow-circle-right"></span></a>
+      
+      
+        <a href="olfactorybulb.html" class="btn btn-neutral float-left" title="Model Python Class Reference" accesskey="p" rel="prev"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>

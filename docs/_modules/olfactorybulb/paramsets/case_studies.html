@@ -1,0 +1,399 @@
+
+
+<!DOCTYPE html>
+<html class="writer-html5" lang="en" >
+<head>
+  <meta charset="utf-8">
+  
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>olfactorybulb.paramsets.case_studies &mdash; Olfactory Bulb 1.0 documentation</title>
+  
+
+  
+  <link rel="stylesheet" href="../../../_static/css/theme.css" type="text/css" />
+  <link rel="stylesheet" href="../../../_static/pygments.css" type="text/css" />
+
+  
+  
+  
+  
+
+  
+  <!--[if lt IE 9]>
+    <script src="../../../_static/js/html5shiv.min.js"></script>
+  <![endif]-->
+  
+    
+      <script type="text/javascript" id="documentation_options" data-url_root="../../../" src="../../../_static/documentation_options.js"></script>
+        <script src="../../../_static/jquery.js"></script>
+        <script src="../../../_static/underscore.js"></script>
+        <script src="../../../_static/doctools.js"></script>
+        <script src="../../../_static/language_data.js"></script>
+    
+    <script type="text/javascript" src="../../../_static/js/theme.js"></script>
+
+    
+    <link rel="index" title="Index" href="../../../genindex.html" />
+    <link rel="search" title="Search" href="../../../search.html" /> 
+</head>
+
+<body class="wy-body-for-nav">
+
+   
+  <div class="wy-grid-for-nav">
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-scroll">
+        <div class="wy-side-nav-search" >
+          
+
+          
+            <a href="../../../index.html" class="icon icon-home" alt="Documentation Home"> Olfactory Bulb
+          
+
+          
+          </a>
+
+          
+            
+            
+              <div class="version">
+                1.0
+              </div>
+            
+          
+
+          
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="../../../search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+
+          
+        </div>
+
+        
+        <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+          
+            
+            
+              
+            
+            
+              <ul>
+<li class="toctree-l1"><a class="reference internal" href="../../../gettingstarted.html">Getting Started</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../visualizing.html">Visualizing the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../recreating.html">Recreating the Model</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../cloud.html">Running Simulations in the Cloud (AWS)</a></li>
+<li class="toctree-l1"><a class="reference internal" href="../../../olfactorybulb.html">Model Python Class Reference</a></li>
+</ul>
+
+            
+          
+        </div>
+        
+      </div>
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" aria-label="top navigation">
+        
+          <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+          <a href="../../../index.html">Olfactory Bulb</a>
+        
+      </nav>
+
+
+      <div class="wy-nav-content">
+        
+        <div class="rst-content">
+        
+          
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<div role="navigation" aria-label="breadcrumbs navigation">
+
+  <ul class="wy-breadcrumbs">
+    
+      <li><a href="../../../index.html" class="icon icon-home"></a> &raquo;</li>
+        
+          <li><a href="../../index.html">Module code</a> &raquo;</li>
+        
+      <li>olfactorybulb.paramsets.case_studies</li>
+    
+    
+      <li class="wy-breadcrumbs-aside">
+        
+      </li>
+    
+  </ul>
+
+  
+  <hr/>
+</div>
+          <div role="main" class="document" itemscope="itemscope" itemtype="http://schema.org/Article">
+           <div itemprop="articleBody">
+            
+  <h1>Source code for olfactorybulb.paramsets.case_studies</h1><div class="highlight"><pre>
+<span></span><span class="kn">from</span> <span class="nn">olfactorybulb.paramsets.base</span> <span class="kn">import</span> <span class="n">SilentNetwork</span>
+
+<div class="viewcode-block" id="PureMCs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.PureMCs">[docs]</a><span class="k">class</span> <span class="nc">PureMCs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Pure MC input&quot;</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="PureTCs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.PureTCs">[docs]</a><span class="k">class</span> <span class="nc">PureTCs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Pure TC input&quot;</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="PureMCsWithGJs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.PureMCsWithGJs">[docs]</a><span class="k">class</span> <span class="nc">PureMCsWithGJs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Pure MC input and enabled gap junctions&quot;</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;MC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="c1"># &quot;TC&quot;: 0,</span>
+    <span class="p">}</span>
+
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="PureTCsWithGJs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.PureTCsWithGJs">[docs]</a><span class="k">class</span> <span class="nc">PureTCsWithGJs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Pure TC input and enabled gap junctions&quot;</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="c1"># &quot;MC&quot;: 0,</span>
+        <span class="s2">&quot;TC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="MCsWithGJsGCs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.MCsWithGJsGCs">[docs]</a><span class="k">class</span> <span class="nc">MCsWithGJsGCs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;MC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">tstop</span> <span class="o">=</span> <span class="mi">400</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;AmpaNmdaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;GabaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+<div class="viewcode-block" id="TCsWithGJsGCs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.TCsWithGJsGCs">[docs]</a><span class="k">class</span> <span class="nc">TCsWithGJsGCs</span><span class="p">(</span><span class="n">SilentNetwork</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;TC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;AmpaNmdaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;GabaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">16</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+
+<div class="viewcode-block" id="MC_TC_Combined_Base"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.MC_TC_Combined_Base">[docs]</a><span class="k">class</span> <span class="nc">MC_TC_Combined_Base</span><span class="p">(</span><span class="n">TCsWithGJsGCs</span><span class="p">):</span>
+
+    <span class="n">gap_juction_gmax</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;MC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+        <span class="s2">&quot;TC&quot;</span><span class="p">:</span> <span class="mi">32</span><span class="p">,</span>
+    <span class="p">}</span>
+
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span>
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">1.0</span></div>
+
+<div class="viewcode-block" id="GammaSignature"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature</span><span class="p">(</span><span class="n">MC_TC_Combined_Base</span><span class="p">):</span>
+
+    <span class="n">sniffs</span> <span class="o">=</span> <span class="mi">8</span>
+    <span class="n">tstop</span> <span class="o">=</span> <span class="p">(</span><span class="mi">1</span><span class="o">+</span><span class="n">sniffs</span><span class="p">)</span> <span class="o">*</span> <span class="mi">200</span>
+
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.2</span>
+    <span class="n">mc_input_delay</span> <span class="o">=</span> <span class="mi">0</span>
+
+    <span class="n">synapse_properties</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="s2">&quot;AmpaNmdaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">64</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">},</span>
+
+        <span class="s2">&quot;GabaSyn&quot;</span><span class="p">:</span> <span class="p">{</span>
+            <span class="s1">&#39;gmax&#39;</span><span class="p">:</span> <span class="mi">2</span><span class="p">,</span>
+            <span class="s1">&#39;tau2&#39;</span><span class="p">:</span> <span class="mi">36</span><span class="p">,</span>
+
+            <span class="s1">&#39;ltpinvl&#39;</span><span class="p">:</span> <span class="mi">0</span><span class="p">,</span>  <span class="c1"># Disable plasticity</span>
+            <span class="s1">&#39;ltdinvl&#39;</span><span class="p">:</span> <span class="mi">0</span>
+        <span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<span class="c1"># Experiments</span>
+
+<div class="viewcode-block" id="GammaSignature_NoInhibition"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_NoInhibition</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Disabling inhibition should advance MC first spike times&quot;</span>
+
+<div class="viewcode-block" id="GammaSignature_NoInhibition.__init__"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoInhibition.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">synapse_properties</span><span class="p">[</span><span class="s2">&quot;GabaSyn&quot;</span><span class="p">][</span><span class="s2">&quot;gmax&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+
+<div class="viewcode-block" id="GammaSignature_NoTCGJs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_NoTCGJs</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Disabling TC GJs should abolish synchronized early TC firing&quot;</span>
+
+<div class="viewcode-block" id="GammaSignature_NoTCGJs.__init__"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoTCGJs.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gap_juction_gmax</span><span class="p">[</span><span class="s2">&quot;TC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+
+
+<div class="viewcode-block" id="GammaSignature_NoMCGJs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_NoMCGJs</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Disabling MC GJs should abolish synchronized late MC firing&quot;</span>
+
+<div class="viewcode-block" id="GammaSignature_NoMCGJs.__init__"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_NoMCGJs.__init__">[docs]</a>    <span class="k">def</span> <span class="fm">__init__</span><span class="p">(</span><span class="bp">self</span><span class="p">):</span>
+        <span class="bp">self</span><span class="o">.</span><span class="n">gap_juction_gmax</span><span class="p">[</span><span class="s2">&quot;MC&quot;</span><span class="p">]</span> <span class="o">=</span> <span class="mi">0</span></div></div>
+
+
+<div class="viewcode-block" id="GammaSignature_EqualTCMCInputs"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_EqualTCMCInputs">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_EqualTCMCInputs</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Increasing MC input weight to match TCs should advance MC first spike times&quot;</span>
+
+    <span class="n">tc_input_weight</span> <span class="o">=</span> <span class="mf">0.8</span>
+    <span class="n">mc_input_weight</span> <span class="o">=</span> <span class="mf">0.8</span></div>
+
+
+
+<div class="viewcode-block" id="GammaSignature_DifferentOdor"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdor">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_DifferentOdor</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">input_odors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span>   <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+        <span class="mi">200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Coffee&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mint&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mint&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1000</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Coffee&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mint&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Mint&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">},</span>
+        <span class="mi">1800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.2</span><span class="p">}</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="GammaSignature_DifferentOdorConc"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.GammaSignature_DifferentOdorConc">[docs]</a><span class="k">class</span> <span class="nc">GammaSignature_DifferentOdorConc</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+
+    <span class="n">input_odors</span> <span class="o">=</span> <span class="p">{</span>
+        <span class="mi">0</span><span class="p">:</span>   <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+        <span class="mi">200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.05</span><span class="p">},</span>
+        <span class="mi">400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.1</span><span class="p">},</span>
+        <span class="mi">600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.15</span><span class="p">},</span>
+        <span class="mi">800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.20</span><span class="p">},</span>
+        <span class="mi">1000</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.25</span><span class="p">},</span>
+        <span class="mi">1200</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.30</span><span class="p">},</span>
+        <span class="mi">1400</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.35</span><span class="p">},</span>
+        <span class="mi">1600</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.4</span><span class="p">},</span>
+        <span class="mi">1800</span><span class="p">:</span> <span class="p">{</span><span class="s2">&quot;name&quot;</span><span class="p">:</span> <span class="s2">&quot;Apple&quot;</span><span class="p">,</span> <span class="s2">&quot;rel_conc&quot;</span><span class="p">:</span> <span class="mf">0.45</span><span class="p">},</span>
+    <span class="p">}</span></div>
+
+
+<div class="viewcode-block" id="OneMsTest"><a class="viewcode-back" href="../../../olfactorybulb.paramsets.html#olfactorybulb.paramsets.case_studies.OneMsTest">[docs]</a><span class="k">class</span> <span class="nc">OneMsTest</span><span class="p">(</span><span class="n">GammaSignature</span><span class="p">):</span>
+    <span class="n">description</span> <span class="o">=</span> <span class="s2">&quot;Test of the simulation, for build testing only&quot;</span>
+    <span class="n">tstop</span> <span class="o">=</span> <span class="mi">1</span></div>
+</pre></div>
+
+           </div>
+           
+          </div>
+          <footer>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        
+        &copy; Copyright 2020, Justas Birgiolas
+
+    </p>
+  </div>
+    
+    
+    
+    Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a
+    
+    <a href="https://github.com/rtfd/sphinx_rtd_theme">theme</a>
+    
+    provided by <a href="https://readthedocs.org">Read the Docs</a>. 
+
+</footer>
+
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.Navigation.enable(true);
+      });
+  </script>
+
+  
+  
+    
+   
+
+</body>
+</html>
