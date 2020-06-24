@@ -9,16 +9,15 @@ This is the documentation site for the `olfactory bulb model <https://olfactoryb
  - Documentation (this site): https://docs.olfactorybulb.org/
  - Source Code Repository: https://github.com/justasb/olfactorybulb
  - Pre-built Docker Images: https://hub.docker.com/repository/docker/jbirgio/olfactory-bulb
+ - Ph.D. Dissertation Describing the Model: `Towards Brains in the Cloud: A Biophysically Realistic Computational Model of Olfactory Bulb <https://repository.asu.edu/attachments/223567/content/Birgiolas_asu_0010E_19503.pdf>`_
 
 
-The model and the related `BlenderNEURON model editing tool <https://blenderneuron.org/>`_ were developed by  as part of Justas Birgiolas' Ph.D. thesis ("`Towards Brains in the Cloud:
-A Biophysically Realistic Computational Model of Olfactory Bulb <https://repository.asu.edu/attachments/223567/content/Birgiolas_asu_0010E_19503.pdf>`_") in collaboration with `researchers at the ICON Lab at Arizona State University <https://iconlab.asu.edu/>`_.
+The model and related `BlenderNEURON model editing tool <https://blenderneuron.org/>`_ were developed in collaboration with `researchers at the ICON Lab at Arizona State University <https://iconlab.asu.edu/>`_.
 
 Citation
 ========
 
-If you use this model or parts of it in your project, please cite the
-model as follows:
+If you use this model in your project, please cite it as follows:
 
 ::
 

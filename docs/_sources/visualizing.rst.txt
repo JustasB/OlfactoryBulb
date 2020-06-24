@@ -1,7 +1,7 @@
 Visualizing the Model
 =====================
 
-Parts of the model can be quickly visualized online. For more advanced visualization, using `BlenderNEURON <http://blenderneuron.org/>`_ is recommended.
+Parts of the model can be quickly visualized online using the widgets below. For more advanced visualization, using `BlenderNEURON <http://blenderneuron.org/>`_ is recommended.
 
 ======
 Layers

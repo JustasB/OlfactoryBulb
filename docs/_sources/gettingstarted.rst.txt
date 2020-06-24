@@ -125,23 +125,47 @@ the updated results:
 Building and Running the Model Locally (without Docker)
 =======================================================
 
-Assumes:
+Running the model locally without Docker has the following requirements:
 
- - Running Ubuntu 16.04 LTS
- - NEURON 7.7+Python+MPI is working (e.g. can run ``python -c 'import neuron'``).
+ - Ubuntu 16.04 LTS
+ - Anaconda Python 3+ (miniconda ok) is installed
+ - NEURON 7.7+Python+MPI is working (e.g. can run ``python -c 'import neuron'`` and ``mpiexec ...``).
 
-    - Note: NEURON must be v7.7. As of this writing, 7.8 results in NEURON seg faults.
+Note: NEURON must be v7.7. As of this writing, 7.8 results in NEURON seg faults.
 
- - Anaconda (miniconda ok) is installed
+The general steps are:
 
-Summary:
+ - Clone the model repository
+ - Install required python packages
+ - Compile .mod files
+ - Run Jupyter Lab/Notebook
 
-Follow the steps in the `Docker file <https://github.com/JustasB/OlfactoryBulb/blob/master/docker/obmodel/Dockerfile>`_
-to build locally.
+The commands below are similar to those performed by the `Docker file <https://github.com/JustasB/OlfactoryBulb/blob/master/docker/obmodel/Dockerfile>`_.
+
+Consider creating a new conda environment (e.g. ``conda create --name obenv python=3.7``) to keep the model python packages separate.
+
+::
+
+   # Clone the model repository
+   git clone https://github.com/justasb/OlfactoryBulb; cd OlfactoryBulb;
+
+   # Install required Python packages
+   conda install pandas=1.0.3 -y
+   python -m pip install pip==9.0.3 # One of the packages requires an older version of pip
+   pip install -r requirements.txt
+
+   # Compile mod files (most importantly under 'prev_ob_models/Birgiolas2020/Mechanisms')
+   cd prev_ob_models
+   ./compile_mod.sh # Assumes nrnivmodl is setup. This will also delete all x86_64 subfolders.
+   cd ..
 
 
+To test the above steps, the following 1ms test simulation should run without errors:
+
+::
+
+    mpiexec -np 2 python initslice.py -paramset OneMsTest -mpi
 
 
-
-
-
+After the above steps are finished, run ``jupyter lab`` and follow the
+`steps to run the notebook experiments <gettingstarted.html#run-the-notebook-with-experiments>`_.

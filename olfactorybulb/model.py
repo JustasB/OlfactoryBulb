@@ -218,7 +218,7 @@ class OlfactoryBulb:
 
     def run(self, tstop):
         """
-        Runs the NEURON simulation untill the specified stop time
+        Runs the NEURON simulation until the specified stop time
 
         :param tstop: Simulation stop time
         """
