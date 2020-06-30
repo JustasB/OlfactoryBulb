@@ -89,7 +89,10 @@
               <ul class="current">
 <li class="toctree-l1"><a class="reference internal" href="gettingstarted.html">Getting Started</a></li>
 <li class="toctree-l1"><a class="reference internal" href="visualizing.html">Visualizing the Model</a></li>
-<li class="toctree-l1 current"><a class="current reference internal" href="#">Recreating the Model</a></li>
+<li class="toctree-l1 current"><a class="current reference internal" href="#">Recreating the Model</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen">Mitral, tufted, and granule cell morphologies cleaned, morphology metrics computed, and representative morphologies chosen</a></li>
+</ul>
+</li>
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
 <li class="toctree-l1"><a class="reference internal" href="olfactorybulb.html">Model Python Class Reference</a></li>
 </ul>
@@ -159,9 +162,25 @@
             
   <div class="section" id="recreating-the-model">
 <h1>Recreating the Model<a class="headerlink" href="#recreating-the-model" title="Permalink to this headline">¶</a></h1>
-<p>Building Large-Scale Biophysically Realistic Computational Neuroscience Models with NEURON and BlenderNEURON</p>
+<p>The model was created in stages: cell models, network models, odor input, LFP output, simulations, and experiments.</p>
+<div class="section" id="mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen">
+<h2>Mitral, tufted, and granule cell morphologies cleaned, morphology metrics computed, and representative morphologies chosen<a class="headerlink" href="#mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
+<li><p>Cell electrical properties and behavior identified and characterized</p></li>
+<li><p>Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions</p></li>
+<li><p>Olfactory bulb layers were reconstructed from sagittal and coronal slices</p></li>
+<li><p>Fitted cell somas were placed within each cell type’s stereotypical laminar location</p></li>
+<li><p>Apical dendrites were rotated towards their stereotypical terminations</p></li>
+<li><p>Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers</p></li>
+<li><p>Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites</p></li>
+<li><p>Gap junctions were formed between glomerular sibling principal cell tufted dendrites</p></li>
+<li><p>Glomeruli stimulated during odor experiments were mapped onto the model glomeruli</p></li>
+<li><p>A model of glomerular input spikes was created to stimulate the model</p></li>
+<li><p>An extracellular local field potential electrode was placed into the granule cell layer</p></li>
+<li><p>NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform</p></li>
+<li><p>Network parameters were explored until the two-cluster gamma fingerprint was reproduced</p></li>
+<li><p>Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint</p></li>
 <li><dl class="simple">
 <dt>cells</dt><dd><ul>
 <li><dl class="simple">
@@ -264,6 +283,7 @@
 </li>
 </ul>
 </div></blockquote>
+</div>
 </div>
 
 
