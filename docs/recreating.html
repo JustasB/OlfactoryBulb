@@ -92,6 +92,20 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="#">Recreating the Model</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen">Mitral, tufted, and granule cell morphologies cleaned, morphology metrics computed, and representative morphologies chosen</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#cell-electrical-properties-and-behavior-identified-and-characterized">Cell electrical properties and behavior identified and characterized</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#ion-channels-placed-onto-chosen-cell-morphologies-and-conductances-fitted-to-experimental-distributions">Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#olfactory-bulb-layers-were-reconstructed-from-sagittal-and-coronal-slices">Olfactory bulb layers were reconstructed from sagittal and coronal slices</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#fitted-cell-somas-were-placed-within-each-cell-type-s-stereotypical-laminar-location">Fitted cell somas were placed within each cell type’s stereotypical laminar location</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#apical-dendrites-were-rotated-towards-their-stereotypical-terminations">Apical dendrites were rotated towards their stereotypical terminations</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mitral-and-tufted-cell-lateral-dendrites-were-aligned-with-the-curvature-of-reconstructed-olfactory-bulb-layers">Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#reciprocal-synapses-were-formed-based-on-dendritic-proximity-between-principal-and-granule-cell-dendrites">Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#gap-junctions-were-formed-between-glomerular-sibling-principal-cell-tufted-dendrites">Gap junctions were formed between glomerular sibling principal cell tufted dendrites</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#glomeruli-stimulated-during-odor-experiments-were-mapped-onto-the-model-glomeruli">Glomeruli stimulated during odor experiments were mapped onto the model glomeruli</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#a-model-of-glomerular-input-spikes-was-created-to-stimulate-the-model">A model of glomerular input spikes was created to stimulate the model</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#an-extracellular-local-field-potential-electrode-was-placed-into-the-granule-cell-layer">An extracellular local field potential electrode was placed into the granule cell layer</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#neuron-mpi-simulations-were-performed-and-lfp-signal-analyzed-using-wavelet-transform">NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#network-parameters-were-explored-until-the-two-cluster-gamma-fingerprint-was-reproduced">Network parameters were explored until the two-cluster gamma fingerprint was reproduced</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#computational-experiments-were-performed-to-demonstrate-the-mechanisms-underlying-the-gamma-fingerprint">Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#outline">Outline</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="cloud.html">Running Simulations in the Cloud (AWS)</a></li>
@@ -163,7 +177,7 @@
             
   <div class="section" id="recreating-the-model">
 <h1>Recreating the Model<a class="headerlink" href="#recreating-the-model" title="Permalink to this headline">¶</a></h1>
-<p>The model was created in stages: cell models, network models, odor input, LFP output, simulations, and experiments.</p>
+<p>The model was created in stages: cell models, network models, odor input, LFP output, simulations, and experiments. While these stages are described in the <a class="reference external" href="https://repository.asu.edu/attachments/223567/content/Birgiolas_asu_0010E_19503.pdf">dissertation</a>, the sections below describe technical details and include links to specific files, tools, and resources. The sections are organized in a chronological order, which can be followed to re-create this or a similar model.</p>
 <div class="section" id="mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen">
 <h2>Mitral, tufted, and granule cell morphologies cleaned, morphology metrics computed, and representative morphologies chosen<a class="headerlink" href="#mitral-tufted-and-granule-cell-morphologies-cleaned-morphology-metrics-computed-and-representative-morphologies-chosen" title="Permalink to this headline">¶</a></h2>
 <p><strong>Morphology Archives</strong></p>
@@ -173,31 +187,66 @@
 <p>Each SWC archive was labeled for whether it was a ‘thin’ (parts of lateral dendrites missing) or ‘full’ (the whole cell was reconstructed) slice. Whether the cells included a soma reconstruction, and whether the reconstructed dendrites included width/radius information (e.g. some archives used constant radius).</p>
 <p>The fixed SWC files were saved back into the archive folders and archive categorizations were stored in the <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology.ipynb">[repo]/notebooks/morphology.ipynb Jupyter Notebook</a>.</p>
 <p><strong>Computing Reconstructed Cell Population Morphology Metrics</strong></p>
-<p>For each reconstruction, NeuroMorpho.org displays a set of whole cell morphology metrics (e.g. see ‘Measurements’ section of <a class="reference external" href="http://neuromorpho.org/neuron_info.jsp?neuron_name=1-09-TD2b">this reconstruction</a>). For cells in this model, those metrics were computed for soma, apical dendrites, and lateral dendrites of each reconstruction.</p>
-<p>The metrics were computed using <a class="reference external" href="https://github.com/justasb/pylmeasure">pyLMeasure tool</a> (which is a Python wrapper of the <a class="reference external" href="http://cng.gmu.edu:8080/Lm/">L-Measure</a> tool). Each metric was formalized as tests of the <a class="reference external" href="https://github.com/scidash/neuronunit">NeuronUnit framework</a>. The test definitions have been incorporated into NeuronUnit and can be found under <a class="reference external" href="https://github.com/scidash/neuronunit/blob/dev/neuronunit/tests/morphology.py">[neuronunit]/tests/morphology.py</a></p>
-<p>The morphology metrics of each cell were computed using suites of NeuronUnit tests (see: <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology.ipynb">[repo]/notebooks/morphology.ipynb</a>) and results stored in <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model-data.sqlite">the model’s SQLite Database</a> in the <code class="docutils literal notranslate"><span class="pre">measurement</span></code> table. The database tables and records can be viewed with an SQLite editor like <a class="reference external" href="http://sqliteexpert.com/">SQLite Expert</a>.</p>
+<p>For each reconstruction, NeuroMorpho.org displays a set of whole-cell morphology metrics (e.g. see ‘Measurements’ section of <a class="reference external" href="http://neuromorpho.org/neuron_info.jsp?neuron_name=1-09-TD2b">this reconstruction</a>). For cells in this model, those metrics were computed for soma, apical dendrites, and lateral dendrites of each reconstruction.</p>
+<p>The metrics were computed using the <a class="reference external" href="https://github.com/justasb/pylmeasure">pyLMeasure tool</a> (which is a Python wrapper of the <a class="reference external" href="http://cng.gmu.edu:8080/Lm/">L-Measure</a> tool). Each metric was formalized as tests of the <a class="reference external" href="https://github.com/scidash/neuronunit">NeuronUnit framework</a>. The test definitions have been incorporated into NeuronUnit and can be found under <a class="reference external" href="https://github.com/scidash/neuronunit/blob/dev/neuronunit/tests/morphology.py">[neuronunit]/tests/morphology.py</a></p>
+<p>The morphology metrics of each cell were computed using suites of NeuronUnit tests (see: <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology.ipynb">[repo]/notebooks/morphology.ipynb</a>) and results stored in <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model-data.sqlite">the model’s SQLite Database</a> in the <code class="docutils literal notranslate"><span class="pre">measurement</span></code> table. The database tables and records can be viewed online with tools like <a class="reference external" href="https://sqliteonline.com/">SQLite online</a> or offline with an SQLite editor like <a class="reference external" href="http://sqliteexpert.com/">SQLite Expert</a>.</p>
 <p>The overall means and standard deviations of each morphology metric were stored in the database in the <code class="docutils literal notranslate"><span class="pre">property</span></code> table. These overall means and standard deviations were used to select five stereotypical morphologies of each cell type. Reconstructions whose morphology metrics were closest to the cell type population means were selected to be used for cell models in this model. They can be found under <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/SWCs">[repo]/prev_ob_models/Birgiolas2020/SWCs</a>.</p>
-<p>The validation of representativeness of the selected morphologies can be found in the <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb">morphology-validation.ipynb notebook</a></p>
+<p>The validation of the representativeness of the selected morphologies can be found in the <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb">morphology-validation.ipynb notebook</a></p>
 <p><strong>Morphology Standardization to Prepare for Network Embedding</strong></p>
 <p>To facilitate the embedding of the cell models within reconstructed network layers, the cell morphologies were further edited as follows. The cells were reoriented so that their apical dendrites were aligned with the Z-axis. The natural curvature of lateral dendrites of mitral and tufted cells was planarized so that the lateral dendrites were essentially perpendicular to the apical dendrites. This prepared the lateral dendrites for an algorithm to confine them to the appropriate cell-type-specific laminar regions in the network model. These standardized morphologies can be found under <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/morphology">[repo]/prev_ob_models/Birgiolas2020/morphology</a>.</p>
 </div>
 <div class="section" id="cell-electrical-properties-and-behavior-identified-and-characterized">
 <h2>Cell electrical properties and behavior identified and characterized<a class="headerlink" href="#cell-electrical-properties-and-behavior-identified-and-characterized" title="Permalink to this headline">¶</a></h2>
+<p>Once cell morphologies were selected, they were turned into active models by inserting ion channel mechanisms. To understand which ion channels should be included, a survey of electrical behaviors of each cell type was conducted via a literature search.</p>
+<p><strong>Generic Test and Publication Python Classes</strong></p>
+<p>Electrical properties of mitral, tufted, and granule cells from main olfactory bulbs of adult mice were aggregated from literature. These properties included passive (e.g. input resistance and resting voltage) and active membrane properties (e.g. spike half-width, spike accommodation, and inhibitory rebound). The protocols used to measure and compute each property were formalized using a set of NeuronUnit tests. Each publication used slightly different protocols and algorithms to compute the properties (e.g. different slice temperatures, different delays to measure input resistance, different ways to compute action potential threshold). To fairly evaluate how a model reproduces a property, these protocol differences were formalized into the NeuronUnit tests as well. A given property reported in a publication was formalized as a NeuronUnit test that consisted of 1) a generic electrophysiology property Python class (e.g. <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/tests.py#L53">RestingVoltageTest</a>) and 2) publication-specific modifications of the property measurement protocol (e.g. <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/publications.py#L34">BurtonUrban2014</a>).</p>
+<p>A NeuronUnit test that computes a property using protocol variations from a specific publication is declared by combining the generic test class with a publication class using Python’s multiple inheritance (e.g. <code class="docutils literal notranslate"><span class="pre">class</span> <span class="pre">InputResistanceUrbanBurton2014Test(UrbanBurton2014,</span> <span class="pre">InputResistanceTest)</span></code> ). Due to the large number of property and publication combinations, these combined classes were created at run time using <a class="reference external" href="https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/__init__.py#L73">a helper method</a>.</p>
+<p>The measurements from each publication are recorded in the SQLite database, <code class="docutils literal notranslate"><span class="pre">measurement</span></code> table. The NeuronUnit class to use for each measurement is defined in the <code class="docutils literal notranslate"><span class="pre">property</span></code> table and <code class="docutils literal notranslate"><span class="pre">test_class_generic</span></code> column. At run-time, the helper method combined the generic test class with the publication class to create a class that computed the property using the protocol parameters specified in each publication.</p>
+</div>
+<div class="section" id="ion-channels-placed-onto-chosen-cell-morphologies-and-conductances-fitted-to-experimental-distributions">
+<h2>Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions<a class="headerlink" href="#ion-channels-placed-onto-chosen-cell-morphologies-and-conductances-fitted-to-experimental-distributions" title="Permalink to this headline">¶</a></h2>
+<p>A literature search to identify each cell type’s electrical properties revealed a set of ion channels likely responsible for the behavior. Furthermore, a separate literature search was performed to identify previous computational models of each cell type. <a class="reference external" href="https://senselab.med.yale.edu/ModelDB/default">ModelDB</a> was utilized to locate runnable NEURON simulator models.</p>
+</div>
+<div class="section" id="olfactory-bulb-layers-were-reconstructed-from-sagittal-and-coronal-slices">
+<h2>Olfactory bulb layers were reconstructed from sagittal and coronal slices<a class="headerlink" href="#olfactory-bulb-layers-were-reconstructed-from-sagittal-and-coronal-slices" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="fitted-cell-somas-were-placed-within-each-cell-type-s-stereotypical-laminar-location">
+<h2>Fitted cell somas were placed within each cell type’s stereotypical laminar location<a class="headerlink" href="#fitted-cell-somas-were-placed-within-each-cell-type-s-stereotypical-laminar-location" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="apical-dendrites-were-rotated-towards-their-stereotypical-terminations">
+<h2>Apical dendrites were rotated towards their stereotypical terminations<a class="headerlink" href="#apical-dendrites-were-rotated-towards-their-stereotypical-terminations" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="mitral-and-tufted-cell-lateral-dendrites-were-aligned-with-the-curvature-of-reconstructed-olfactory-bulb-layers">
+<h2>Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers<a class="headerlink" href="#mitral-and-tufted-cell-lateral-dendrites-were-aligned-with-the-curvature-of-reconstructed-olfactory-bulb-layers" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="reciprocal-synapses-were-formed-based-on-dendritic-proximity-between-principal-and-granule-cell-dendrites">
+<h2>Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites<a class="headerlink" href="#reciprocal-synapses-were-formed-based-on-dendritic-proximity-between-principal-and-granule-cell-dendrites" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="gap-junctions-were-formed-between-glomerular-sibling-principal-cell-tufted-dendrites">
+<h2>Gap junctions were formed between glomerular sibling principal cell tufted dendrites<a class="headerlink" href="#gap-junctions-were-formed-between-glomerular-sibling-principal-cell-tufted-dendrites" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="glomeruli-stimulated-during-odor-experiments-were-mapped-onto-the-model-glomeruli">
+<h2>Glomeruli stimulated during odor experiments were mapped onto the model glomeruli<a class="headerlink" href="#glomeruli-stimulated-during-odor-experiments-were-mapped-onto-the-model-glomeruli" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="a-model-of-glomerular-input-spikes-was-created-to-stimulate-the-model">
+<h2>A model of glomerular input spikes was created to stimulate the model<a class="headerlink" href="#a-model-of-glomerular-input-spikes-was-created-to-stimulate-the-model" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="an-extracellular-local-field-potential-electrode-was-placed-into-the-granule-cell-layer">
+<h2>An extracellular local field potential electrode was placed into the granule cell layer<a class="headerlink" href="#an-extracellular-local-field-potential-electrode-was-placed-into-the-granule-cell-layer" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="neuron-mpi-simulations-were-performed-and-lfp-signal-analyzed-using-wavelet-transform">
+<h2>NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform<a class="headerlink" href="#neuron-mpi-simulations-were-performed-and-lfp-signal-analyzed-using-wavelet-transform" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="network-parameters-were-explored-until-the-two-cluster-gamma-fingerprint-was-reproduced">
+<h2>Network parameters were explored until the two-cluster gamma fingerprint was reproduced<a class="headerlink" href="#network-parameters-were-explored-until-the-two-cluster-gamma-fingerprint-was-reproduced" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="computational-experiments-were-performed-to-demonstrate-the-mechanisms-underlying-the-gamma-fingerprint">
+<h2>Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint<a class="headerlink" href="#computational-experiments-were-performed-to-demonstrate-the-mechanisms-underlying-the-gamma-fingerprint" title="Permalink to this headline">¶</a></h2>
+</div>
+<div class="section" id="outline">
+<h2>Outline<a class="headerlink" href="#outline" title="Permalink to this headline">¶</a></h2>
 <blockquote>
 <div><ul class="simple">
-<li><p>Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions</p></li>
-<li><p>Olfactory bulb layers were reconstructed from sagittal and coronal slices</p></li>
-<li><p>Fitted cell somas were placed within each cell type’s stereotypical laminar location</p></li>
-<li><p>Apical dendrites were rotated towards their stereotypical terminations</p></li>
-<li><p>Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers</p></li>
-<li><p>Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites</p></li>
-<li><p>Gap junctions were formed between glomerular sibling principal cell tufted dendrites</p></li>
-<li><p>Glomeruli stimulated during odor experiments were mapped onto the model glomeruli</p></li>
-<li><p>A model of glomerular input spikes was created to stimulate the model</p></li>
-<li><p>An extracellular local field potential electrode was placed into the granule cell layer</p></li>
-<li><p>NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform</p></li>
-<li><p>Network parameters were explored until the two-cluster gamma fingerprint was reproduced</p></li>
-<li><p>Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint</p></li>
 <li><dl class="simple">
 <dt>cells</dt><dd><ul>
 <li><dl class="simple">

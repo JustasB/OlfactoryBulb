@@ -48,24 +48,65 @@ Electrical properties of mitral, tufted, and granule cells from main olfactory b
 
 A NeuronUnit test that computes a property using protocol variations from a specific publication is declared by combining the generic test class with a publication class using Python's multiple inheritance (e.g. ``class InputResistanceUrbanBurton2014Test(UrbanBurton2014, InputResistanceTest)`` ). Due to the large number of property and publication combinations, these combined classes were created at run time using `a helper method <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/__init__.py#L73>`_.
 
-The measurements from each publication are recorded in the SQLite database, ``measurement`` table. The NeuronUnit class to use for each measurement is defined in the ``property`` table and ``test_class_generic`` column. At run-time, the helper method combined the generic test class with the publication class to create a class that computed the property value for a given model.
+The measurements from each publication are recorded in the SQLite database, ``measurement`` table. The NeuronUnit class to use for each measurement is defined in the ``property`` table and ``test_class_generic`` column. At run-time, the helper method combined the generic test class with the publication class to create a class that computed the property using the protocol parameters specified in each publication.
 
 =======================================================================================================
 Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions
 =======================================================================================================
 
- - Olfactory bulb layers were reconstructed from sagittal and coronal slices
- - Fitted cell somas were placed within each cell type's stereotypical laminar location
- - Apical dendrites were rotated towards their stereotypical terminations
- - Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers
- - Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites
- - Gap junctions were formed between glomerular sibling principal cell tufted dendrites
- - Glomeruli stimulated during odor experiments were mapped onto the model glomeruli
- - A model of glomerular input spikes was created to stimulate the model
- - An extracellular local field potential electrode was placed into the granule cell layer
- - NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform
- - Network parameters were explored until the two-cluster gamma fingerprint was reproduced
- - Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint
+A literature search to identify each cell type's electrical properties revealed a set of ion channels likely responsible for the behavior. Furthermore, a separate literature search was performed to identify previous computational models of each cell type. `ModelDB <https://senselab.med.yale.edu/ModelDB/default>`_ was utilized to locate runnable NEURON simulator models.
+
+=========================================================================
+Olfactory bulb layers were reconstructed from sagittal and coronal slices
+=========================================================================
+
+====================================================================================
+Fitted cell somas were placed within each cell type's stereotypical laminar location
+====================================================================================
+
+======================================================================
+Apical dendrites were rotated towards their stereotypical terminations
+======================================================================
+
+===============================================================================================================
+Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers
+===============================================================================================================
+
+=========================================================================================================
+Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites
+=========================================================================================================
+
+====================================================================================
+Gap junctions were formed between glomerular sibling principal cell tufted dendrites
+====================================================================================
+
+=================================================================================
+Glomeruli stimulated during odor experiments were mapped onto the model glomeruli
+=================================================================================
+
+=====================================================================
+A model of glomerular input spikes was created to stimulate the model
+=====================================================================
+
+=======================================================================================
+An extracellular local field potential electrode was placed into the granule cell layer
+=======================================================================================
+
+=====================================================================================
+NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform
+=====================================================================================
+
+=======================================================================================
+Network parameters were explored until the two-cluster gamma fingerprint was reproduced
+=======================================================================================
+
+=======================================================================================================
+Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint
+=======================================================================================================
+
+=======
+Outline
+=======
 
  - cells
     - morphology
