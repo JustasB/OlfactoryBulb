@@ -78,7 +78,7 @@ class OlfactoryBulbCellTest(VmTest):
         mro = self.__class__.mro()
 
         if len(mro) < 4:
-            raise Exception("The test should be a class that inherits from an publications class"
+            raise Exception("The test should be a class that inherits from a publications class"
                             "AND from a generic tests class, in that order. E.g. "
                             "'class MyTest(UrbanBurton2014, InputResistanceTest):'")
 

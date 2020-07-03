@@ -2,7 +2,7 @@
 Recreating the Model
 *********************************************
 
-The model was created in stages: cell models, network models, odor input, LFP output, simulations, and experiments.
+The model was created in stages: cell models, network models, odor input, LFP output, simulations, and experiments. While these stages are described in the `dissertation <https://repository.asu.edu/attachments/223567/content/Birgiolas_asu_0010E_19503.pdf>`_, the sections below describe technical details and include links to specific files, tools, and resources. The sections are organized in a chronological order, which can be followed to re-create this or a similar model.
 
 ==========================================================================================================================
 Mitral, tufted, and granule cell morphologies cleaned, morphology metrics computed, and representative morphologies chosen
@@ -22,15 +22,15 @@ The fixed SWC files were saved back into the archive folders and archive categor
 
 **Computing Reconstructed Cell Population Morphology Metrics**
 
-For each reconstruction, NeuroMorpho.org displays a set of whole cell morphology metrics (e.g. see 'Measurements' section of `this reconstruction <http://neuromorpho.org/neuron_info.jsp?neuron_name=1-09-TD2b>`_). For cells in this model, those metrics were computed for soma, apical dendrites, and lateral dendrites of each reconstruction.
+For each reconstruction, NeuroMorpho.org displays a set of whole-cell morphology metrics (e.g. see 'Measurements' section of `this reconstruction <http://neuromorpho.org/neuron_info.jsp?neuron_name=1-09-TD2b>`_). For cells in this model, those metrics were computed for soma, apical dendrites, and lateral dendrites of each reconstruction.
 
-The metrics were computed using `pyLMeasure tool <https://github.com/justasb/pylmeasure>`_ (which is a Python wrapper of the `L-Measure <http://cng.gmu.edu:8080/Lm/>`_ tool). Each metric was formalized as tests of the `NeuronUnit framework <https://github.com/scidash/neuronunit>`_. The test definitions have been incorporated into NeuronUnit and can be found under `[neuronunit]/tests/morphology.py <https://github.com/scidash/neuronunit/blob/dev/neuronunit/tests/morphology.py>`_
+The metrics were computed using the `pyLMeasure tool <https://github.com/justasb/pylmeasure>`_ (which is a Python wrapper of the `L-Measure <http://cng.gmu.edu:8080/Lm/>`_ tool). Each metric was formalized as tests of the `NeuronUnit framework <https://github.com/scidash/neuronunit>`_. The test definitions have been incorporated into NeuronUnit and can be found under `[neuronunit]/tests/morphology.py <https://github.com/scidash/neuronunit/blob/dev/neuronunit/tests/morphology.py>`_
 
-The morphology metrics of each cell were computed using suites of NeuronUnit tests (see: `[repo]/notebooks/morphology.ipynb <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology.ipynb>`_) and results stored in `the model's SQLite Database <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model-data.sqlite>`_ in the ``measurement`` table. The database tables and records can be viewed with an SQLite editor like `SQLite Expert <http://sqliteexpert.com/>`_.
+The morphology metrics of each cell were computed using suites of NeuronUnit tests (see: `[repo]/notebooks/morphology.ipynb <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology.ipynb>`_) and results stored in `the model's SQLite Database <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model-data.sqlite>`_ in the ``measurement`` table. The database tables and records can be viewed online with tools like `SQLite online <https://sqliteonline.com/>`_ or offline with an SQLite editor like `SQLite Expert <http://sqliteexpert.com/>`_.
 
 The overall means and standard deviations of each morphology metric were stored in the database in the ``property`` table. These overall means and standard deviations were used to select five stereotypical morphologies of each cell type. Reconstructions whose morphology metrics were closest to the cell type population means were selected to be used for cell models in this model. They can be found under `[repo]/prev_ob_models/Birgiolas2020/SWCs <https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/SWCs>`_.
 
-The validation of representativeness of the selected morphologies can be found in the `morphology-validation.ipynb notebook <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb>`_
+The validation of the representativeness of the selected morphologies can be found in the `morphology-validation.ipynb notebook <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb>`_
 
 **Morphology Standardization to Prepare for Network Embedding**
 
@@ -40,7 +40,20 @@ To facilitate the embedding of the cell models within reconstructed network laye
 Cell electrical properties and behavior identified and characterized
 ====================================================================
 
- - Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions
+Once cell morphologies were selected, they were turned into active models by inserting ion channel mechanisms. To understand which ion channels should be included, a survey of electrical behaviors of each cell type was conducted via a literature search.
+
+**Generic Test and Publication Python Classes**
+
+Electrical properties of mitral, tufted, and granule cells from main olfactory bulbs of adult mice were aggregated from literature. These properties included passive (e.g. input resistance and resting voltage) and active membrane properties (e.g. spike half-width, spike accommodation, and inhibitory rebound). The protocols used to measure and compute each property were formalized using a set of NeuronUnit tests. Each publication used slightly different protocols and algorithms to compute the properties (e.g. different slice temperatures, different delays to measure input resistance, different ways to compute action potential threshold). To fairly evaluate how a model reproduces a property, these protocol differences were formalized into the NeuronUnit tests as well. A given property reported in a publication was formalized as a NeuronUnit test that consisted of 1) a generic electrophysiology property Python class (e.g. `RestingVoltageTest <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/tests.py#L53>`_) and 2) publication-specific modifications of the property measurement protocol (e.g. `BurtonUrban2014 <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/publications.py#L34>`_).
+
+A NeuronUnit test that computes a property using protocol variations from a specific publication is declared by combining the generic test class with a publication class using Python's multiple inheritance (e.g. ``class InputResistanceUrbanBurton2014Test(UrbanBurton2014, InputResistanceTest)`` ). Due to the large number of property and publication combinations, these combined classes were created at run time using `a helper method <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/neuronunit/tests/__init__.py#L73>`_.
+
+The measurements from each publication are recorded in the SQLite database, ``measurement`` table. The NeuronUnit class to use for each measurement is defined in the ``property`` table and ``test_class_generic`` column. At run-time, the helper method combined the generic test class with the publication class to create a class that computed the property value for a given model.
+
+=======================================================================================================
+Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions
+=======================================================================================================
+
  - Olfactory bulb layers were reconstructed from sagittal and coronal slices
  - Fitted cell somas were placed within each cell type's stereotypical laminar location
  - Apical dendrites were rotated towards their stereotypical terminations
