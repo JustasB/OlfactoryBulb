@@ -20,6 +20,7 @@ echo Creating folder structure for Sphinx
 mkdir ../docs
 mkdir ../docs/source
 cp -a . ../docs/source
+mv ../docs/source/CNAME ../docs # This allows docs.olfactorybulb.org to point to the github pages
 mv ../docs/source/Makefile ../docs
 mv ../docs/source/.nojekyll ../docs # tells github that the html files are pre-generated
 mv ../docs ../html
