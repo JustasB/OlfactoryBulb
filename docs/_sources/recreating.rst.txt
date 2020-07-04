@@ -30,7 +30,7 @@ The morphology metrics of each cell were computed using suites of NeuronUnit tes
 
 The overall means and standard deviations of each morphology metric were stored in the database in the ``property`` table. These overall means and standard deviations were used to select five stereotypical morphologies of each cell type. Reconstructions whose morphology metrics were closest to the cell type population means were selected to be used for cell models in this model. They can be found under `[repo]/prev_ob_models/Birgiolas2020/SWCs <https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/SWCs>`_.
 
-The validation of the representativeness of the selected morphologies can be found in the `morphology-validation.ipynb notebook <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb>`_
+The validation of the representativeness of the selected morphologies and comparison with previously published models can be found in the `morphology-validation.ipynb notebook <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/morphology-validation.ipynb>`_
 
 **Morphology Standardization to Prepare for Network Embedding**
 
@@ -54,7 +54,23 @@ The measurements from each publication are recorded in the SQLite database, ``me
 Ion channels placed onto chosen cell morphologies and conductances fitted to experimental distributions
 =======================================================================================================
 
-A literature search to identify each cell type's electrical properties revealed a set of ion channels likely responsible for the behavior. Furthermore, a separate literature search was performed to identify previous computational models of each cell type. `ModelDB <https://senselab.med.yale.edu/ModelDB/default>`_ was utilized to locate runnable NEURON simulator models.
+**Previously Published Olfactory Models**
+
+A literature search to identify each cell type's electrical properties revealed a set of ion channels likely responsible for the behavior. Furthermore, a separate literature search was performed to identify previous computational models of each cell type. `ModelDB <https://senselab.med.yale.edu/ModelDB/default>`_ was utilized to locate runnable NEURON simulator models. Results from the initial search of all olfactory bulb or cell models were manually inspected by following the instructions to run the models and then inspecting which cell types were modeled. If a model included multi-compartment morphologies, the morphology was extracted into .SWC files using the `hoc2swc <https://github.com/JustasB/hoc2swc>`_ tool. The set of previous olfactory models can be found under `[repo]/prev_ob_models <https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models>`_.
+
+**Selection of Ion Channel Models**
+
+In addition to morphologies, the previous models included ion channel .MOD files. Many of the .MOD files were nearly identical copies of files from earlier publications. After tracing the publication geneology of each .MOD file, the most recent versions were identified. By examining the reasons why the channels were included, and comparing the electrical behavior seen in experimental literature, channels hypothesized to be responsible for the experimentally observed behaviors were selected for inclusion in this model. If an ion channel model did not include temperature sensitivity, equations to utilize the Q10 coefficient were added to the .MOD file. The ion channel models used in this model can be found under `[repo]/prev_ob_models/Birgiolas2020/Mechanisms <https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/Mechanisms>`_.
+
+NEURON Cell Builder feature was used to import morphology SWC files and then insert channel mechanisms. The initial, unoptimized cell models can be found under `[repo]/prev_ob_models/Birgiolas2020/Cells <https://github.com/JustasB/OlfactoryBulb/tree/master/prev_ob_models/Birgiolas2020/Cells>`_.
+
+**Parameter Fitting and Validation**
+
+A genetic optimization algorithm was used to identify the combinations of ion channel parameters that best reproduced experimentally observed electrical behaviors (minimized the error between model electrical property values and experimentally observed property means). The algorithm is defined in `fitting.py <https://github.com/JustasB/OlfactoryBulb/blob/master/prev_ob_models/Birgiolas2020/fitting.py>`_ and Jupyter notebooks used for fitting can be found under `[repo]/notebooks <https://github.com/JustasB/OlfactoryBulb/tree/master/notebooks>`_ (files that start with ``fitting``).
+
+The validation of the cell models against experimental data and comparison to previously published models can be found in `all-model-validation-results.ipynb notebook <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/all-model-validation-results.ipynb>`_.
+
+The final, optimized models and their parameters are defined in `[repo]/prev_ob_models/Birgiolas2020/isolated_cells.py <https://github.com/JustasB/OlfactoryBulb/blob/master/prev_ob_models/Birgiolas2020/isolated_cells.py>`_ (see MC1..5, GC1..5, TC1..5 classes).
 
 =========================================================================
 Olfactory bulb layers were reconstructed from sagittal and coronal slices
