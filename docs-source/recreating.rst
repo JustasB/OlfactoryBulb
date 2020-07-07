@@ -76,6 +76,24 @@ The final, optimized models and their parameters are defined in `[repo]/prev_ob_
 Olfactory bulb layers were reconstructed from sagittal and coronal slices
 =========================================================================
 
+**Bulb Slices and Limitations**
+
+To place olfactory bulb cell models in their appropriate anatomical locations, a reconstruction of olfactory bulb layers was necessary.
+`Allen Brain Atlas <https://atlas.brain-map.org/atlas?atlas=1#atlas=1&structure=507&resolution=16.75&x=5536&y=4142&zoom=-4&plate=100960516&z=5>`_ contains labeled sagital and coronal slices of full adult mouse olfactory bulbs. However, the Allen Atlas API, exposed only partialy reconstructed bulbs (frontal extremes were missing), and did not have labeled cell layer information. But, images of the full bulb slices with layers labeld were available through the `online viewer <https://atlas.brain-map.org/atlas?atlas=1#atlas=1&structure=507&resolution=16.75&x=5536&y=4142&zoom=-4&plate=100960516&z=5>`_. Furthermore, the sagital and coronal slices were different thickness, and the thiner coronal slices did not contain the the frontal bulb extreme region. Thus the coronal slice images were used to reconstruct the 3D shape of the mid and posterior parts of the olfactory bulb at higher resolution, and the thicker sagital slices were used to reconstruct the frontal extreme region.
+
+**Conversion of 2D Slices to 3D Layer Meshes**
+
+The slice images were downloaded and converted into SVG vector format using `Inkscape <https://inkscape.org/>`_. The SVG files were imported into `Blender <http://blender.org/>`_ and positioned apart to match the thickness of the slices. The corresponding points of each neighboring layer were joined together using Blender's `Make Face (from edges) <https://docs.blender.org/manual/en/latest/modeling/meshes/editing/vertex/make_face_edge.html>`_. This process was repeated for each layer separately, until the 3D mesh of all the layers of the bulb were reconstructed. The number of polygons of the final mesh were reduced by using Blender's `Decimate Modifier <https://docs.blender.org/manual/en/latest/modeling/modifiers/generate/decimate.html>`_ and the `Dyntopo (dynamic topology) sculpting tool <https://www.blendernation.com/2018/11/14/blender-2-8-feature-simplify-sculpting-brush/>`_.
+
+The Blender file containing the reconstructed layers can be found under `[repo]/blender-files <https://github.com/JustasB/OlfactoryBulb/tree/master/blender-files>`_ (bulb-layers.blend and ob-gloms-fast.blend).
+
+**Virtual Slices and Generating Potential Positions for Cell Somas within each Layer**
+
+To generate positions within each layer where cell somas could be located, the reconstructed layers were filled with approximately evenly distributed points. This was done to enable the use of 'virtual slices'. A virtual slice can be any 3D shape, but in this model, it was chosen to be a rectangular box. To construct a virtual slice, the slice shape is positioned over a desired part of the reconstructed layers. Any potential-soma points that are located within the parts of the layers that are contained within the virtual slice are selected to be used as potential cell placement locations. Points outside the virtual slice are ignored.
+
+The points for possible cell locations can be found in `ob-gloms-fast.blend <https://github.com/JustasB/OlfactoryBulb/blob/master/blender-files/ob-gloms-fast.blend>`_ as Blender's Particle Systems of reconstructed layer objects ending with "Particles" (e.g. ``0 GL Particles`` for potential positions for glomeruli, and ``4 GRL Particles`` for positions of cells within the granule cell layer). The number of points in each layer was based on the cell and glomeruli count estimates in adult mice bulbs. The points were created using the `Blue Noise Particles <https://github.com/BorisTheBrave/blue-noise-particles>`_ addon for Blender.
+
+
 ====================================================================================
 Fitted cell somas were placed within each cell type's stereotypical laminar location
 ====================================================================================
