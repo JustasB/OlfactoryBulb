@@ -72,6 +72,12 @@ The validation of the cell models against experimental data and comparison to pr
 
 The final, optimized models and their parameters are defined in `[repo]/prev_ob_models/Birgiolas2020/isolated_cells.py <https://github.com/JustasB/OlfactoryBulb/blob/master/prev_ob_models/Birgiolas2020/isolated_cells.py>`_ (see MC1..5, GC1..5, TC1..5 classes).
 
+.. raw:: html
+
+    <div class="sketchfab-embed-wrapper">
+    <iframe title="A 3D model" width="100%" height="480" src="https://sketchfab.com/models/21a500cd56d74fa2853b3d9e6b4c54b5/embed?preload=1&amp;ui_controls=1&amp;ui_infos=1&amp;ui_inspector=1&amp;ui_stop=1&amp;ui_watermark=1&amp;ui_watermark_link=1" frameborder="0" allow="autoplay; fullscreen; vr" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+
+
 =========================================================================
 Olfactory bulb layers were reconstructed from sagittal and coronal slices
 =========================================================================
@@ -87,6 +93,11 @@ The slice images were downloaded and converted into SVG vector format using `Ink
 
 The Blender file containing the reconstructed layers can be found under `[repo]/blender-files <https://github.com/JustasB/OlfactoryBulb/tree/master/blender-files>`_ (bulb-layers.blend and ob-gloms-fast.blend).
 
+.. raw:: HTML
+
+    <div class="sketchfab-embed-wrapper">
+    <iframe title="A 3D model" width="100%" height="480" src="https://sketchfab.com/models/977a977c4eb9432d802a99dc760997c7/embed?preload=1&amp;ui_controls=1&amp;ui_infos=1&amp;ui_inspector=1&amp;ui_stop=1&amp;ui_watermark=1&amp;ui_watermark_link=1" frameborder="0" allow="autoplay; fullscreen; vr" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+
 **Virtual Slices and Generating Potential Positions for Cell Somas within each Layer**
 
 To generate positions within each layer where cell somas could be located, the reconstructed layers were filled with approximately evenly distributed points. This was done to enable the use of 'virtual slices'. A virtual slice can be any 3D shape, but in this model, it was chosen to be a rectangular box. To construct a virtual slice, the slice shape is positioned over a desired part of the reconstructed layers. Any potential-soma points that are located within the parts of the layers that are contained within the virtual slice are selected to be used as potential cell placement locations. Points outside the virtual slice are ignored.
@@ -98,13 +109,29 @@ The points for possible cell locations can be found in `ob-gloms-fast.blend <htt
 Fitted cell somas were placed within each cell type's stereotypical laminar location
 ====================================================================================
 
+When constructing a network model, after a virtual slice was positioned over a desired area of the bulbar layers, the potential locations of somas and glomeruli that were contained by the virtual slice mesh were selected for use as soma/glomeruli center locations.
+
+This is started by the `[repo]/buil-dslice.py <https://github.com/JustasB/OlfactoryBulb/blob/master/build-slice.py>`_ and most of the work is performed by the `SliceBuilderBlender <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/slicebuilder/blender.py>`_ class.
+
+Depending on the number of cells of each type specified in ``SliceBuilderBlender``, a random subset of the positions contained within the virtual slice are used to place cell somas/glomeruli.
+
+Mitral cell somas are placed in locations contained within the mitral cell layer. Tufted cells are placed within the external plexiform layer, and granule cells are placed within the granule cell layer.
+
+When a mitral cell position is chosen, the closest glomerulus location is used to determine the minimum length that a mitral cell's apical dendrite must have to be placed at that position (to satisfy the condition that mitral cell apical dendrites must terminate within the glomerular layer). A model is chosen at random from this set of mitral cell models that meet the apical dendrite criteria. If no mitral cell has a long-enough apical dendrite, the mitral cell model with the longest apical dendrite is chosen. The above rules are also followed for tufted cells, whose somas are placed within the external plexiform layer.
+
+Similarly, granule cell somas are placed at locations within the virtual slice, however, a specific model for each location is selected at random from a set of granule cell models that have apical dendrites that terminate within the external plexiform layer (reach beyond the closest point of the external plexiform but do not reach into the glomerular layer.
+
 ======================================================================
 Apical dendrites were rotated towards their stereotypical terminations
 ======================================================================
 
+Once their somas are placed, cells of all types are rotated so that their apical dendrites point towards glomeruli closest to them. The cells are then rotated around the apical dendrite axis by a random degree. At this point, mitral and tufted cell apical dendrites point towards the glomeruli that are closest to the cell somas, and due to the cell morphology standardization step described earlier, the lateral dendrites lie in a plane that is approximatelly orthogonal to the apical dendrites. However, the apical dendrites of the selected mitral or tufted cell model might extend beyond the closest glomerulus. For this reason, the apical dendrites are rotated independently from the soma, to point towards a glomeruli that lie at approximately the same distance as the length of the apical dendrite. This guarantees that the mitral and tufted cell dendrites terminate within the glomerular layer.
+
 ===============================================================================================================
 Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers
 ===============================================================================================================
+
+
 
 =========================================================================================================
 Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites
