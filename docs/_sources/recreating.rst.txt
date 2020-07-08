@@ -125,21 +125,34 @@ Similarly, granule cell somas are placed at locations within the virtual slice, 
 Apical dendrites were rotated towards their stereotypical terminations
 ======================================================================
 
-Once their somas are placed, cells of all types are rotated so that their apical dendrites point towards glomeruli closest to them. The cells are then rotated around the apical dendrite axis by a random degree. At this point, mitral and tufted cell apical dendrites point towards the glomeruli that are closest to the cell somas, and due to the cell morphology standardization step described earlier, the lateral dendrites lie in a plane that is approximatelly orthogonal to the apical dendrites. However, the apical dendrites of the selected mitral or tufted cell model might extend beyond the closest glomerulus. For this reason, the apical dendrites are rotated independently from the soma, to point towards a glomeruli that lie at approximately the same distance as the length of the apical dendrite. This guarantees that the mitral and tufted cell dendrites terminate within the glomerular layer.
+Once their somas are placed, cells of all types are rotated so that their apical dendrites point towards glomeruli closest to them. The cells are then rotated around the apical dendrite axis by a random degree. At this point, mitral and tufted cell apical dendrites point towards the glomeruli that are closest to the cell somas, and due to the cell morphology standardization step described earlier, the lateral dendrites lie in a plane that is approximately orthogonal to the apical dendrites. However, the apical dendrites of the selected mitral or tufted cell model might extend beyond the closest glomerulus. For this reason, the apical dendrites are rotated independently from the soma, to point towards glomeruli that lie at approximately the same distance as the length of the apical dendrite. This guarantees that the mitral and tufted cell dendrites terminate within the glomerular layer.
 
 ===============================================================================================================
 Mitral and tufted cell lateral dendrites were aligned with the curvature of reconstructed olfactory bulb layers
 ===============================================================================================================
 
+In experimental literature, mitral and tufted cell lateral dendrites tend to be confined to the external plexiform layer, and generally follow the local curvature of the layer. To replicate this phenomenon, after mitral and tufted cells were placed, and apical dendrites oriented, the lateral dendrites of mitral and tufted cells were confined to the external plexiform layer. Mitral cell lateral dendrites were confined to the inner 60% portion of the external plexiform layer, while tufted cell lateral dendrites were confined to the remaining outer 40% portion.
 
+The final cell positions and morphology were saved for later instantiation in NEURON. The morphology transform files can be found under `[repo]/slices/DorsalColumnSlice ([X]C.json files) <https://github.com/JustasB/OlfactoryBulb/tree/master/olfactorybulb/slices/DorsalColumnSlice>`_.
+
+.. raw:: HTML
+
+    <div class="sketchfab-embed-wrapper">
+    <iframe title="A 3D model" width="100%" height="480" src="https://sketchfab.com/models/fffdafc7ef2f4e0ab7d006daf3517da7/embed?preload=1&amp;ui_controls=1&amp;ui_infos=1&amp;ui_inspector=1&amp;ui_stop=1&amp;ui_watermark=1&amp;ui_watermark_link=1" frameborder="0" allow="autoplay; fullscreen; vr" mozallowfullscreen="true" webkitallowfullscreen="true"></iframe></div>
+
+In the above visualization of the virtual slice used in this model, mitral cells are yellow/green, tufted cells are red, and granule cells are blue.
 
 =========================================================================================================
 Reciprocal synapses were formed based on dendritic proximity between principal and granule cell dendrites
 =========================================================================================================
 
+After all the cell dendrites were in their appropriate locations, reciprocal synapses were formed between mitral and granule cells and tufted and granule cells. Synapses were formed where granule cell dendrites approached mitral or tufted cell dendrites within 5 microns. At each location, an excitatory AMPA/MNDA synapse was placed onto the granule cell membrane, and an inhibitory GABA synapse was placed onto the tufted/mitral cell membrane. Granule cells that did not form any synapses were removed from the simulation. The synapse information was saved for later instantiation in NEURON and can be seen under `[repo]/slices/DorsalColumnSlice (GCs__MCs.json and GCs__TCs.json files) <https://github.com/JustasB/OlfactoryBulb/tree/master/olfactorybulb/slices/DorsalColumnSlice>`_.
+
 ====================================================================================
 Gap junctions were formed between glomerular sibling principal cell tufted dendrites
 ====================================================================================
+
+
 
 =================================================================================
 Glomeruli stimulated during odor experiments were mapped onto the model glomeruli
