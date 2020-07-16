@@ -152,23 +152,33 @@ After all the cell dendrites were in their appropriate locations, reciprocal syn
 Gap junctions were formed between glomerular sibling principal cell tufted dendrites
 ====================================================================================
 
-
+Gap junctions were added between the apical tufts of glomerular sibling mitral cells. The same was done with glomerular sibling tufted cells. NEURON ``.setup_transfer()`` function was used to share the continuous current flows between the connected principal compartments. Within a glomerulus, the sibling pricipal cells were connected with each other in a round-robin fashion, where each pricipal cell was connected by gap junctions to two other siblings of same cell type. This procedure can be seen in `model.py add_gap_junctions() <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model.py#L333>`_.
 
 =================================================================================
 Glomeruli stimulated during odor experiments were mapped onto the model glomeruli
 =================================================================================
 
+To stimulate glomeruli with realistic activation patterns, glomerular activations visible in optical glomerular imaging experiments done in Vincis et. al. (2012) were used to stimulate the network. These activations were previously digitized in Migliore et. al. (2014) model. To identify the analogous glomeruli, the Migliore model was imported into Blender using BlenderNEURON and the model's glomeruli were registered with the reconstructed glomerular layer of this model. The glomerular locations that were closest to those in the Migliore model were used for odor input. The odors from Vincis and the corresponding glomeruli and their peak intensities were stored in the SQLite database in ``odor`` and ``odor_glom`` tables.
+
 =====================================================================
 A model of glomerular input spikes was created to stimulate the model
 =====================================================================
+
+Each tufted dendrite of a pricipal cell received input stimulation in the form of a train of spikes. The spike times for each cell were picked from a Gaussian distribution whose symmetric 99% range was scaled to correspond to the chosen inhalation duration (e.g. 100 ms). The spikes were delivered to excitatory synapses placed in each pricipal cell's apical dendrites. This procedure can be seen in `model.py stim_glom_segments() <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model.py#L134>`_
 
 =======================================================================================
 An extracellular local field potential electrode was placed into the granule cell layer
 =======================================================================================
 
+Earlier work by Parasuram et. al. (2016) was extended to create a Python-based, MPI-compatible version of LFPsim. The new version, `LFPsimpy <https://github.com/JustasB/LFPsimpy>`_ was utilized in this model. Using the library an extracellular electrode was placed in approximately the same location in the granule cell layer as in Manabe & Mori (2013) which demonstrated the gamma fingerprint. The code to insert the electrode can be seen in `model.py create_lfp_electrode() <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model.py#L134>`_
+
 =====================================================================================
 NEURON+MPI simulations were performed and LFP signal analyzed using wavelet transform
 =====================================================================================
+
+The model was designed to utilize multiple processes using MPI and Parallel NEURON. During model initializtion, cells were distributed by placing them onto least utilized ranks. The number of cell compartments (segments) was used a proxy for cell complexity. Simulations were performed on Arizona State University computers and on Amazon Web Services instances. Most simulations were 1,800 ms long. The full model initialization and simulation code can be seen in `model.py OlfactoryBulb class <https://github.com/JustasB/OlfactoryBulb/blob/master/olfactorybulb/model.py#L30>`_
+
+During simulations, input spike times, soma membrane voltages of pricipal cells, and the LFP electrode signal were collected and saved at the end of the simulation for off-line analysis. The LFP signal was first band-pass filtered to 30-120 Hz, and then the `pywavelets <https://github.com/PyWavelets/pywt>`_ package was used to create wavelet spectrogram of the filtered signal. The final spectrogam was the average spectrogram of all sniffs during the simulation. The `LFP Wavelet Analysis.ipynb <https://github.com/JustasB/OlfactoryBulb/blob/master/notebooks/LFP%20Wavelet%20Analysis.ipynb>`_ notebook contains the wavelet decomposition code.
 
 =======================================================================================
 Network parameters were explored until the two-cluster gamma fingerprint was reproduced
@@ -177,62 +187,9 @@ Network parameters were explored until the two-cluster gamma fingerprint was rep
 =======================================================================================================
 Computational experiments were performed to demonstrate the mechanisms underlying the gamma fingerprint
 =======================================================================================================
-
-=======
-Outline
-=======
-
- - cells
-    - morphology
-        - SWC archives
-        - quality / cleaning
-        - morphology selection
-        - validation
-
-    - electrophysiology properties and database
-    - ion channels
-    - electrophysiology property tests
-    - fitting
-    - comparison to other models
-
- - layers
-    - reconstruction
-    - mesh simplification
-
- - cell placement
-    - placement within layers
-    - orientation
-    - dendritic alignment
-
- - synapses
-    - M/TC <-> GC Reciprocal Synapses
-        - AMPA/NMDA
-        - GABA
-        - spines
-        - dendritic proximity rule
-
-    - M/TC Gap Junctions
-
- - odor input
-    - Migliore14 glomerular activation maps
-    - Glomerular registration
-    - Glomerular intensity to spikes model
-    - Input connections
-
- - simulation
-    - single thread
-    - mpi
-        - cell rank assignment
-        - gap junction considerations
-        - synaptic connections
-
- - recordings
-    - somatic
-    - extracellular lfp
-    - wavelet analysis
-
  - experiments
     - silent network
     - Only MCs or TCs
     - Added GCs
     - Added Gap Junctions
+
