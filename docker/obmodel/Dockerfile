@@ -14,7 +14,7 @@ ADD https://api.github.com/repos/justasb/OlfactoryBulb/git/refs/heads/master ver
 RUN git clone https://github.com/justasb/OlfactoryBulb; rm -rf /OlfactoryBulb/.git
 WORKDIR "/OlfactoryBulb"
 
-RUN conda install pandas=1.0.3 -y
+RUN conda install pandas=1.0.3 llvmlite=0.34.0 -y
 RUN python -m pip install pip==9.0.3
 RUN pip install -r requirements.txt
 
